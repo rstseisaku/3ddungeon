@@ -1,0 +1,24 @@
+Initialize engine version: 5.6.0f3 (497a0f351392)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: Intel(R) HD Graphics (ID=0x1606)
+    Vendor:   Intel
+    VRAM:     1130 MB
+    Driver:   10.18.15.4256
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
+Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
+- Completed reload, in  0.343 seconds
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\System.dll (this message is harmless)
+desktop: 1366x768 60Hz; virtual: 1366x768 at 0,0
+<RI> Initializing input.
+XInput1_3.dll not found. Trying XInput9_1_0.dll instead...
+<RI> Input initialized.
