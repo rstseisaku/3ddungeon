@@ -64,7 +64,9 @@ public class GameMaster : MonoBehaviour {
 
             if (Input.GetAxis("Vertical") > 0)
             {
+                /*
                 lookTarget.transform.position += lookTarget.transform.forward; // カメラを前方向に 1 だけ移動
+                */
 
                 // 前方に移動させる
                 yield return MyMove();   
@@ -95,7 +97,7 @@ public class GameMaster : MonoBehaviour {
     IEnumerator MyMove()
     {
         Vector3 movePos = new Vector3(0, 0, 0);
-        for (int i = 0; i < rotateTime; i++)
+        for (int i = 0; i < moveTime; i++)
         {
             movePos = lookTarget.transform.forward; // カメラを前方向に 1 だけ移動
             // Debug.Log( movePos );
