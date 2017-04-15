@@ -1,0 +1,14 @@
+リソースフォルダとか
+http://hamken100.blogspot.jp/2012/04/unity-resourcesprefab.html
+
+テクスチャ設定
+http://www.atmarkit.co.jp/ait/articles/1411/06/news040.html
+
+オブジェクトのサイズ
+http://libro.tuyano.com/index3?id=2816003
+
+入力
+http://qiita.com/yando/items/c406690c9ad87ecfc8e5
+
+コルーチン
+http://developer.wonderpla.net/entry/blog/engineer/Unity_Co-routine/
