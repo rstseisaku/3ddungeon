@@ -26,41 +26,41 @@ public class GameMaster : MonoBehaviour {
         // カメラオブジェクトの取得
         lookTarget = GameObject.FindWithTag("MainCamera");
 
+        // csvファイルに従ってマップを生成
         map.MakeMap("Map1.csv");
-        SetPlayer(1,2);
-        
 
-        // コルーチンの起動
+        // プレイヤーの位置設定
+        SetPlayer(1,2);        
+
+        // コルーチンの起動(メインループ)
         StartCoroutine("MyUpdate");
     }
 
     // Update is called once per frame
-    void Update() { }
-
+    void Update() {
+        // 利用しない
+    }
 
     IEnumerator MyUpdate() 
     {
-        // 『Time.DeltaTime の使い方』
+        // メモ 『Time.DeltaTime の使い方』
         while (true) // ゲームメインループ
         {
+            // カメラ位置から 2Dマップでの(X,Y)を求める
             PlayerPositionX = (int)Mathf.Round(lookTarget.transform.position.x);
             PlayerPositionY = (int)Mathf.Round(lookTarget.transform.position.z);
 
+            // 角度と現在位置から、真っすぐ進んだ際の2D(X,Y) を求めておく
             int nextX = PlayerPositionX + (int)Mathf.Sin(lookTarget.transform.localEulerAngles.y * 2 * Mathf.PI / 360);
             int nextY = PlayerPositionY + (int)Mathf.Cos(lookTarget.transform.localEulerAngles.y * 2 * Mathf.PI / 360);
-            // Debug.Log();
 
             if (Input.GetAxis("Vertical") > 0)
             {
+                // 前方に移動させる
                 if (map.isMoveable(nextX, nextY))
                 {
-                    // 前方に移動させる
                     yield return MyMove();
                     continue;
-                }
-                else
-                {
-                   // for( int i=0; i<60; i++) yield return 0;
                 }
             }
 
@@ -77,13 +77,10 @@ public class GameMaster : MonoBehaviour {
                 continue;
             }
 
-
-
-
             // 処理の終了
             yield return 0;
         }
-    }
+    } // ---MyUpdate()
 
     // 一定フレームをかけて回転させる
     IEnumerator MyRotate( Vector3 vec3 )
@@ -102,30 +99,33 @@ public class GameMaster : MonoBehaviour {
     // 一定フレームをかけて移動させる
     IEnumerator MyMove()
     {
+        // 向いてる方向に 1 マス移動
         Vector3 movePos = new Vector3(0, 0, 0);
         movePos = lookTarget.transform.forward; // カメラを前方向に 1 だけ移動
-                                                // Debug.Log( movePos );
         movePos /= moveTime;
         
+        //一定フレームかけて移動する
         for (int i = 0; i < moveTime; i++)
         {
             lookTarget.transform.position += movePos;
             yield return 0;
         }
-        lookTarget.transform.position = new Vector3(Mathf.Round(lookTarget.transform.position.x),
-                                                    lookTarget.transform.position.y,
-                                                    Mathf.Round(lookTarget.transform.position.z));
+        // 誤差修正
+        lookTarget.transform.position =
+            new Vector3(Mathf.Round(lookTarget.transform.position.x),
+                        lookTarget.transform.position.y,
+                        Mathf.Round(lookTarget.transform.position.z));
+        // 移動後のウェイト
         for (int i = 0; i < moveWaitTime; i++)
         {
             yield return 0;
         }
     }
 
-    //playerの配置
+    // プレイヤの配置
     private void SetPlayer(int StartX, int StartY)
     {
         // カメラの移動
         lookTarget.transform.position = new Vector3(StartX, 0.5f, StartY);
-
     }
 }

@@ -12,3 +12,24 @@ http://qiita.com/yando/items/c406690c9ad87ecfc8e5
 
 コルーチン
 http://developer.wonderpla.net/entry/blog/engineer/Unity_Co-routine/
+
+image sprite
+http://tsubakit1.hateblo.jp/entry/2016/09/26/080000#uGUI-Imageの振る舞い
+
+
+uGUIのアスペクト比を固定する（修正版）
+http://tsubakit1.hateblo.jp/entry/2014/12/11/223427
+
+Canvas Scaler
+https://docs.unity3d.com/ja/540/Manual/script-CanvasScaler.html
+
+画像動的張替え
+http://redfreshet.com/2015/11/10/unity_change_sourceimage/
+( Sprite側じゃないと上手く動かない )
+
+UI移動
+https://boccilog.wordpress.com/2015/10/18/ugui%E3%81%AEimage%E3%81%AE%E7%A7%BB%E5%8B%95%E3%80%81%E3%82%B5%E3%82%A4%E3%82%BA%E5%A4%89%E6%9B%B4%E3%81%AA%E3%81%A9%E3%81%AA%E3%81%A9/
+
+
+
+
