@@ -8,8 +8,15 @@ public class GameMaster : MonoBehaviour {
     public int rotateWaitTime = 10; // 回転にかかるフレームの設定
     public int moveWaitTime = 10; // 移動フレームの設定
 
+    //ダンジョン内の現在位置
+    private int PlayerPositionX;
+    private int PlayerPositionY;
+
+
 
     private GameObject lookTarget; // カメラ。スクリプト内で取得。
+
+    Map1 map = new Map1();
 
 
     // Resources/Prefabs から直接読み込む
@@ -19,24 +26,9 @@ public class GameMaster : MonoBehaviour {
         // カメラオブジェクトの取得
         lookTarget = GameObject.FindWithTag("MainCamera");
 
-        // 疑似 3D フィールド生成
-        for (int j = 0; j < 30; ++j)
-        {
-            for (int i = 0; i < 30; ++i)
-            {
-                Instantiate(Resources.Load("Prefabs/FloorArea1"),
-                    new Vector3(i , 0, j ), // Plane を 0.1 倍にすると 1x1 になる
-                    Quaternion.identity);
-                if (i == j )
-                {
-                    Instantiate(Resources.Load("Prefabs/WallArea1"),
-                        new Vector3(i, 0.5f, j),
-                        Quaternion.identity);
-                }
-            }
-        }
-        // カメラの移動
-        lookTarget.transform.position = new Vector3( 0.0f, 0.5f, 0.0f );
+        map.MakeMap("Map1.csv");
+        SetPlayer(1,2);
+        
 
         // コルーチンの起動
         StartCoroutine("MyUpdate");
@@ -51,24 +43,40 @@ public class GameMaster : MonoBehaviour {
         // 『Time.DeltaTime の使い方』
         while (true) // ゲームメインループ
         {
+            PlayerPositionX = (int)Mathf.Round(lookTarget.transform.position.x);
+            PlayerPositionY = (int)Mathf.Round(lookTarget.transform.position.z);
+
+            int nextX = PlayerPositionX + (int)Mathf.Sin(lookTarget.transform.localEulerAngles.y * 2 * Mathf.PI / 360);
+            int nextY = PlayerPositionY + (int)Mathf.Cos(lookTarget.transform.localEulerAngles.y * 2 * Mathf.PI / 360);
+            // Debug.Log();
+
+            if (Input.GetAxis("Vertical") > 0)
+            {
+                if (map.isMoveable(nextX, nextY))
+                {
+                    // 前方に移動させる
+                    yield return MyMove();
+                    continue;
+                }
+                else
+                {
+                   // for( int i=0; i<60; i++) yield return 0;
+                }
+            }
+
             if (Input.GetAxis("Horizontal") > 0)
             {
                 // 回転させる(右方向)
                 yield return MyRotate(new Vector3(0, 90, 0));
+                continue;
             }
             if (Input.GetAxis("Horizontal") < 0)
             {
                 // 回転させる(左方向)
                 yield return MyRotate(new Vector3(0, -90, 0));
+                continue;
             }
 
-            if (Input.GetAxis("Vertical") > 0)
-            {
-                lookTarget.transform.position += lookTarget.transform.forward; // カメラを前方向に 1 だけ移動
-
-                // 前方に移動させる
-                yield return MyMove();   
-            }
 
 
 
@@ -95,18 +103,29 @@ public class GameMaster : MonoBehaviour {
     IEnumerator MyMove()
     {
         Vector3 movePos = new Vector3(0, 0, 0);
-        for (int i = 0; i < rotateTime; i++)
+        movePos = lookTarget.transform.forward; // カメラを前方向に 1 だけ移動
+                                                // Debug.Log( movePos );
+        movePos /= moveTime;
+        
+        for (int i = 0; i < moveTime; i++)
         {
-            movePos = lookTarget.transform.forward; // カメラを前方向に 1 だけ移動
-            // Debug.Log( movePos );
-            movePos /= moveTime;
-
             lookTarget.transform.position += movePos;
             yield return 0;
         }
+        lookTarget.transform.position = new Vector3(Mathf.Round(lookTarget.transform.position.x),
+                                                    lookTarget.transform.position.y,
+                                                    Mathf.Round(lookTarget.transform.position.z));
         for (int i = 0; i < moveWaitTime; i++)
         {
             yield return 0;
         }
+    }
+
+    //playerの配置
+    private void SetPlayer(int StartX, int StartY)
+    {
+        // カメラの移動
+        lookTarget.transform.position = new Vector3(StartX, 0.5f, StartY);
+
     }
 }
