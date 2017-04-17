@@ -21,11 +21,14 @@ public class CharacterBase : MonoBehaviour
     public int Hp; // 体力( 雑魚戦用 )
     public int Atk; // 攻撃力
     public int Mag; // 魔力値
+    public int knockback; // 吹き飛ばし力
+    public int resistKnockback; // 吹き飛ばし耐性
 
     // CTB 関連
     public int partyId; // パーティ ID
     public int ctbNum; // CTB値
     protected int targetId; // 攻撃対象
+    public int TargetId { get { return this.targetId; }}
 
 
     // キャラクターのデータ読み込み
@@ -48,6 +51,8 @@ public class CharacterBase : MonoBehaviour
         Hp = int.Parse(linebuffer[2]); // 体力
         Atk = int.Parse(linebuffer[3]); // 攻撃力
         Mag = 1; // 魔力値
+        knockback = 6; // 吹き飛ばし力
+        resistKnockback = UnityEngine.Random.Range(0, 5); // 吹き飛び耐性
 
         // テクスチャ読込
         faceTexture = MyGetTexture(faceGraphicPath);
@@ -80,7 +85,6 @@ public class CharacterBase : MonoBehaviour
         // 顔グラのをCTBに応じた位置に表示
         SetFaceObj();
     } // --- MakeCharacterGraphic()
-
     // ファイル名からテクスチャを返す
     protected Texture2D MyGetTexture(string FilePath)
     {
@@ -91,8 +95,6 @@ public class CharacterBase : MonoBehaviour
     public void SetFaceObj() {
         SetFaceObj(0, 1);
     }
-
-    // ctbNum に従った位置に顔グラフィックを表示する(Y 座標をずらす機能持ち)
     public void SetFaceObj( int OffsetY, int vy )
     {
         // 0,-1,1のいずれかのパラメータに正規化
@@ -100,15 +102,89 @@ public class CharacterBase : MonoBehaviour
 
         // 座標の設定 Canvas(x,y)
         FaceObj.transform.localPosition =
-            new Vector3(ConstantValue.BATTLE_FACE_SIZE * ctbNum - 200,
+            new Vector3(ConstantValue.BATTLE_FACE_SIZE * ctbNum + ConstantValue.BATTLE_FACE_OFFSETX,
             vy * partyId * ConstantValue.BATTLE_FACE_VY + OffsetY,
             0);
     } // --- SetFaceObj( int OffsetY, int vy  )
 
 
 
-    // 対象キャラクターの選択
-    protected IEnumerator SelectTarget()
+    /*
+     * ===========================================================
+     *  対象キャラクターの選択(targetId を戻り値として利用)
+     * ===========================================================
+     */
+    // 対象キャラクターの選択処理実部
+    protected IEnumerator SelectTarget( EnemyCharacterData[] enemyCd )
+    {
+        // カーソルオブジェクトを作成
+        GameObject cursorObj = MakeCursorObj();
+        GameObject predictObj = MakePredictObj( enemyCd );
+
+        // 初期化
+        int checkFinger = -1; // 監視指の ID
+        int nowSelect = 0; // 現在選択しているターゲットID
+        int newTouchSelect = 0; // 新押時の ターゲット ID
+        bool finishFlag = false; // ターゲットを決定可能か否かを示す。( 新押時に選択されているターゲットが、既に選択されている場合に true となる )
+
+        // 初期表示
+        SetCursorObj(nowSelect, cursorObj);
+        SetPredictObj(predictObj, nowSelect, enemyCd); // 予測オブジェクト表示
+        while ( targetId == -1 )
+        {
+            // 新タッチがあったら
+            if ( mInput.existNewTouch >= 0 )
+            {
+                // 監視指ID を登録
+                checkFinger = mInput.existNewTouch; // 新推指のID
+
+                // 入力座標Yを取得しカーソルIDを求める
+                int _nowSelect = nowSelect;
+                nowSelect = PosToTargetId( checkFinger );
+                newTouchSelect = nowSelect;
+
+                // 更新時のみ表示を更新
+                finishFlag = true;
+                if (nowSelect != _nowSelect)
+                {
+                    finishFlag = false; // 押す場所が変わった
+                    SetCursorObj(nowSelect, cursorObj); // カーソルオブジェクト登録
+                    SetPredictObj(predictObj, nowSelect, enemyCd); // 予測オブジェクト表示
+                }
+            }
+            // 新推がなければ、監視指の中身を見る
+            else if( checkFinger >= 0)
+            {
+                // 入力座標Yを取得しカーソルIDを求める
+                int _nowSelect = nowSelect;
+                nowSelect = PosToTargetId( checkFinger );
+
+                // 更新時のみ表示を更新
+                if (nowSelect != _nowSelect)
+                {
+                    SetCursorObj(nowSelect, cursorObj); // カーソルオブジェクト登録
+                    SetPredictObj(predictObj, nowSelect, enemyCd); // 予測オブジェクト表示
+                }
+
+                // 離されたら
+                if (mInput.existEndTouch == checkFinger)
+                {
+                    // 監視リストから除外
+                    checkFinger = -1;
+
+                    // 選択位置が変化していない場合
+                    if ( finishFlag &&  nowSelect == newTouchSelect)
+                        targetId = nowSelect;
+                }
+            }
+            yield return 0;
+        }
+        Destroy( cursorObj );
+        Destroy( predictObj );
+        yield return 0;
+    }
+    // カーソルオブジェクトの操作(ターゲット選択時利用)
+    private GameObject MakeCursorObj()
     {
         // カーソルオブジェクトの表示
         string FilePath = "Prefabs\\Battle\\ImageBase";
@@ -125,49 +201,56 @@ public class CharacterBase : MonoBehaviour
             new Vector2(1200, ConstantValue.BATTLE_FACE_SIZE);
         cursorObj.GetComponent<Image>().color
             = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-
-        int nowSelect = 0;
-        bool nowUpdate = true;
-        targetId = -1;
-        while ( targetId == -1 )
-        {
-            // ★スマホ向け・ブラウザゲー向きの入力はあとで考える
-            if ( Input.GetKeyDown(KeyCode.Z))
-            {
-
-                targetId = nowSelect;
-            }
-            if(Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                nowSelect += ConstantValue.enemyNum - 1;
-                nowSelect %= ConstantValue.enemyNum;
-                nowUpdate = true;
-            }
-            if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                nowSelect++;
-                nowSelect %= ConstantValue.enemyNum;
-                nowUpdate = true;
-            }
-
-            if (nowUpdate)
-            {
-                // 選択中の場所に表示する
-                int posY = ConstantValue.BATTLE_ENEMYFACE_OFFSETY;
-                posY += -1 *  nowSelect * ConstantValue.BATTLE_FACE_VY;
-                cursorObj.transform.localPosition = new Vector3(
-                    0,
-                    posY,
-                    0);
-                nowUpdate = false;
-            }
-
-            yield return 0;
-        }
-
-        Destroy( cursorObj );
-        yield return 0;
+        return cursorObj;
+    } // ---MakeCursorObj
+    private void SetCursorObj( int nowSelect, GameObject cursorObj )
+    {
+        int posY = ConstantValue.BATTLE_ENEMYFACE_OFFSETY;
+        posY += -1 * nowSelect * ConstantValue.BATTLE_FACE_VY;
+        cursorObj.transform.localPosition = new Vector3(
+            0,
+            posY,
+            0);
+    } // ---SetCursorObj
+    // 予測オブジェクトの操作(ターゲット選択時利用)
+    private GameObject MakePredictObj( EnemyCharacterData[] enemyCd)
+    {
+        // 顔グラフィックオブジェクトをコピー(ダミー)
+        GameObject predictObj = GameObject.Instantiate(
+            enemyCd[0].FaceObj);
+        predictObj.transform.SetParent(enemyCd[0].FaceObj.transform.parent);
+        predictObj.transform.localScale = enemyCd[0].FaceObj.transform.localScale;
+        predictObj.transform.GetComponent<Image>().color =
+            new Color(1.0f, 1.0f, 1.0f, 0.5f);
+        return predictObj;
     }
+    private void SetPredictObj( GameObject predictObj, int nowSelect, EnemyCharacterData[] enemyCd)
+    {
+        Debug.Log(nowSelect);
+        // 吹き飛び量を計算
+        int blow = knockback - enemyCd[nowSelect].resistKnockback;
+        if (blow < 0) blow = 0;
+        // 座標更新
+        predictObj.transform.position = enemyCd[nowSelect].FaceObj.transform.position;
+        predictObj.transform.position +=
+            new Vector3(blow * ConstantValue.BATTLE_FACE_SIZE, 0, 0);
+        // Sprite 貼り付け
+        predictObj.GetComponent<Image>().sprite =
+            enemyCd[nowSelect].FaceObj.GetComponent<Image>().sprite;
+
+    }
+    // ターゲット ID を算出
+    private int PosToTargetId( int checkFinger )
+    {
+        int posY = (int)mInput.touchPos[checkFinger].y;
+        int nowSelect = posY - ConstantValue.BATTLE_ENEMYFACE_OFFSETY;
+        nowSelect /= -1 * ConstantValue.BATTLE_FACE_VY;
+        if (nowSelect < 0) nowSelect = 0;
+        if (nowSelect >= ConstantValue.enemyNum) nowSelect = ConstantValue.enemyNum - 1;
+        return nowSelect;
+    } // --- PosToTargetId
+
+
 
     // 攻撃用の演出
     protected IEnumerator DrawBattleGraphic()
@@ -197,5 +280,17 @@ public class CharacterBase : MonoBehaviour
         Destroy(AttackChara);
 
         yield return 0;
+    }
+
+    // 攻撃実処理
+    protected void Attack( EnemyCharacterData[] enemyCd )
+    {
+        // HPを削る
+        enemyCd[targetId].Hp -= Atk;
+
+        // 吹き飛ばし
+        int blow = knockback - enemyCd[targetId].resistKnockback;
+        if (blow < 0) blow = 0;
+        enemyCd[targetId].ctbNum += blow;
     }
 }

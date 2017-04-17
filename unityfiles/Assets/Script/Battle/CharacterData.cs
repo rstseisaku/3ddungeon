@@ -18,10 +18,22 @@ public class CharacterData : CharacterBase
     }
 
     // 通常攻撃。(プレイヤーキャラクター)
-    public IEnumerator PlayAction()
+    public IEnumerator PlayAction( int target, EnemyCharacterData[] enemyCd )
     {
+        // ユニゾンの場合は、ターゲットが既に決まっている
+        targetId = target;
+        // -1 の場合のみターゲット決定処理
+        if (targetId == -1)
+        {
+            yield return SelectTarget( enemyCd ); 
+        }
+
         ctbNum = (int)UnityEngine.Random.Range(0, 10);
-        yield return SelectTarget();
+
+        // 攻撃処理
+        Attack(enemyCd);
+
+        // 攻撃演出(仮)
         yield return DrawBattleGraphic();
     }
 }

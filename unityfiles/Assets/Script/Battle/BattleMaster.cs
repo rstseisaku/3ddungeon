@@ -173,11 +173,13 @@ public class BattleMaster : MonoBehaviour
     // 動けるキャラクターすべての PlayerAction を呼び出す
     IEnumerator CallCharacterAction()
     {
+        int targetId = -1;
         for (int i = 0; i <ConstantValue.playerNum; i++)
         {
             if (cd[i].ctbNum <= 0)
             {
-                yield return cd[i].PlayAction();
+                yield return cd[i].PlayAction( targetId, enemyCd );
+                targetId = cd[i].TargetId;
             }
         }
         for (int i = 0; i <ConstantValue.enemyNum; i++)
@@ -199,7 +201,7 @@ public class BattleMaster : MonoBehaviour
         // CTB に応じた位置に再描画
         for (int i = 0; i <ConstantValue.playerNum; i++)
         {
-            cd[i].SetFaceObj();
+            cd[i].SetFaceObj(ConstantValue.BATTLE_PLAYERFACE_OFFSETY, 1);
         }
         for (int i = 0; i <ConstantValue.enemyNum; i++)
         {
@@ -255,7 +257,7 @@ public class BattleMaster : MonoBehaviour
         // CTB に応じた位置に再描画
         for (int i = 0; i <ConstantValue.playerNum; i++)
         {
-            cd[i].SetFaceObj();
+            cd[i].SetFaceObj( ConstantValue.BATTLE_PLAYERFACE_OFFSETY, 1);
         }
         for (int i = 0; i <ConstantValue.enemyNum; i++)
         {
