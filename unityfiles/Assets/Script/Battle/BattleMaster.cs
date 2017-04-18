@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,8 @@ public class BattleMaster : MonoBehaviour
     private CharacterData[] cd; // キャラクターデータの配列
     private EnemyCharacterData[] enemyCd; // 敵キャラクターの配列
 
+    // 選択されたコマンド
+    private int selectedCommand;
 
 
     // Use this for initialization
@@ -43,7 +46,7 @@ public class BattleMaster : MonoBehaviour
     private void LoadPartyInfo()
     {
         // ★本来はどっか別のクラスから読み込んでくる
-        ConstantValue.playerNum = 5; // どっかから取ってくる
+        ConstantValue.playerNum = 4; // どっかから取ってくる
 
         // パーティー情報から、キャラクターID を読み込む。(一時的に設定)
         Party = new int[ConstantValue.playerNum]; // パーティ配列定義
@@ -68,7 +71,7 @@ public class BattleMaster : MonoBehaviour
             cd[i].LoadCharacterData(Party[i], i);
             
             // キャラクター画像描画初期化
-            cd[i].MakeCharacterGraphic(canvas);
+            cd[i].MakeCharacterGraphic(canvas, ConstantValue.BATTLE_STATUS_PLAYERY);
         }
     } // --- LoadPlayerChara()
     // 敵の情報を読み込む
@@ -85,7 +88,7 @@ public class BattleMaster : MonoBehaviour
             enemyCd[i].LoadCharacterData(i, i);
 
             //  キャラクター画像描画初期化
-            enemyCd[i].MakeCharacterGraphic(canvas);
+            enemyCd[i].MakeCharacterGraphic(canvas, ConstantValue.BATTLE_STATUS_ENEMYY);
         }
     } // --- LoadEnemyChara()
 
@@ -125,6 +128,7 @@ public class BattleMaster : MonoBehaviour
     } // --- CountActionCharacter()
 
     // 実際の行動処理
+    // x = 味方行動可能人数 ,  y = 敵行動可能人数
     IEnumerator PlayAction( Vector2 countActionCharacterInfo )
     {
         // ランブル・ユニゾン・通常アクションの 3 パターンがありえる
@@ -132,8 +136,10 @@ public class BattleMaster : MonoBehaviour
         {
             if (countActionCharacterInfo.x + countActionCharacterInfo.y == 1)
             {
-                Debug.Log( "通常攻撃" );
-                // 通常攻撃
+                // コマンド選択( 攻撃・詠唱・待機など )
+                yield return SelectCommand( countActionCharacterInfo.x == 1 );
+
+                // 通常行動
                 yield return CallCharacterAction();
             }
             else
@@ -170,6 +176,36 @@ public class BattleMaster : MonoBehaviour
         yield return 0;
     }
 
+    // 行動内容選択(アタック・ユニゾン・攻撃)
+    private IEnumerator SelectCommand( bool isPlayer)
+    {
+        if (isPlayer)
+        {
+            string FilePath = "Prefabs\\Battle\\SelectAction";
+            GameObject selObj = (GameObject)Instantiate(Resources.Load(FilePath),
+                                new Vector3(-400, 0, 0),
+                                Quaternion.identity);
+            selObj.transform.SetParent(canvas.transform, false);
+
+            // コマンドを選ぶまでループ
+            while (true)
+            {
+                if (selObj.GetComponent<SelectAction>().selectId >= 0)
+                {
+                    selectedCommand = selObj.GetComponent<SelectAction>().selectId;
+                    break;
+                }
+                yield return null;
+            }
+            Destroy(selObj);
+        }
+        else
+        {
+            // 通常攻撃しかしない(敵)
+            selectedCommand = 0;
+        }
+    }
+
     // 動けるキャラクターすべての PlayerAction を呼び出す
     IEnumerator CallCharacterAction()
     {
@@ -186,7 +222,8 @@ public class BattleMaster : MonoBehaviour
         {
             if (enemyCd[i].ctbNum <= 0)
             {
-                yield return enemyCd[i].PlayAction();
+                yield return enemyCd[i].PlayAction( targetId , cd);
+                targetId = enemyCd[i].TargetId;
             }
         }
     }
@@ -198,15 +235,8 @@ public class BattleMaster : MonoBehaviour
         for (int i = 0; i < 30; i++)
             yield return 0;
 
-        // CTB に応じた位置に再描画
-        for (int i = 0; i <ConstantValue.playerNum; i++)
-        {
-            cd[i].SetFaceObj(ConstantValue.BATTLE_PLAYERFACE_OFFSETY, 1);
-        }
-        for (int i = 0; i <ConstantValue.enemyNum; i++)
-        {
-            enemyCd[i].SetFaceObj( ConstantValue.BATTLE_ENEMYFACE_OFFSETY , -1);
-        }
+        // 情報を再描画
+        DrawCharacterData();
     }
 
     // 行動できるキャラクターが出るまでループを回す
@@ -221,12 +251,14 @@ public class BattleMaster : MonoBehaviour
             {
                 // ctbゲージを進め、アクション可能キャラがいたら、フラグを立てる 
                 cd[i].ctbNum--;
-                if (cd[i].ctbNum == 0) isDecideNextChara = true;
+                if (cd[i].ctbNum <= 0) isDecideNextChara = true;
+                if (cd[i].ctbNum < 0) cd[i].ctbNum = 0;
             }
             for (int i = 0; i <ConstantValue.enemyNum; i++)
             {
                 enemyCd[i].ctbNum--;
-                if (enemyCd[i].ctbNum == 0) isDecideNextChara = true;
+                if (enemyCd[i].ctbNum <= 0) isDecideNextChara = true;
+                if (enemyCd[i].ctbNum < 0) enemyCd[i].ctbNum = 0;
             }
             // 移動演出のコルーチンを呼び出す
             yield return CtbMove();
@@ -254,15 +286,26 @@ public class BattleMaster : MonoBehaviour
             }
             yield return 0;
         }
-        // CTB に応じた位置に再描画
-        for (int i = 0; i <ConstantValue.playerNum; i++)
-        {
-            cd[i].SetFaceObj( ConstantValue.BATTLE_PLAYERFACE_OFFSETY, 1);
-        }
-        for (int i = 0; i <ConstantValue.enemyNum; i++)
-        {
-            enemyCd[i].SetFaceObj( ConstantValue.BATTLE_ENEMYFACE_OFFSETY , -1 );
-        }
+        // 移動後に再描画
+        DrawCharacterData();
         yield return 0;
     } // --- CtbMove()
+
+    // キャラクター情報の描画を更新
+    private void DrawCharacterData()
+    {
+        // CTB に応じた位置に再描画( CTB 顔グラ )
+        // Hpの更新
+        for (int i = 0; i < ConstantValue.playerNum; i++)
+        {
+            cd[i].SetFaceObj(ConstantValue.BATTLE_PLAYERFACE_OFFSETY, 1);
+            cd[i].SetStatusObj();
+        }
+        for (int i = 0; i < ConstantValue.enemyNum; i++)
+        {
+            enemyCd[i].SetFaceObj(ConstantValue.BATTLE_ENEMYFACE_OFFSETY, -1);
+            enemyCd[i].SetStatusObj();
+        }
+
+    }
 }

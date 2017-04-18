@@ -80,7 +80,7 @@ public class Map1 : MonoBehaviour {
                 }
 
                 Instantiate(Resources.Load(MapChip[MapData[i, j]]),
-                            new Vector3(i, posY, j), // Plane を 0.1 倍にすると 1x1 になる
+                            new Vector3(j, posY, i), // Plane を 0.1 倍にすると 1x1 になる
                             Quaternion.identity);
             }
         }
@@ -95,5 +95,4 @@ public class Map1 : MonoBehaviour {
         if (tmp == 0 || tmp == 2) return true;
         else return false;
     }
-    
 }

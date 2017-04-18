@@ -30,10 +30,10 @@ public class CharacterData : CharacterBase
 
         ctbNum = (int)UnityEngine.Random.Range(0, 10);
 
-        // 攻撃処理
-        Attack(enemyCd);
-
         // 攻撃演出(仮)
-        yield return DrawBattleGraphic();
+        yield return DrawBattleGraphic(enemyCd);
+
+        // 攻撃処理(計算)
+        yield return Attack(enemyCd);
     }
 }
