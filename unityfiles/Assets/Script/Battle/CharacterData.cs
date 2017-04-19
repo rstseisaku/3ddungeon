@@ -28,7 +28,8 @@ public class CharacterData : CharacterBase
             yield return SelectTarget( enemyCd ); 
         }
 
-        ctbNum = (int)UnityEngine.Random.Range(0, 10);
+        // 行動終了処理
+        AfterAction();
 
         // 攻撃演出(仮)
         yield return DrawBattleGraphic(enemyCd);
