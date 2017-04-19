@@ -53,14 +53,14 @@ public class Map1 : MonoBehaviour {
 
         for (int i = 0; i < MapY; i++)
         {
-            linebuffer = buffer[3 + i].Split(',');
+            linebuffer = buffer[2 + MapY - i].Split(',');
             
             for (int j = 0; j < MapX; j++)
             {
                 /*
                  MapData[y, x]
                  */
-                MapData[i, j] = int.Parse(linebuffer[j]);
+                MapData[j, i] = int.Parse(linebuffer[j]);
             }
         }
 
@@ -70,16 +70,16 @@ public class Map1 : MonoBehaviour {
             for (int j = 0; j < MapX; j++)
             {
                 float posY = 0.0f;
-                if (ObjectType[MapData[i, j]] == 0 || ObjectType[MapData[i, j]] == 1)
+                if (ObjectType[MapData[j, i]] == 0 || ObjectType[MapData[j, i]] == 1)
                 {
                     posY = 0.0f;
                 }
-                else if(ObjectType[MapData[i, j]] == 2 || ObjectType[MapData[i, j]] == 3)
+                else if(ObjectType[MapData[j, i]] == 2 || ObjectType[MapData[j, i]] == 3)
                 {
                     posY = 0.5f;
                 }
 
-                Instantiate(Resources.Load(MapChip[MapData[i, j]]),
+                Instantiate(Resources.Load(MapChip[MapData[j, i]]),
                             new Vector3(j, posY, i), // Plane を 0.1 倍にすると 1x1 になる
                             Quaternion.identity);
             }
@@ -91,7 +91,7 @@ public class Map1 : MonoBehaviour {
     public bool isMoveable(int x,int y) 
     {
         Debug.Log(x + ", " + y);
-        int tmp = ObjectType[MapData[y, x]];
+        int tmp = ObjectType[MapData[x, y]];
         if (tmp == 0 || tmp == 2) return true;
         else return false;
     }

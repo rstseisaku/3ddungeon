@@ -30,7 +30,7 @@ public class GameMaster : MonoBehaviour {
         map.MakeMap("Map1.csv");
 
         // プレイヤーの位置設定
-        SetPlayer(2,8);        
+        SetPlayer(1,2);        
 
         // コルーチンの起動(メインループ)
         StartCoroutine("MyUpdate");
