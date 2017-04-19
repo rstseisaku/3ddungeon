@@ -24,6 +24,8 @@ public class CharacterBase : MonoBehaviour
     public int Mag; // 魔力値
     public int knockback; // 吹き飛ばし力
     public int resistKnockback; // 吹き飛ばし耐性
+    public bool isWaitUnison; // ユニゾン待機中か否か
+    public bool isMagic; // 詠唱中か否か
 
     // CTB 関連
     public int partyId; // パーティ ID
@@ -60,6 +62,8 @@ public class CharacterBase : MonoBehaviour
 
         // CTB 値を適当に初期化しておく
         ctbNum = (int)UnityEngine.Random.Range(0, 10);
+        isMagic = false;
+        isWaitUnison = false;
     }
 
     // ファイル名からテクスチャを返す
@@ -385,7 +389,7 @@ public class CharacterBase : MonoBehaviour
     protected GameObject AttackEffect(CharacterBase[] cd)
     {
         // カーソルオブジェクトの表示
-        string FilePath = "Prefabs\\Battle\\Effect\\Effect2";
+        string FilePath = "Prefabs\\Effect\\Effect3";
         // Canvas サイズに合わせてプレハブ化してあるのでそのまま利用
         GameObject effObj = (GameObject)Instantiate(Resources.Load(FilePath));
         effObj.transform.SetParent(battleCanvas.transform, false);
@@ -404,9 +408,24 @@ public class CharacterBase : MonoBehaviour
         if (blow < 0) blow = 0;
         cd[targetId].ctbNum += blow;
 
+        // ユニゾン・詠唱の解除
+        if (blow >= 1 && cd[targetId].isWaitUnison)
+            cd[targetId].isWaitUnison = false;
+        if (blow >= 1 && cd[targetId].isMagic)
+            cd[targetId].isMagic = false;
+
         yield return 0;
     }
  
+    // 行動終了後の処理
+    protected void AfterAction()
+    {
+        // 個々のキャラクターでできること
+        ctbNum = (int)UnityEngine.Random.Range(10, 12);
+        isWaitUnison = false;
+        isMagic = false;
+    }
+
     // ダメージ表示
     protected GameObject DrawDamage( int damage )
     {

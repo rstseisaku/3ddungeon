@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+enum Command { Attack, Unison, Magic }
+
 public class BattleMaster : MonoBehaviour
 {
     // new を使わないためのダミーオブジェクト(new を使うと Warnigが出る)
@@ -118,10 +121,12 @@ public class BattleMaster : MonoBehaviour
         int EnemyCount = 0;
         for (int i = 0; i <ConstantValue.playerNum; i++)
         {
+            if (cd[i].isWaitUnison) continue;
             if (cd[i].ctbNum <= 0) PlayerCount++;
         }
         for (int i = 0; i <ConstantValue.enemyNum; i++)
         {
+            if (enemyCd[i].isWaitUnison) continue;
             if (enemyCd[i].ctbNum <= 0) EnemyCount++;
         }
         return new Vector2(PlayerCount, EnemyCount);
@@ -136,19 +141,26 @@ public class BattleMaster : MonoBehaviour
         {
             if (countActionCharacterInfo.x + countActionCharacterInfo.y == 1)
             {
-                // コマンド選択( 攻撃・詠唱・待機など )
-                yield return SelectCommand( countActionCharacterInfo.x == 1 );
+                // 敵味方どちらかが単体攻撃を放つ
 
-                // 通常行動
-                yield return CallCharacterAction();
+                // コマンド選択( 攻撃・詠唱・待機など )
+                yield return SelectCommand(
+                    countActionCharacterInfo.x == 1,
+                    new Vector3(1, 1, 1));
+
+                yield return CallCharacterAction( selectedCommand );
             }
             else
             {
-                // ユニゾン
-                Debug.Log("ユニゾン");
+                // 敵味方どちらかがユニゾン攻撃
+
+                // コマンド選択( 攻撃・詠唱・待機など )
+                yield return SelectCommand(
+                    countActionCharacterInfo.x == 1,
+                    new Vector3(1, 1, 0));
 
                 //  1. PlayAction を連続で再生する。
-                yield return CallCharacterAction();
+                yield return CallCharacterAction( selectedCommand );
 
                 //  2. 合体攻撃を放つ。
 
@@ -157,8 +169,9 @@ public class BattleMaster : MonoBehaviour
         }
         else
         {
-            Debug.Log("ランブル!");
             // ランブル
+
+            Debug.Log("ランブル!");
             // 　1. それぞれの魔力レベルを取得
             //   2. 両サイドの和を求める
             //   3. 少ない方にスタン処理＆ダメージ。
@@ -177,7 +190,8 @@ public class BattleMaster : MonoBehaviour
     }
 
     // 行動内容選択(アタック・ユニゾン・攻撃)
-    private IEnumerator SelectCommand( bool isPlayer)
+    // ┗ vec( int, int, int ) 
+    private IEnumerator SelectCommand( bool isPlayer, Vector3 vec )
     {
         if (isPlayer)
         {
@@ -185,6 +199,7 @@ public class BattleMaster : MonoBehaviour
             GameObject selObj = (GameObject)Instantiate(Resources.Load(FilePath),
                                 new Vector3(-400, 0, 0),
                                 Quaternion.identity);
+            selObj.GetComponent<SelectAction>().SetParameter(vec);
             selObj.transform.SetParent(canvas.transform, false);
 
             // コマンドを選ぶまでループ
@@ -195,7 +210,7 @@ public class BattleMaster : MonoBehaviour
                     selectedCommand = selObj.GetComponent<SelectAction>().selectId;
                     break;
                 }
-                yield return null;
+                yield return 0;
             }
             Destroy(selObj);
         }
@@ -207,23 +222,48 @@ public class BattleMaster : MonoBehaviour
     }
 
     // 動けるキャラクターすべての PlayerAction を呼び出す
-    IEnumerator CallCharacterAction()
+    IEnumerator CallCharacterAction( int command)
     {
+        Debug.Log( "コマンド" + command);
         int targetId = -1;
         for (int i = 0; i <ConstantValue.playerNum; i++)
         {
+            // 味方キャラクター。CTB ゲージが 0 の場合。
             if (cd[i].ctbNum <= 0)
             {
-                yield return cd[i].PlayAction( targetId, enemyCd );
-                targetId = cd[i].TargetId;
+                if (command == (int)Command.Attack)
+                {
+                    yield return cd[i].PlayAction(targetId, enemyCd);
+                    targetId = cd[i].TargetId;
+                }
+                else if (command == (int)Command.Unison)
+                {
+                    cd[i].isWaitUnison = true;
+                }
+                else if (command == (int)Command.Magic)
+                {
+                    cd[i].isMagic = true;
+                }
             }
         }
         for (int i = 0; i <ConstantValue.enemyNum; i++)
         {
+            // 味方キャラクター。CTB ゲージが 0 の場合。
             if (enemyCd[i].ctbNum <= 0)
             {
-                yield return enemyCd[i].PlayAction( targetId , cd);
-                targetId = enemyCd[i].TargetId;
+                if (command == (int)Command.Attack)
+                {
+                    yield return enemyCd[i].PlayAction(targetId, cd);
+                    targetId = enemyCd[i].TargetId;
+                }
+                else if (command == (int)Command.Unison)
+                {
+                    enemyCd[i].isWaitUnison = true;
+                }
+                else if (command == (int)Command.Magic)
+                {
+                    enemyCd[i].isMagic = true;
+                }
             }
         }
     }
@@ -232,8 +272,7 @@ public class BattleMaster : MonoBehaviour
     IEnumerator AfterAction()
     {
         // ウェイトを挟む
-        for (int i = 0; i < 30; i++)
-            yield return 0;
+        yield return Utility.Wait(30);
 
         // 情報を再描画
         DrawCharacterData();
@@ -251,13 +290,13 @@ public class BattleMaster : MonoBehaviour
             {
                 // ctbゲージを進め、アクション可能キャラがいたら、フラグを立てる 
                 cd[i].ctbNum--;
-                if (cd[i].ctbNum <= 0) isDecideNextChara = true;
+                if (cd[i].ctbNum <= 0 && !cd[i].isWaitUnison ) isDecideNextChara = true;
                 if (cd[i].ctbNum < 0) cd[i].ctbNum = 0;
             }
             for (int i = 0; i <ConstantValue.enemyNum; i++)
             {
                 enemyCd[i].ctbNum--;
-                if (enemyCd[i].ctbNum <= 0) isDecideNextChara = true;
+                if (enemyCd[i].ctbNum <= 0 && !enemyCd[i].isWaitUnison) isDecideNextChara = true;
                 if (enemyCd[i].ctbNum < 0) enemyCd[i].ctbNum = 0;
             }
             // 移動演出のコルーチンを呼び出す
@@ -278,11 +317,13 @@ public class BattleMaster : MonoBehaviour
             movePosTrue = movePos * 60 * Time.deltaTime;
             for (int i = 0; i <ConstantValue.playerNum; i++)
             {
-                cd[i].FaceObj.transform.localPosition += movePosTrue;
+                if( !cd[i].isWaitUnison )
+                    cd[i].FaceObj.transform.localPosition += movePosTrue;
             }
             for (int i = 0; i <ConstantValue.enemyNum; i++)
             {
-                enemyCd[i].FaceObj.transform.localPosition += movePosTrue;
+                if (!enemyCd[i].isWaitUnison)
+                    enemyCd[i].FaceObj.transform.localPosition += movePosTrue;
             }
             yield return 0;
         }

@@ -25,7 +25,9 @@ public class EnemyCharacterData : CharacterBase
         // 対象をランダムに決める
         if ( target == -1)
             targetId = UnityEngine.Random.Range(0 , ConstantValue.playerNum - 1);
-        ctbNum = (int)UnityEngine.Random.Range(10, 12);
+
+        // 行動終了処理
+        AfterAction();
 
         // 演出処理
         yield return DrawBattleGraphic(cd);
