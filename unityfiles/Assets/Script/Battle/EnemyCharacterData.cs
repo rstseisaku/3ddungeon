@@ -20,9 +20,17 @@ public class EnemyCharacterData : CharacterBase
     }
 
     // 通常攻撃。(敵キャラクター)
-    public IEnumerator PlayAction()
+    public IEnumerator PlayAction( int target, CharacterData[] cd)
     {
-        ctbNum = (int)UnityEngine.Random.Range(15, 22);
-        yield return DrawBattleGraphic();
+        // 対象をランダムに決める
+        if ( target == -1)
+            targetId = UnityEngine.Random.Range(0 , ConstantValue.playerNum - 1);
+        ctbNum = (int)UnityEngine.Random.Range(10, 12);
+
+        // 演出処理
+        yield return DrawBattleGraphic(cd);
+
+        // 攻撃処理(計算)
+        yield return Attack(cd);
     }
 }

@@ -95,5 +95,4 @@ public class Map1 : MonoBehaviour {
         if (tmp == 0 || tmp == 2) return true;
         else return false;
     }
-    
 }

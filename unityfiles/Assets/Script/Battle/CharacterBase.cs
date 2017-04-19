@@ -4,17 +4,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 /*
  * キャラクターの情報を管理するクラス
  */
 public class CharacterBase : MonoBehaviour
 {
     // 画像関連
-    GameObject battleCanvas; // 描画対象となるキャンパス(MakeCharacterGraphicで設定)
-    public GameObject FaceObj; // 顔グラオブジェクトの配列( Image オブジェクト)
+    GameObject battleCanvas; // 描画対象となるキャンパス(SetCanvasで設定)
     public string faceGraphicPath; // 顔グラファイルパス
     public Texture2D faceTexture; // 顔グラテクスチャ
+    public GameObject FaceObj; // CTB 用の顔グラオブジェクト( Image オブジェクト)
+    public GameObject StatusObj; // ステータス画面用の顔グラオブジェクト( Image オブジェクト)
+    public GameObject magText; // 魔力値のテキスト表示
 
     // キャラクターのステータスなど
     public string charaName; // キャラの名前
@@ -61,8 +62,20 @@ public class CharacterBase : MonoBehaviour
         ctbNum = (int)UnityEngine.Random.Range(0, 10);
     }
 
-    // 顔グラのオブジェクトをインスタンス化する
-    public void MakeCharacterGraphic(GameObject canvas)
+    // ファイル名からテクスチャを返す
+    protected Texture2D MyGetTexture(string FilePath)
+    {
+        return Resources.Load<Texture2D>(FilePath);
+    }
+
+
+    /*
+     * ===========================================================
+     *  表示関係
+     * ===========================================================
+     */
+    // 顔グラ(CTB)のオブジェクトをインスタンス化する
+    public void MakeCharacterGraphic(GameObject canvas, int Y)
     {
         // キャンバスを登録しておく
         battleCanvas = canvas;
@@ -84,14 +97,14 @@ public class CharacterBase : MonoBehaviour
             new Vector2(ConstantValue.BATTLE_FACE_SIZE, ConstantValue.BATTLE_FACE_SIZE);
         // 顔グラのをCTBに応じた位置に表示
         SetFaceObj();
-    } // --- MakeCharacterGraphic()
-    // ファイル名からテクスチャを返す
-    protected Texture2D MyGetTexture(string FilePath)
-    {
-        return Resources.Load<Texture2D>(FilePath);
-    }
 
-    // ctbNum に従った位置に顔グラフィックを表示する
+        // ステータスオブジェクトの生成
+        MakeStatusObj(Y);
+
+        // 魔力表示テキスト生成
+        magText = MakeMagTextObj();
+    } // --- MakeCharacterGraphic()
+    // ctbNum に従った位置に顔グラフィック(CTB)を表示する
     public void SetFaceObj() {
         SetFaceObj(0, 1);
     }
@@ -107,7 +120,54 @@ public class CharacterBase : MonoBehaviour
             0);
     } // --- SetFaceObj( int OffsetY, int vy  )
 
+    // HP‣顔グラフィックの表示
+    public void MakeStatusObj( int Y )
+    {
+        // Image オブジェクト生成
+        string FilePath = "Prefabs\\Battle\\Status";
+        // ステータスオブジェクトの生成
+        StatusObj = (GameObject)Instantiate(Resources.Load(FilePath),
+                            new Vector3(0, 0, 0),
+                            Quaternion.identity);
+        // Canvas を親オブジェクトに設定
+        StatusObj.transform.SetParent(battleCanvas.transform, false);
+        // 座標指定
+        StatusObj.transform.localPosition = new Vector3(
+            partyId * ConstantValue.BATTLE_STATUS_VX + ConstantValue.BATTLE_STATUS_OFFSETX,
+            Y,
+            0);
+        // 画像を貼る(画像のアドレス)
+        GameObject img = StatusObj.transform.FindChild("FaceGra").gameObject;
+        img.GetComponent<Image>().sprite =
+                        FaceObj.GetComponent<Image>().sprite;
+        // 表示順の設定( 値が小さいオブジェが上に表示される )
+        StatusObj.transform.SetSiblingIndex(100);
+    } //---MakeStatusObj()
+    public void SetStatusObj( )
+    {
+        UpdateHp(); // HPの更新
+    } //---SetStatusObj()
+    private void UpdateHp()
+    {
+        // HP の更新
+        GameObject text = StatusObj.transform.FindChild("HpText").gameObject;
+        text.GetComponent<Text>().text = "" + Hp;
+    } // ---UpdateHp()
+    
+    // 魔力表示テキストオブジェクトの生成
+    // Set はCTB顔グラと同タイミング
+    public GameObject MakeMagTextObj()
+    {
+        string FilePath = "Prefabs\\Battle\\MagText";
+        GameObject magObj = (GameObject)Instantiate(Resources.Load(FilePath),
+                            new Vector3(12, -12, 0),
+                            Quaternion.identity);
+        magObj.transform.SetParent( FaceObj.transform , false);
+        magObj.GetComponent<Text>().text = "" + Mag;        
+        return magObj;
+    }
 
+    
 
     /*
      * ===========================================================
@@ -219,20 +279,21 @@ public class CharacterBase : MonoBehaviour
         GameObject predictObj = GameObject.Instantiate(
             enemyCd[0].FaceObj);
         predictObj.transform.SetParent(enemyCd[0].FaceObj.transform.parent);
-        predictObj.transform.localScale = enemyCd[0].FaceObj.transform.localScale;
+        predictObj.GetComponent<RectTransform>().localScale
+            = enemyCd[0].FaceObj.GetComponent<RectTransform>().localScale;
         predictObj.transform.GetComponent<Image>().color =
             new Color(1.0f, 1.0f, 1.0f, 0.5f);
         return predictObj;
     }
     private void SetPredictObj( GameObject predictObj, int nowSelect, EnemyCharacterData[] enemyCd)
     {
-        Debug.Log(nowSelect);
         // 吹き飛び量を計算
         int blow = knockback - enemyCd[nowSelect].resistKnockback;
         if (blow < 0) blow = 0;
         // 座標更新
-        predictObj.transform.position = enemyCd[nowSelect].FaceObj.transform.position;
-        predictObj.transform.position +=
+        predictObj.GetComponent<RectTransform>().localPosition =
+            enemyCd[nowSelect].FaceObj.GetComponent<RectTransform>().localPosition;
+        predictObj.GetComponent<RectTransform>().localPosition +=
             new Vector3(blow * ConstantValue.BATTLE_FACE_SIZE, 0, 0);
         // Sprite 貼り付け
         predictObj.GetComponent<Image>().sprite =
@@ -251,9 +312,37 @@ public class CharacterBase : MonoBehaviour
     } // --- PosToTargetId
 
 
-
+    /*
+     * ===========================================================
+     *  攻撃関係の処理
+     * ===========================================================
+     */
     // 攻撃用の演出
-    protected IEnumerator DrawBattleGraphic()
+    protected IEnumerator DrawBattleGraphic(CharacterBase[] cd)
+    {
+        // 攻撃者の画像を貼り付ける
+        GameObject atkObj = Attacker();
+        yield return Utility.Wait(60);
+        Destroy(atkObj);
+
+        // 対象表示
+        GameObject targetObj = TargetGraphicDraw(cd);
+        yield return Utility.Wait(10);
+        // 戦闘アニメーション
+        GameObject effObj = AttackEffect(cd);
+        yield return Utility.Wait(60);
+
+        // ダメージ表示 
+        GameObject dmgObj = DrawDamage( Atk );
+        yield return Utility.Wait(45);
+
+        Destroy(dmgObj);
+        Destroy(effObj);
+        Destroy(targetObj);
+
+        yield return 0;
+    }
+    private GameObject Attacker()
     {
         // Image オブジェクト生成
         string FilePath = "Prefabs\\Battle\\ImageBase";
@@ -269,28 +358,65 @@ public class CharacterBase : MonoBehaviour
         // Canvas を親オブジェクトに設定
         AttackChara.transform.SetParent(battleCanvas.transform, false);
         // サイズ設定
-        AttackChara.GetComponent<RectTransform>().sizeDelta =
+        AttackChara.transform.localScale =
             new Vector2(ConstantValue.BATTLE_ATTACKFACE_SIZE, ConstantValue.BATTLE_ATTACKFACE_SIZE);
 
-        // 60 フレームウェイト
-        for (int i = 0; i < 60; i++)
-        {
-            yield return 0;
-        }
-        Destroy(AttackChara);
+        return AttackChara;
+    }
+    private GameObject TargetGraphicDraw( CharacterBase[] cd)
+    {
+        // Image オブジェクト生成
+        string FilePath = "Prefabs\\Battle\\ImageBase";
+        // 顔グラオブジェクトの生成
+        GameObject chara = (GameObject)Instantiate(Resources.Load(FilePath),
+                            new Vector3(0, 0, 0),
+                            Quaternion.identity);
+        // 作成した Image オブジェクトにテクスチャを貼り付ける
+        chara.GetComponent<Image>().sprite =
+            cd[targetId].FaceObj.GetComponent<Image>().sprite;
+        // Canvas を親オブジェクトに設定
+        chara.transform.SetParent(battleCanvas.transform, false);
+        // サイズ設定
+        chara.GetComponent<Image>().transform.localScale =
+            new Vector2(ConstantValue.BATTLE_ATTACKFACE_SIZE, ConstantValue.BATTLE_ATTACKFACE_SIZE);
+
+        return chara;
+    }
+    protected GameObject AttackEffect(CharacterBase[] cd)
+    {
+        // カーソルオブジェクトの表示
+        string FilePath = "Prefabs\\Battle\\Effect\\Effect2";
+        // Canvas サイズに合わせてプレハブ化してあるのでそのまま利用
+        GameObject effObj = (GameObject)Instantiate(Resources.Load(FilePath));
+        effObj.transform.SetParent(battleCanvas.transform, false);
+        effObj.GetComponent<ParticleSystem>().Play();
+        return effObj;
+    }
+
+    // 攻撃用の処理
+    protected IEnumerator Attack(CharacterBase[] cd)
+    {
+        // HPを削る
+        cd[targetId].Hp -= Atk;
+
+        // 吹き飛ばし
+        int blow = knockback - cd[targetId].resistKnockback;
+        if (blow < 0) blow = 0;
+        cd[targetId].ctbNum += blow;
 
         yield return 0;
     }
-
-    // 攻撃実処理
-    protected void Attack( EnemyCharacterData[] enemyCd )
+ 
+    // ダメージ表示
+    protected GameObject DrawDamage( int damage )
     {
-        // HPを削る
-        enemyCd[targetId].Hp -= Atk;
-
-        // 吹き飛ばし
-        int blow = knockback - enemyCd[targetId].resistKnockback;
-        if (blow < 0) blow = 0;
-        enemyCd[targetId].ctbNum += blow;
+        // カーソルオブジェクトの表示
+        string FilePath = "Prefabs\\Battle\\AttackText";
+        GameObject damageObj = (GameObject)Instantiate(Resources.Load(FilePath),
+                            new Vector3(0, 0, 0),
+                            Quaternion.identity);
+        damageObj.transform.SetParent(battleCanvas.transform, false);
+        damageObj.GetComponent<Text>().text = "" + damage;
+        return damageObj;
     }
 }
