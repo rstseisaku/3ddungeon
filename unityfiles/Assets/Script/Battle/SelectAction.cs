@@ -18,14 +18,16 @@ public class SelectAction : MonoBehaviour {
     {
         // ボタンオブジェクトのインスタンス化
         buttonObj = new GameObject[3];
-        buttonObj[0] = new GameObject();
-        buttonObj[1] = new GameObject();
-        buttonObj[2] = new GameObject();
 
-        // ボタンオブジェクトを
+        // ボタンオブジェクト取得
         buttonObj[0] = gameObject.transform.FindChild("AtkButton").gameObject;
         buttonObj[1] = gameObject.transform.FindChild("UniButton").gameObject;
         buttonObj[2] = gameObject.transform.FindChild("MagButton").gameObject;
+
+        // 親オブジェクトに自分自身を設定(一緒に破棄されて欲しい)
+        buttonObj[0].transform.SetParent(this.transform);
+        buttonObj[1].transform.SetParent(this.transform);
+        buttonObj[2].transform.SetParent(this.transform);
 
         // ボタンの表示・非表示
         for (int i = 0; i < 3; i++)
