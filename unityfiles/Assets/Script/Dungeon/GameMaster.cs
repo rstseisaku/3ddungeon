@@ -12,6 +12,8 @@ public class GameMaster : MonoBehaviour {
     private int PlayerPositionX;
     private int PlayerPositionY;
 
+    private int mode = 0;
+
 
 
     private GameObject lookTarget; // カメラ。スクリプト内で取得。
@@ -79,6 +81,12 @@ public class GameMaster : MonoBehaviour {
                 continue;
             }
 
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                minimap.displaymode(mode);
+                mode++;
+                mode %= 3;
+            }
             // 処理の終了
             yield return 0;
         }
@@ -122,6 +130,7 @@ public class GameMaster : MonoBehaviour {
         {
             yield return 0;
         }
+
     }
 
     // プレイヤの配置
