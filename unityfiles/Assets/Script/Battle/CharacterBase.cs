@@ -80,7 +80,7 @@ public class CharacterBase : MonoBehaviour
     }
 
     // ウェイトに乱数補正をかける(初期化時、行動後呼出)
-    private void SetWaitTime()
+    public void SetWaitTime()
     {
         magWait = magWaitBase + UnityEngine.Random.Range(-1, 1);
         waitAction = waitActionBase + UnityEngine.Random.Range(-1, 1);
@@ -415,6 +415,12 @@ public class CharacterBase : MonoBehaviour
     public void StartUnison()
     {
         isWaitUnison = true;
+
+        // 演出処理
+        // FaceObj.GetComponent<Image>().material = (加算描画のシェーダー)
+
+        FaceObj.GetComponent<Image>().color =
+            new Color(0.5f, 0.5f, 1.0f, 1.0f);
     }
     public void EndUnison()
     {
@@ -423,6 +429,11 @@ public class CharacterBase : MonoBehaviour
     public void EndUnison( CharacterBase cb )
     {
         cb.isWaitUnison = false;
+
+        // 演出処理
+        if( !isMagic )
+          cb.FaceObj.GetComponent<Image>().color
+               = new Color(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     // 詠唱開始処理
@@ -444,6 +455,10 @@ public class CharacterBase : MonoBehaviour
         ctbNum = aveWaitMagic;
         Debug.Log(ctbNum);
         SetWaitTime();
+
+        // 演出処理
+        FaceObj.GetComponent<Image>().color
+            = new Color(1.6f, 0.6f, 0.6f, 1.0f);
     }
 
 
@@ -456,9 +471,14 @@ public class CharacterBase : MonoBehaviour
     {
         if (cb.isMagic)
         {
+            // 詠唱解除
             cb.isMagic = false;
             cb.Mag -= 2;
             cb.magText.GetComponent<Text>().text = "" + Mag;
+
+            // 演出処理
+            cb.FaceObj.GetComponent<Image>().color
+                = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         }
     }
 

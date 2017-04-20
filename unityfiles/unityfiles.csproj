@@ -88,11 +88,14 @@
     <Compile Include="Assets\Script\Battle\CharacterBase.cs" />
     <Compile Include="Assets\Script\Battle\CharacterData.cs" />
     <Compile Include="Assets\Script\Battle\ConstantValue.cs" />
+    <Compile Include="Assets\Script\Battle\CtbManager.cs" />
     <Compile Include="Assets\Script\Battle\EnemyCharacterData.cs" />
+    <Compile Include="Assets\Script\Battle\LeaderSelect.cs" />
     <Compile Include="Assets\Script\Battle\SelectAction.cs" />
     <Compile Include="Assets\Script\Dungeon\GameMaster.cs" />
     <Compile Include="Assets\Script\Dungeon\Map1.cs" />
     <Compile Include="Assets\Script\Dungeon\mHPcolor.cs" />
+    <Compile Include="Assets\Script\Dungeon\miniMap.cs" />
     <Compile Include="Assets\Script\Utility.cs" />
     <Compile Include="Assets\Script\mInput.cs" />
     <Compile Include="Assets\Test.cs" />
