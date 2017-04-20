@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/BattleScene.unity
+- path: Assets/TES.unity
   isLoaded: 1
   isActive: 1

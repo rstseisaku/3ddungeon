@@ -12,11 +12,14 @@ public class GameMaster : MonoBehaviour {
     private int PlayerPositionX;
     private int PlayerPositionY;
 
+    private int mode = 0;
+
 
 
     private GameObject lookTarget; // カメラ。スクリプト内で取得。
 
     Map1 map = new Map1();
+    miniMap minimap = new miniMap();
 
 
     // Resources/Prefabs から直接読み込む
@@ -28,6 +31,7 @@ public class GameMaster : MonoBehaviour {
 
         // csvファイルに従ってマップを生成
         map.MakeMap("Map1.csv");
+        minimap.SetMinimap("Map1.csv");
 
         // プレイヤーの位置設定
         SetPlayer(1,2);        
@@ -77,6 +81,12 @@ public class GameMaster : MonoBehaviour {
                 continue;
             }
 
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                minimap.displaymode(mode);
+                mode++;
+                mode %= 3;
+            }
             // 処理の終了
             yield return 0;
         }
@@ -120,6 +130,7 @@ public class GameMaster : MonoBehaviour {
         {
             yield return 0;
         }
+
     }
 
     // プレイヤの配置
