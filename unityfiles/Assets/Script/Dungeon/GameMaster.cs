@@ -17,6 +17,7 @@ public class GameMaster : MonoBehaviour {
     private GameObject lookTarget; // カメラ。スクリプト内で取得。
 
     Map1 map = new Map1();
+    miniMap minimap = new miniMap();
 
 
     // Resources/Prefabs から直接読み込む
@@ -28,6 +29,7 @@ public class GameMaster : MonoBehaviour {
 
         // csvファイルに従ってマップを生成
         map.MakeMap("Map1.csv");
+        minimap.SetMinimap("Map1.csv");
 
         // プレイヤーの位置設定
         SetPlayer(1,2);        
