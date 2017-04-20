@@ -60,8 +60,6 @@ public class mInput : MonoBehaviour
             touchPos[0].y = touchPos[0].y / Screen.height * 720;
             touchPos[0].x -= 640;
             touchPos[0].y -= 360;
-            Debug.Log(touchPos[0].x + "  ,  " +  touchPos[0].y);
-
             touchPhase[0] = TouchPhase.Stationary; // enum
         }
         if (Input.GetMouseButtonUp(num))

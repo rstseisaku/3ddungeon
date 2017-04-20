@@ -65,18 +65,12 @@ public class CharacterBase : MonoBehaviour
         SetWaitTime();
 
         // テクスチャ読込
-        faceTexture = MyGetTexture(faceGraphicPath);
+        faceTexture = Utility.MyGetTexture(faceGraphicPath);
 
         // CTB 値を適当に初期化しておく
         ctbNum = (int)UnityEngine.Random.Range(0, 10);
         isMagic = false;
         isWaitUnison = false;
-    }
-
-    // ファイル名からテクスチャを返す
-    protected Texture2D MyGetTexture(string FilePath)
-    {
-        return Resources.Load<Texture2D>(FilePath);
     }
 
     // ウェイトに乱数補正をかける(初期化時、行動後呼出)
@@ -185,158 +179,13 @@ public class CharacterBase : MonoBehaviour
         return magObj;
     }
 
-    
-
-    /*
-     * ===========================================================
-     *  対象キャラクターの選択(targetId を戻り値として利用)
-     * ===========================================================
-     */
-    // 対象キャラクターの選択処理実部
-    protected IEnumerator SelectTarget( EnemyCharacterData[] enemyCd )
-    {
-        // カーソルオブジェクトを作成
-        GameObject cursorObj = MakeCursorObj();
-        GameObject predictObj = MakePredictObj( enemyCd );
-
-        // 初期化
-        int checkFinger = -1; // 監視指の ID
-        int nowSelect = 0; // 現在選択しているターゲットID
-        int newTouchSelect = 0; // 新押時の ターゲット ID
-        bool finishFlag = false; // ターゲットを決定可能か否かを示す。( 新押時に選択されているターゲットが、既に選択されている場合に true となる )
-
-        // 初期表示
-        SetCursorObj(nowSelect, cursorObj);
-        SetPredictObj(predictObj, nowSelect, enemyCd); // 予測オブジェクト表示
-        while ( targetId == -1 )
-        {
-            // 新タッチがあったら
-            if ( mInput.existNewTouch >= 0 )
-            {
-                // 監視指ID を登録
-                checkFinger = mInput.existNewTouch; // 新推指のID
-
-                // 入力座標Yを取得しカーソルIDを求める
-                int _nowSelect = nowSelect;
-                nowSelect = PosToTargetId( checkFinger );
-                newTouchSelect = nowSelect;
-
-                // 更新時のみ表示を更新
-                finishFlag = true;
-                if (nowSelect != _nowSelect)
-                {
-                    finishFlag = false; // 押す場所が変わった
-                    SetCursorObj(nowSelect, cursorObj); // カーソルオブジェクト登録
-                    SetPredictObj(predictObj, nowSelect, enemyCd); // 予測オブジェクト表示
-                }
-            }
-            // 新推がなければ、監視指の中身を見る
-            else if( checkFinger >= 0)
-            {
-                // 入力座標Yを取得しカーソルIDを求める
-                int _nowSelect = nowSelect;
-                nowSelect = PosToTargetId( checkFinger );
-
-                // 更新時のみ表示を更新
-                if (nowSelect != _nowSelect)
-                {
-                    SetCursorObj(nowSelect, cursorObj); // カーソルオブジェクト登録
-                    SetPredictObj(predictObj, nowSelect, enemyCd); // 予測オブジェクト表示
-                }
-
-                // 離されたら
-                if (mInput.existEndTouch == checkFinger)
-                {
-                    // 監視リストから除外
-                    checkFinger = -1;
-
-                    // 選択位置が変化していない場合
-                    if ( finishFlag &&  nowSelect == newTouchSelect)
-                        targetId = nowSelect;
-                }
-            }
-            yield return 0;
-        }
-        Destroy( cursorObj );
-        Destroy( predictObj );
-        yield return 0;
-    }
-    // カーソルオブジェクトの操作(ターゲット選択時利用)
-    private GameObject MakeCursorObj()
-    {
-        // カーソルオブジェクトの表示
-        string FilePath = "Prefabs\\Battle\\ImageBase";
-        GameObject cursorObj = (GameObject)Instantiate(Resources.Load(FilePath),
-                            new Vector3(0, 0, 0),
-                            Quaternion.identity);
-        Texture2D cursorTex = MyGetTexture("Images\\System\\cursor");
-        cursorObj.GetComponent<Image>().sprite =
-            Sprite.Create(cursorTex,
-            new Rect(0, 0, cursorTex.width, cursorTex.height),
-            Vector2.zero);
-        cursorObj.transform.SetParent(battleCanvas.transform, false);
-        cursorObj.GetComponent<RectTransform>().sizeDelta =
-            new Vector2(1200, ConstantValue.BATTLE_FACE_SIZE);
-        cursorObj.GetComponent<Image>().color
-            = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-        return cursorObj;
-    } // ---MakeCursorObj
-    private void SetCursorObj( int nowSelect, GameObject cursorObj )
-    {
-        int posY = ConstantValue.BATTLE_ENEMYFACE_OFFSETY;
-        posY += -1 * nowSelect * ConstantValue.BATTLE_FACE_VY;
-        cursorObj.transform.localPosition = new Vector3(
-            0,
-            posY,
-            0);
-    } // ---SetCursorObj
-    // 予測オブジェクトの操作(ターゲット選択時利用)
-    private GameObject MakePredictObj( EnemyCharacterData[] enemyCd)
-    {
-        // 顔グラフィックオブジェクトをコピー(ダミー)
-        GameObject predictObj = GameObject.Instantiate(
-            enemyCd[0].FaceObj);
-        predictObj.transform.SetParent(enemyCd[0].FaceObj.transform.parent);
-        predictObj.GetComponent<RectTransform>().localScale
-            = enemyCd[0].FaceObj.GetComponent<RectTransform>().localScale;
-        predictObj.transform.GetComponent<Image>().color =
-            new Color(1.0f, 1.0f, 1.0f, 0.5f);
-        return predictObj;
-    }
-    private void SetPredictObj( GameObject predictObj, int nowSelect, EnemyCharacterData[] enemyCd)
-    {
-        // 吹き飛び量を計算
-        int blow = knockback - enemyCd[nowSelect].resistKnockback;
-        if (blow < 0) blow = 0;
-        // 座標更新
-        predictObj.GetComponent<RectTransform>().localPosition =
-            enemyCd[nowSelect].FaceObj.GetComponent<RectTransform>().localPosition;
-        predictObj.GetComponent<RectTransform>().localPosition +=
-            new Vector3(blow * ConstantValue.BATTLE_FACE_SIZE, 0, 0);
-        // Sprite 貼り付け
-        predictObj.GetComponent<Image>().sprite =
-            enemyCd[nowSelect].FaceObj.GetComponent<Image>().sprite;
-
-    }
-    // ターゲット ID を算出
-    private int PosToTargetId( int checkFinger )
-    {
-        int posY = (int)mInput.touchPos[checkFinger].y;
-        int nowSelect = posY - ConstantValue.BATTLE_ENEMYFACE_OFFSETY;
-        nowSelect /= -1 * ConstantValue.BATTLE_FACE_VY;
-        if (nowSelect < 0) nowSelect = 0;
-        if (nowSelect >= ConstantValue.enemyNum) nowSelect = ConstantValue.enemyNum - 1;
-        return nowSelect;
-    } // --- PosToTargetId
-
-
     /*
      * ===========================================================
      *  攻撃関係の処理
      * ===========================================================
      */
     // 攻撃用の演出
-    protected IEnumerator DrawBattleGraphic(CharacterBase[] cd)
+    protected IEnumerator DrawBattleGraphic(CharacterBase[] cd, ComboManager cm )
     {
         // 攻撃者の画像を貼り付ける
         GameObject atkObj = Attacker();
@@ -351,9 +200,11 @@ public class CharacterBase : MonoBehaviour
         yield return Utility.Wait(60);
 
         // ダメージ表示 
-        GameObject dmgObj = DrawDamage( Atk );
+        GameObject dmgObj = DrawDamage( (Atk * cm.magnificationDamage) / 100 );
+        GameObject cmbObj = DrawCombo( cm );
         yield return Utility.Wait(45);
 
+        Destroy(cmbObj);
         Destroy(dmgObj);
         Destroy(effObj);
         Destroy(targetObj);
@@ -417,7 +268,8 @@ public class CharacterBase : MonoBehaviour
         isWaitUnison = true;
 
         // 演出処理
-        // FaceObj.GetComponent<Image>().material = (加算描画のシェーダー)
+        // FaceObj.GetComponent<Image>().material = 
+        // (※ 加算描画のシェーダー)
 
         FaceObj.GetComponent<Image>().color =
             new Color(0.5f, 0.5f, 1.0f, 1.0f);
@@ -483,10 +335,10 @@ public class CharacterBase : MonoBehaviour
     }
 
     // 攻撃用の処理
-    protected IEnumerator Attack(CharacterBase[] cd)
+    protected IEnumerator Attack(CharacterBase[] cd, int md)
     {
         // HPを削る
-        cd[targetId].Hp -= Atk;
+        cd[targetId].Hp -= ( Atk * md ) / 100 ;
 
         // 吹き飛ばし
         int blow = knockback - cd[targetId].resistKnockback;
@@ -513,7 +365,7 @@ public class CharacterBase : MonoBehaviour
     }
 
     // ダメージ表示
-    protected GameObject DrawDamage( int damage )
+    protected GameObject DrawDamage( int damage)
     {
         // カーソルオブジェクトの表示
         string FilePath = "Prefabs\\Battle\\AttackText";
@@ -523,5 +375,20 @@ public class CharacterBase : MonoBehaviour
         damageObj.transform.SetParent(battleCanvas.transform, false);
         damageObj.GetComponent<Text>().text = "" + damage;
         return damageObj;
+    }
+
+    // combo表示
+    protected GameObject DrawCombo( ComboManager cm )
+    {
+        // カーソルオブジェクトの表示
+        string FilePath = "Prefabs\\Battle\\AttackText";
+        GameObject cmbObj = (GameObject)Instantiate(Resources.Load(FilePath),
+                            new Vector3(0, 0, 0),
+                            Quaternion.identity);
+        cmbObj.transform.SetParent(battleCanvas.transform, false);
+        cmbObj.transform.GetComponent<RectTransform>().localPosition =
+            new Vector3( -400, 280, 0 );
+        cmbObj.GetComponent<Text>().text = cm.comboString;
+        return cmbObj;
     }
 }

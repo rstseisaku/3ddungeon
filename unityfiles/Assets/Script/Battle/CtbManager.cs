@@ -82,6 +82,18 @@ public class CtbManager : MonoBehaviour
         return new Vector2(PlayerCount, EnemyCount);
     } // --- CountActionCharacter()
 
+    // 行動可能キャラクターのノックバック値の和を算出
+    public static int GetSumKnockback( CharacterBase[] cd )
+    {
+        int sumKnockback = 0;
+        for (int i = 0; i < cd.Length; i++)
+        {
+            if (cd[i].ctbNum <= 0) sumKnockback += cd[i].knockback;
+        }
+        return sumKnockback;
+    } // --- GetSumKnockback()
+
+
     // 行動可能キャラ( = CTB が0)で、詠唱しているキャラをカウント
     public static int CountActionableMagic(
          CharacterData[] cd,

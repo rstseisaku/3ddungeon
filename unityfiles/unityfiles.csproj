@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.6.0f3</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -84,14 +86,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Event.cs" />
     <Compile Include="Assets\Script\Battle\BattleMaster.cs" />
     <Compile Include="Assets\Script\Battle\CharacterBase.cs" />
     <Compile Include="Assets\Script\Battle\CharacterData.cs" />
+    <Compile Include="Assets\Script\Battle\ComboManager.cs" />
     <Compile Include="Assets\Script\Battle\ConstantValue.cs" />
     <Compile Include="Assets\Script\Battle\CtbManager.cs" />
     <Compile Include="Assets\Script\Battle\EnemyCharacterData.cs" />
     <Compile Include="Assets\Script\Battle\LeaderSelect.cs" />
     <Compile Include="Assets\Script\Battle\SelectAction.cs" />
+    <Compile Include="Assets\Script\Battle\SelectTarget.cs" />
     <Compile Include="Assets\Script\Dungeon\GameMaster.cs" />
     <Compile Include="Assets\Script\Dungeon\Map1.cs" />
     <Compile Include="Assets\Script\Dungeon\mHPcolor.cs" />

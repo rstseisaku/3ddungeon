@@ -18,23 +18,18 @@ public class CharacterData : CharacterBase
     }
 
     // 通常攻撃。(プレイヤーキャラクター)
-    public IEnumerator PlayAction( int target, EnemyCharacterData[] enemyCd )
+    public IEnumerator PlayAction( int target, EnemyCharacterData[] enemyCd , ComboManager cm)
     {
-        // ユニゾンの場合は、ターゲットが既に決まっている
+        // ターゲットIDを取得
         targetId = target;
-        // -1 の場合のみターゲット決定処理
-        if (targetId == -1)
-        {
-            yield return SelectTarget( enemyCd ); 
-        }
 
         // 行動終了処理
         AfterAction();
 
         // 攻撃演出(仮)
-        yield return DrawBattleGraphic(enemyCd);
+        yield return DrawBattleGraphic(enemyCd,cm);
 
         // 攻撃処理(計算)
-        yield return Attack(enemyCd);
+        yield return Attack(enemyCd, cm.magnificationDamage);
     }
 }

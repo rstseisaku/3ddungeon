@@ -71,7 +71,11 @@ public class LeaderSelect : MonoBehaviour {
 
         // 決定ボタンが押された
         if (buttonId == 2) isDecided = true;
-
+        if (buttonId == 3)
+        {
+            selectId = -1;
+            isDecided = true;
+        }
     }
 
     private void SetFaceGraphic()

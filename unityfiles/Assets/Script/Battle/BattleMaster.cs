@@ -9,6 +9,8 @@ using UnityEngine.UI;
 // ----------------------------------------
 // toDo
 // ----------------------------------------
+// ★戻る処理
+// ★コンボ
 // 　ランブル
 // ★リーダーの選択（ ランブル / ユニゾン など）
 //　 ユニゾン処理
@@ -26,7 +28,7 @@ public class BattleMaster : MonoBehaviour
      * =========================================
      */
     // new を使わないためのダミーオブジェクト
-    // (new を使うと Warnigが出るので回避)
+    // (new を使うと Warnigが出るので回避する)
     GameObject dObj;
 
     // 戦闘中利用データ
@@ -35,40 +37,38 @@ public class BattleMaster : MonoBehaviour
     private CharacterData[] cd; // キャラクターデータの配列
     private EnemyCharacterData[] enemyCd; // 敵キャラクターの配列
 
-    // コンボ情報
-    private int playerCombo; // プレイヤーのコンボ数
-    private int enemyCombo; // 敵のコンボ数
+    // コンボデータ
+    ComboManager mCombo;
 
     // 選択された値の格納先
     private int selectedCommand; // 選択されたコマンドの値
     private int selectedLeader; // 選択されたリーダーの値
-
-
-
+    private int selectedTarget; // 選択されたターゲットの値
+    
     /*
      * =========================================
      * 関数宣言
      * =========================================
      */
     // 初期化に使う処理
-    // 読み込み処理を呼び出す
+    // ( 読み込み処理を呼び出す )
     void Start()
     {
-        // 初期化処理
+        /* オブジェクト読み込み */
         canvas = GameObject.Find("Canvas"); // Canvas オブジェクトを取得
         dObj = new GameObject("Cube"); // AddComponent を使うためのダミーオブジェクト
 
-        // 味方キャラクターの読み込み
+        /* 味方キャラクターの読み込み */
         LoadPartyInfo(); // パーティー情報の読み込み
         LoadPlayerChara(); // パーティー情報をもとにキャラクターデータ読み込み＆初期描画
 
-        // 敵キャラクターの読み込み
+        /* 敵キャラクターの読み込み */
         LoadEnemyChara(); // 敵キャラクター情報の読み込み
 
-        // 初期化処理
-        Init();
+        /* 初期化処理 */
+        ComboInit();
 
-        // メインループスタート
+        /* メインループスタート */
         StartCoroutine("MyUpdate");
     } // --- Start()
 
@@ -127,11 +127,11 @@ public class BattleMaster : MonoBehaviour
             enemyCd[i].MakeCharacterGraphic(canvas, ConstantValue.BATTLE_STATUS_ENEMYY);
         }
     } // --- LoadEnemyChara()
-    // その他の初期化処理
-    private void Init()
+    // コンボ初期化処理
+    private void ComboInit()
     {
-        enemyCombo = 0;
-        playerCombo = 0;
+        mCombo = new ComboManager();
+        mCombo.Init();
     }
 
 
@@ -220,11 +220,11 @@ public class BattleMaster : MonoBehaviour
 
     /*
      * ================================================
-     * PlayAction() の中身
+     * PlayAction の内部処理
      * ================================================
      */
      // 通常攻撃・ユニゾンの場合に呼ばれる処理
-    private IEnumerator PlayActionNoRamble( Vector2 countActionCharacterInfo )
+    IEnumerator PlayActionNoRamble( Vector2 countActionCharacterInfo )
     {
         // 行動サイドのユニゾン待機を終了
         CtbManager.EndWaitUnison( countActionCharacterInfo.x >= 1, cd, enemyCd);
@@ -232,39 +232,76 @@ public class BattleMaster : MonoBehaviour
         countActionCharacterInfo =
             CtbManager.CountActionableCharacter(true, cd, enemyCd);
 
-        // コマンド選択を行う( 攻撃・待機・詠唱など )
-        //   ┗ selectCommand に、値が入る
-        yield return SelectCommand(countActionCharacterInfo);
+        // コマンド選択・リーダー決定・ターゲット選択を行う
+        selectedCommand = -1;
+        selectedLeader = -1;
+        selectedTarget = -1;
 
-        // リーダーキャラクターの選択
-        yield return SelectLeader(countActionCharacterInfo);
+        // 【要: ここの仕組みは、特にリファクタリングすべき】
+        while (true)
+        {
+            if ( selectedCommand == -1) {
+                // コマンド選択を行う( 攻撃・待機・詠唱など )
+                yield return SelectCommand(countActionCharacterInfo);
+                continue;
+            }
 
-        // 動けるキャラクター全員が行動(攻撃・待機・詠唱)を行う
+            if ( selectedLeader == -1)
+            {
+                // リーダーキャラクターの選択
+                yield return SelectLeader(countActionCharacterInfo);
+                if (selectedLeader == -1) selectedCommand = -1;
+                continue;
+            }
+
+            if ( selectedTarget == -1) {
+                // ターゲットキャラクターの選択
+                yield return SelectTarget(countActionCharacterInfo);
+                if (selectedTarget == -1)
+                {
+                    selectedLeader = -1;
+                    if (countActionCharacterInfo.x == 1 ||
+                        countActionCharacterInfo.y == 1 ||
+                        selectedCommand == (int)Command.Magic)
+                    {
+                        selectedCommand = 0; // リーダー選択が存在しないならば 2 ステップ戻す
+                        yield break;
+                    }
+                }
+                continue;
+            }
+
+            break;
+        }
+
+        // 入力内容に応じて、処理を実行する
         yield return CallCharacterAction();
     }
 
     // コマンド内容をもとに
     // 動けるキャラクターすべての行動(攻撃・ユニゾン・詠唱)を行う
     // 　┗ 呼出元: PlayActionNoRamble
-    // 　┗ 条件: selectedCommand selectedLeader が決定済
-    //　　　　　　　≒ ( SelectCommand SelectLeader が先に呼ばれる )
+    // 　┗ 条件: selectedCommand selectedLeader selectedTarget が決定済
     IEnumerator CallCharacterAction()
     {
         // 詠唱中キャラの平均待機値を求めておく
         int avePlayerMagWait = CtbManager.GetAverageMagWait(cd);
         int aveEnemyMagWait = CtbManager.GetAverageMagWait(enemyCd);
 
-        // ターゲット未選択状態( ユニゾンなど 2 体目以降は固定 )
-        int targetId = -1;
-        for (int i = 0; i < ConstantValue.playerNum; i++)
+        for (int i = 0; i < cd.Length; i++)
         {
             // 味方キャラクター。CTB ゲージが 0 の場合。
             if (cd[i].ctbNum <= 0 && !cd[i].isWaitUnison)
             {
+                // コマンドに応じた行動を行う
                 if (selectedCommand == (int)Command.Attack)
                 {
-                    yield return cd[i].PlayAction(targetId, enemyCd);
-                    targetId = cd[i].TargetId;
+
+                    mCombo.AddPlayerCombo();
+                    yield return cd[i].PlayAction(
+                        selectedTarget,
+                        enemyCd,
+                        mCombo);
                 }
                 else if (selectedCommand == (int)Command.Unison)
                 {
@@ -276,16 +313,18 @@ public class BattleMaster : MonoBehaviour
                 }
             }
         }
-        targetId = -1;
-        for (int i = 0; i < ConstantValue.enemyNum; i++)
+        for (int i = 0; i < enemyCd.Length; i++)
         {
             // 敵キャラクター。CTB ゲージが 0 の場合。
             if (enemyCd[i].ctbNum <= 0 && !enemyCd[i].isWaitUnison)
             {
                 if (selectedCommand == (int)Command.Attack)
                 {
-                    yield return enemyCd[i].PlayAction(targetId, cd);
-                    targetId = enemyCd[i].TargetId;
+                    mCombo.AddEnemyCombo();
+                    yield return enemyCd[i].PlayAction(
+                        selectedTarget,
+                        cd,
+                        mCombo);
                 }
                 else if (selectedCommand == (int)Command.Unison)
                 {
@@ -298,6 +337,219 @@ public class BattleMaster : MonoBehaviour
             }
         }
     }
+
+
+
+    /*
+     * ===========================================================
+     *  対象キャラクターの選択
+     * ===========================================================
+     */
+    // ターゲットの選択を行う
+    // 　┗ 呼出元: PlayActionNoRamble
+    // 　┗ 条件: selectedCommand selectedLeader が決定済
+    IEnumerator SelectTarget(Vector2 countActionCharacterInfo)
+    {
+        // 味方キャラが行動できないなら処理終了( 敵キャラの値を設定 )
+        if (countActionCharacterInfo.x == 0)
+        {
+            selectedTarget = UnityEngine.Random.Range(0, cd.Length - 1);
+            yield break;
+        }
+
+        // ノックバック値の和を求める
+        int knockback = CtbManager.GetSumKnockback(cd);
+
+        // 攻撃コマンドの場合のみターゲット選択を行う
+        if (selectedCommand == (int)Command.Attack)
+        {
+            yield return DoSelectTarget2(knockback);
+        }
+        else
+        {
+            selectedTarget = 0; // 攻撃コマンドでない場合、決定済として扱う
+        }
+    }
+    /* ボタンクリック式 */
+    IEnumerator DoSelectTarget2(int sumKnockback)
+    {
+        // カーソルオブジェクトを作成
+        GameObject cursorObj = MakeCursorObj();
+        GameObject predictObj = MakePredictObj(enemyCd);
+
+        string FilePath = "Prefabs\\Battle\\SelectTarget";
+        GameObject tObj = (GameObject)Instantiate(Resources.Load(FilePath),
+                            new Vector3(400, 0, 0),
+                            Quaternion.identity);
+        tObj.GetComponent<SelectTarget>().SetParameter( enemyCd );
+        tObj.transform.SetParent(canvas.transform, false);
+
+        // コマンドを選ぶまでループ
+        int _mouseOver = -1;
+        int mouseOver = 0;
+        while (true)
+        {
+            // 予測表示
+            mouseOver = tObj.GetComponent<SelectTarget>().mouseOverId;
+            if( _mouseOver != mouseOver)
+            {
+                SetCursorObj(mouseOver, cursorObj); // カーソルオブジェクト登録
+                SetPredictObj(predictObj, mouseOver, enemyCd, sumKnockback); // 予測オブジェクト表示
+            }
+
+            // 終了判定
+            if (tObj.GetComponent<SelectTarget>().selectId != -1)
+            {
+                selectedTarget = tObj.GetComponent<SelectTarget>().selectId;
+                if ( selectedTarget < 0) selectedTarget = -1; // キャンセルした
+                break;
+            }
+            yield return 0;
+        }
+        Destroy(tObj);
+        Destroy(cursorObj);
+        Destroy(predictObj);
+    }
+    /* 座標直書き DoSelectTarget  */
+    /*
+    public IEnumerator DoSelectTarget(int sumKnockback)
+    {
+        // カーソルオブジェクトを作成
+        GameObject cursorObj = MakeCursorObj();
+        GameObject predictObj = MakePredictObj(enemyCd);
+
+        // 初期化
+        int checkFinger = -1; // 監視指の ID
+        int nowSelect = 0; // 現在選択しているターゲットID
+        int newTouchSelect = 0; // 新押時の ターゲット ID
+        bool finishFlag = false; // ターゲットを決定可能か否かを示す。( 新押時に選択されているターゲットが、既に選択されている場合に true となる )
+
+        // 初期表示
+        SetCursorObj(nowSelect, cursorObj);
+        SetPredictObj(predictObj, nowSelect, enemyCd, sumKnockback); // 予測オブジェクト表示
+        while (selectedTarget == -1)
+        {
+            // 新タッチがあったら
+            if (mInput.existNewTouch >= 0)
+            {
+                // 監視指ID を登録
+                checkFinger = mInput.existNewTouch; // 新推指のID
+
+                // 入力座標Yを取得しカーソルIDを求める
+                int _nowSelect = nowSelect;
+                nowSelect = PosToTargetId(checkFinger);
+                newTouchSelect = nowSelect;
+
+                // 更新時のみ表示を更新
+                finishFlag = true;
+                if (nowSelect != _nowSelect)
+                {
+                    finishFlag = false; // 押す場所が変わった
+                    SetCursorObj(nowSelect, cursorObj); // カーソルオブジェクト登録
+                    SetPredictObj(predictObj, nowSelect, enemyCd, sumKnockback); // 予測オブジェクト表示
+                }
+            }
+            // 新推がなければ、監視指の中身を見る
+            else if (checkFinger >= 0)
+            {
+                // 入力座標Yを取得しカーソルIDを求める
+                int _nowSelect = nowSelect;
+                nowSelect = PosToTargetId(checkFinger);
+
+                // 更新時のみ表示を更新
+                if (nowSelect != _nowSelect)
+                {
+                    SetCursorObj(nowSelect, cursorObj); // カーソルオブジェクト登録
+                    SetPredictObj(predictObj, nowSelect, enemyCd, sumKnockback); // 予測オブジェクト表示
+                }
+
+                // 離されたら
+                if (mInput.existEndTouch == checkFinger)
+                {
+                    // 監視リストから除外
+                    checkFinger = -1;
+
+                    // 選択位置が変化していない場合
+                    if (finishFlag && nowSelect == newTouchSelect)
+                        selectedTarget = nowSelect;
+                }
+            }
+            yield return 0;
+        }
+
+        Destroy(cursorObj);
+        Destroy(predictObj);
+        yield return 0;
+    }
+    */
+
+    // カーソルオブジェクトの操作(ターゲット選択時利用)
+    private GameObject MakeCursorObj()
+    {
+        // カーソルオブジェクトの表示
+        string FilePath = "Prefabs\\Battle\\ImageBase";
+        GameObject cursorObj = (GameObject)Instantiate(Resources.Load(FilePath),
+                            new Vector3(0, 0, 0),
+                            Quaternion.identity);
+        Texture2D cursorTex = Utility.MyGetTexture("Images\\System\\cursor");
+        cursorObj.GetComponent<Image>().sprite =
+            Sprite.Create(cursorTex,
+            new Rect(0, 0, cursorTex.width, cursorTex.height),
+            Vector2.zero);
+        cursorObj.transform.SetParent(canvas.transform, false);
+        cursorObj.GetComponent<RectTransform>().sizeDelta =
+            new Vector2(1200, ConstantValue.BATTLE_FACE_SIZE);
+        cursorObj.GetComponent<Image>().color
+            = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+        return cursorObj;
+    } // ---MakeCursorObj
+    private void SetCursorObj(int nowSelect, GameObject cursorObj)
+    {
+        int posY = ConstantValue.BATTLE_ENEMYFACE_OFFSETY;
+        posY += -1 * nowSelect * ConstantValue.BATTLE_FACE_VY;
+        cursorObj.transform.localPosition = new Vector3(
+            0,
+            posY,
+            0);
+    } // ---SetCursorObj
+    // 予測オブジェクトの操作(ターゲット選択時利用)
+    private GameObject MakePredictObj(EnemyCharacterData[] enemyCd)
+    {
+        // 顔グラフィックオブジェクトをコピー(ダミー)
+        GameObject predictObj = Instantiate(enemyCd[0].FaceObj);
+        predictObj.transform.SetParent(enemyCd[0].FaceObj.transform.parent);
+        predictObj.GetComponent<RectTransform>().localScale
+            = enemyCd[0].FaceObj.GetComponent<RectTransform>().localScale;
+        predictObj.transform.GetComponent<Image>().color =
+            new Color(1.0f, 1.0f, 1.0f, 0.5f);
+        return predictObj;
+    }
+    private void SetPredictObj(GameObject predictObj, int nowSelect, EnemyCharacterData[] enemyCd, int sumKnockback)
+    {
+        // 吹き飛び量を計算
+        int blow = sumKnockback - enemyCd[nowSelect].resistKnockback;
+        if (blow < 0) blow = 0;
+        // 座標更新
+        predictObj.GetComponent<RectTransform>().localPosition =
+            enemyCd[nowSelect].FaceObj.GetComponent<RectTransform>().localPosition;
+        predictObj.GetComponent<RectTransform>().localPosition +=
+            new Vector3(blow * ConstantValue.BATTLE_FACE_SIZE, 0, 0);
+        // Sprite 貼り付け
+        predictObj.GetComponent<Image>().sprite =
+            enemyCd[nowSelect].FaceObj.GetComponent<Image>().sprite;
+
+    }
+    // ターゲット ID を算出
+    private int PosToTargetId(int checkFinger)
+    {
+        int posY = (int)mInput.touchPos[checkFinger].y;
+        int nowSelect = posY - ConstantValue.BATTLE_ENEMYFACE_OFFSETY;
+        nowSelect /= -1 * ConstantValue.BATTLE_FACE_VY;
+        if (nowSelect < 0) nowSelect = 0;
+        if (nowSelect >= ConstantValue.enemyNum) nowSelect = ConstantValue.enemyNum - 1;
+        return nowSelect;
+    } // --- PosToTargetId
+
 
 
     /*
@@ -385,6 +637,7 @@ public class BattleMaster : MonoBehaviour
             countActionCharacterInfo.y == 1 ||
             selectedCommand == (int)Command.Magic )
         {
+            selectedLeader = 0; // リーダー決定済として扱う
             yield break;
         }
 
@@ -401,6 +654,8 @@ public class BattleMaster : MonoBehaviour
         // リーダー選択処理の本体を呼ぶ
         yield return DoSelectLeader();
     }
+
+
 
 
     /*

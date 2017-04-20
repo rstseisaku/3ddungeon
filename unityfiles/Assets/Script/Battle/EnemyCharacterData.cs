@@ -20,21 +20,18 @@ public class EnemyCharacterData : CharacterBase
     }
 
     // 通常攻撃。(敵キャラクター)
-    public IEnumerator PlayAction( int target, CharacterData[] cd)
+    public IEnumerator PlayAction( int target, CharacterData[] cd, ComboManager cm)
     {
         // ユニゾンの場合は、ターゲットが既に決まっている
         targetId = target;
-        // 対象をランダムに決める
-        if ( target == -1)
-            targetId = UnityEngine.Random.Range(0 , ConstantValue.playerNum - 1);
 
         // 行動終了処理
         AfterAction();
 
         // 演出処理
-        yield return DrawBattleGraphic(cd);
+        yield return DrawBattleGraphic(cd,cm);
 
         // 攻撃処理(計算)
-        yield return Attack(cd);
+        yield return Attack(cd, cm.magnificationDamage);
     }
 }
