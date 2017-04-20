@@ -26,6 +26,10 @@ public class CharacterBase : MonoBehaviour
     public int resistKnockback; // 吹き飛ばし耐性
     public bool isWaitUnison; // ユニゾン待機中か否か
     public bool isMagic; // 詠唱中か否か
+    public int magWaitBase; // 詠唱待機時間のベース値
+    public int magWait; // 詠唱待機時間の乱数加算後
+    public int waitActionBase; // 待機時間のベース値
+    public int waitAction; // 待機時間の乱数加算後
 
     // CTB 関連
     public int partyId; // パーティ ID
@@ -56,6 +60,9 @@ public class CharacterBase : MonoBehaviour
         Mag = 1; // 魔力値
         knockback = 6; // 吹き飛ばし力
         resistKnockback = UnityEngine.Random.Range(0, 5); // 吹き飛び耐性
+        waitActionBase = 9; // 行動後の待機時間
+        magWaitBase = 2 + 3 * partyId; // 詠唱後の待機時間
+        SetWaitTime();
 
         // テクスチャ読込
         faceTexture = MyGetTexture(faceGraphicPath);
@@ -70,6 +77,13 @@ public class CharacterBase : MonoBehaviour
     protected Texture2D MyGetTexture(string FilePath)
     {
         return Resources.Load<Texture2D>(FilePath);
+    }
+
+    // ウェイトに乱数補正をかける(初期化時、行動後呼出)
+    private void SetWaitTime()
+    {
+        magWait = magWaitBase + UnityEngine.Random.Range(-1, 1);
+        waitAction = waitActionBase + UnityEngine.Random.Range(-1, 1);
     }
 
 
@@ -397,6 +411,57 @@ public class CharacterBase : MonoBehaviour
         return effObj;
     }
 
+    // ユニゾン開始処理
+    public void StartUnison()
+    {
+        isWaitUnison = true;
+    }
+    public void EndUnison()
+    {
+        EndUnison(this);
+    }
+    public void EndUnison( CharacterBase cb )
+    {
+        cb.isWaitUnison = false;
+    }
+
+    // 詠唱開始処理
+    public void StartMagic()
+    {
+        // 平均値 = 自分自身の値
+        // ( 基本的に呼ばれることはないはず )
+        Debug.LogError(" StartMagic() が呼ばれました ");
+        StartMagic(magWait);
+    }
+    public void StartMagic( int aveWaitMagic)
+    {
+        // 詠唱開始
+        isMagic = true;
+        Mag += 2;
+        magText.GetComponent<Text>().text = "" + Mag;
+
+        // ウェイト時間に乱数補正をかける
+        ctbNum = aveWaitMagic;
+        Debug.Log(ctbNum);
+        SetWaitTime();
+    }
+
+
+    public void EndMagic()
+    {
+        EndMagic(this);
+    }
+
+    public void EndMagic( CharacterBase cb )
+    {
+        if (cb.isMagic)
+        {
+            cb.isMagic = false;
+            cb.Mag -= 2;
+            cb.magText.GetComponent<Text>().text = "" + Mag;
+        }
+    }
+
     // 攻撃用の処理
     protected IEnumerator Attack(CharacterBase[] cd)
     {
@@ -409,10 +474,8 @@ public class CharacterBase : MonoBehaviour
         cd[targetId].ctbNum += blow;
 
         // ユニゾン・詠唱の解除
-        if (blow >= 1 && cd[targetId].isWaitUnison)
-            cd[targetId].isWaitUnison = false;
-        if (blow >= 1 && cd[targetId].isMagic)
-            cd[targetId].isMagic = false;
+        EndUnison( cd[targetId] );
+        EndMagic( cd[targetId] );
 
         yield return 0;
     }
@@ -420,10 +483,13 @@ public class CharacterBase : MonoBehaviour
     // 行動終了後の処理
     protected void AfterAction()
     {
-        // 個々のキャラクターでできること
-        ctbNum = (int)UnityEngine.Random.Range(10, 12);
-        isWaitUnison = false;
-        isMagic = false;
+        // 個々のキャラクターでできる終了処理
+        ctbNum = waitAction;
+        EndUnison();
+        EndMagic();
+
+        // ウェイト時間に乱数補正をかける
+        SetWaitTime();
     }
 
     // ダメージ表示
