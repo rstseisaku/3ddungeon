@@ -38,6 +38,7 @@ public class SelectTarget : MonoBehaviour {
         if( obj.name == "Return")
         {
             selectId = -2; // キャンセル
+            return;
         }
         selectId = int.Parse(obj.name);
     }
