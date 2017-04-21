@@ -12,12 +12,12 @@ public class GameMaster : MonoBehaviour {
     private int PlayerPositionX;
     private int PlayerPositionY;
 
+    //ミニマップのモード　　0：非表示　1：拡大　2：縮小
     private int mode = 0;
-
-
 
     private GameObject lookTarget; // カメラ。スクリプト内で取得。
 
+    //unityに文句言われるからそのうち直す
     Map1 map = new Map1();
     miniMap minimap = new miniMap();
 
@@ -58,6 +58,7 @@ public class GameMaster : MonoBehaviour {
             int nextX = PlayerPositionX + (int)Mathf.Sin(lookTarget.transform.localEulerAngles.y * 2 * Mathf.PI / 360);
             int nextY = PlayerPositionY + (int)Mathf.Cos(lookTarget.transform.localEulerAngles.y * 2 * Mathf.PI / 360);
 
+            //↑キーが押されている間
             if (Input.GetAxis("Vertical") > 0)
             {
                 // 前方に移動させる
@@ -68,19 +69,21 @@ public class GameMaster : MonoBehaviour {
                 }
             }
 
+            //→キーが押されている間
             if (Input.GetAxis("Horizontal") > 0)
             {
                 // 回転させる(右方向)
                 yield return MyRotate(new Vector3(0, 90, 0));
                 continue;
             }
+            //←キーが押されている間
             if (Input.GetAxis("Horizontal") < 0)
             {
                 // 回転させる(左方向)
                 yield return MyRotate(new Vector3(0, -90, 0));
                 continue;
             }
-
+            //spaceキーが離された時にミニマップのモードを変更
             if (Input.GetKeyUp(KeyCode.Space))
             {
                 minimap.displaymode(mode);
