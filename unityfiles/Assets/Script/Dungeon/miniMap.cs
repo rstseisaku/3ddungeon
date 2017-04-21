@@ -8,6 +8,8 @@ public class miniMap : MonoBehaviour {
     int MiniMapY;
 
     public GameObject minimap;
+    //gameobject[][]型の配列作る?
+
 
     // Use this for initialization
     void Start () {
@@ -23,7 +25,10 @@ public class miniMap : MonoBehaviour {
 
         //絶対もっといい書き方ある
 
+        //Canvas取得
         minimap = GameObject.Find("MiniMap");
+
+        //マップ作成と基本的に同じ
         string FilePath = "Assets\\Resources\\MapData\\";
         FilePath += Filename;
 
@@ -40,9 +45,11 @@ public class miniMap : MonoBehaviour {
 
         for (int i = 0; i < 5; i++)
         {
+            //ミニマップ用のプレハブはマップ用のプレハブ+miniというファイルで作る
             MapChip[i] += "mini";
         }
 
+        //キャンバスの子オブジェクトとして作るため、一時的なgameobject型を作成
         GameObject temp;
 
         for (int i = 0; i < MiniMapY; i++)
@@ -52,10 +59,13 @@ public class miniMap : MonoBehaviour {
             for (int j = 0; j < MiniMapX; j++)
             {
                 MapData[j, i] = int.Parse(linebuffer[j]);
+                //最初に作る位置はどこでもいい
                 temp = Instantiate(Resources.Load(MapChip[MapData[j, i]]),
-                           new Vector3(0, 0, 0), // Plane を 0.1 倍にすると 1x1 になる
+                           new Vector3(0, 0, 0),
                            Quaternion.identity) as GameObject;
+                //Canvasの子オブジェクトにする
                 temp.transform.SetParent(minimap.transform);
+                //最初は縮小モード
                 temp.transform.localScale = new Vector3(0.5f, 0.5f, 1);
                 temp.transform.localPosition = new Vector3(i * 10 - 100, j * 10 - 100, 0);
             }
@@ -65,6 +75,7 @@ public class miniMap : MonoBehaviour {
     //表示モード、通常、拡大、非表示
     public void displaymode(int mode)
     {
+        //非表示
         if(mode == 0)
         {
             int count = 0;
@@ -74,6 +85,7 @@ public class miniMap : MonoBehaviour {
                 count++;
             }
         }
+        //拡大モード
         else if (mode == 1)
         {
             int count = 0;
@@ -88,6 +100,7 @@ public class miniMap : MonoBehaviour {
                 count++;
             }
         }
+        //縮小モード
         else if (mode == 2)
         {
             int count = 0;
@@ -100,6 +113,7 @@ public class miniMap : MonoBehaviour {
                 count++;
             }
         }
+        //念のためにそれ以外になった時
         else
         {
             Debug.Log("ここが出ちゃ駄目");
