@@ -4,6 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+
+enum Element { Fire, Water, Thunder, Light, Dark}
+
+
 /*
  * キャラクターの情報を管理するクラス
  */
@@ -30,6 +35,8 @@ public class CharacterBase : MonoBehaviour
     public int magWait; // 詠唱待機時間の乱数加算後
     public int waitActionBase; // 待機時間のベース値
     public int waitAction; // 待機時間の乱数加算後
+    public int element; // キャラクターの属性
+    public int stunCount; // スタン時間
 
     // CTB 関連
     public int partyId; // パーティ ID
@@ -60,6 +67,7 @@ public class CharacterBase : MonoBehaviour
         Mag = 1; // 魔力値
         knockback = 6; // 吹き飛ばし力
         resistKnockback = UnityEngine.Random.Range(0, 5); // 吹き飛び耐性
+        element = (int)Element.Fire;
         waitActionBase = 9; // 行動後の待機時間
         magWaitBase = 2 + 3 * partyId; // 詠唱後の待機時間
         SetWaitTime();
@@ -87,7 +95,7 @@ public class CharacterBase : MonoBehaviour
      * ===========================================================
      */
     // 顔グラ(CTB)のオブジェクトをインスタンス化する
-    public void MakeCharacterGraphic(GameObject canvas, int Y)
+    public void MakeCharacterGraphic(GameObject canvas, int statusObjY)
     {
         // キャンバスを登録しておく
         battleCanvas = canvas;
@@ -108,18 +116,16 @@ public class CharacterBase : MonoBehaviour
         FaceObj.GetComponent<RectTransform>().sizeDelta =
             new Vector2(ConstantValue.BATTLE_FACE_SIZE, ConstantValue.BATTLE_FACE_SIZE);
         // 顔グラのをCTBに応じた位置に表示
-        SetFaceObj();
+        SetFaceObj( ConstantValue.BATTLE_PLAYERFACE_OFFSETY , 1);
 
         // ステータスオブジェクトの生成
-        MakeStatusObj(Y);
+        MakeStatusObj(statusObjY);
 
         // 魔力表示テキスト生成
         magText = MakeMagTextObj();
     } // --- MakeCharacterGraphic()
+
     // ctbNum に従った位置に顔グラフィック(CTB)を表示する
-    public void SetFaceObj() {
-        SetFaceObj(0, 1);
-    }
     public void SetFaceObj( int OffsetY, int vy )
     {
         // 0,-1,1のいずれかのパラメータに正規化
@@ -269,7 +275,7 @@ public class CharacterBase : MonoBehaviour
 
         // 演出処理
         // FaceObj.GetComponent<Image>().material = 
-        // (※ 加算描画のシェーダー)
+        // (※ 加算描画のシェーダーを貼り付ける )
 
         FaceObj.GetComponent<Image>().color =
             new Color(0.5f, 0.5f, 1.0f, 1.0f);
@@ -313,6 +319,23 @@ public class CharacterBase : MonoBehaviour
             = new Color(1.6f, 0.6f, 0.6f, 1.0f);
     }
 
+    // スタン処理起動
+    public void StartStun(int stunCtbNum)
+    {
+        stunCount = stunCtbNum;
+
+        // 演出処理
+        FaceObj.GetComponent<Image>().color
+            = new Color(0.3f, 0.3f, 0.3f, 1.0f);
+    }
+
+    // スタン処理終了
+    public void EndStun()
+    {
+        // 演出処理
+        FaceObj.GetComponent<Image>().color
+            = new Color(1.0f, 1.9f, 1.0f, 1.0f);
+    }
 
     public void EndMagic()
     {

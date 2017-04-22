@@ -11,6 +11,8 @@ using UnityEngine.UI;
  * CTB 操作処理
  * キャラクター全体の情報取得・情報操作
  * キャラクター全体の処理の実行
+ * 
+ *  [ Call, Get, Set, Count ]
  */
 public class CtbManager : MonoBehaviour
 {
@@ -22,7 +24,7 @@ public class CtbManager : MonoBehaviour
         SetCtbNum(ecd);
     }
 
-    // 対象: CTB = 0 のキャラ( プレイヤー or 敵 )
+    // 対象: CTB = 0 のキャラ全て( プレイヤー or 敵 )
     // 処理内容: CTB 値をセット，Wait 値の再設定
     public static void SetCtbNum( CharacterBase[] cb )
     {
@@ -46,23 +48,69 @@ public class CtbManager : MonoBehaviour
         for (int i = 0; i < cb.Length; i++)
         {
             // ctbゲージを進める
-            cb[i].ctbNum--;
-            if ( cb[i].ctbNum < 0) cb[i].ctbNum = 0;
+            if (cb[i].stunCount == 0) cb[i].ctbNum--;
+            if (cb[i].ctbNum < 0) cb[i].ctbNum = 0;
             // アクション可能キャラがいたら、フラグを立てる 
             if (cb[i].ctbNum <= 0 && !cb[i].isWaitUnison)
             {
-                Debug.Log(i + "i, " + cb[i].ctbNum);
                 count++;
             }
         }
         return count;
     }
 
+    // 対象: スタン中の全てのキャラクター
+    // 処理内容: スタン値を1減らす
+    public static void SubStun(CharacterBase[] cb, CharacterBase[] ecb)
+    {
+        SubStun(cb);
+        SubStun(ecb);
+    }
+    // 対象: スタン中の全てのキャラクター
+    // 処理内容: スタン値を1減らす
+    public static void SubStun( CharacterBase[] cb)
+    {
+        for (int i = 0; i < cb.Length; i++)
+        {
+            // スタン値を1減らす
+            if (cb[i].stunCount > 0)
+            {
+                cb[i].stunCount--;
+                if (cb[i].stunCount == 0)
+                {
+                    // スタン表示終了
+                    cb[i].EndStun();
+                }
+            }
+        }
+    }
+
+
+    // 対象: CTB = 0 のキャラ全て( プレイヤー or 敵 )
+    // 処理内容: Mag 値の合計を求める
+    public static int GetSumMoveableMag(CharacterBase[] cb)
+    {
+        int sum = 0;
+        foreach( CharacterBase chara in cb)
+        {
+            if (chara.ctbNum <= 0) sum += chara.Mag;
+        }
+        return sum;
+    }
+
+    // 対象: CTB = 0 のキャラ( プレイヤー or 敵 )
+    // 処理内容: スタン処理を起動する
+    public static void CallStun(CharacterBase[] cb,int stunCtbNum)
+    {
+        foreach (CharacterBase chara in cb)
+        {
+            if (chara.ctbNum <= 0) chara.StartStun(stunCtbNum);
+        }
+    }
 
     // 行動可能人数をカウント
     //  ┗ 第一引数: ユニゾンで待機しているキャラを無視
     public static Vector2 CountActionableCharacter(
-        bool isIgnoreWaitUnison,
          CharacterData[] cd,
          EnemyCharacterData[] ecd)
     {
@@ -71,12 +119,12 @@ public class CtbManager : MonoBehaviour
         int EnemyCount = 0;
         for (int i = 0; i < cd.Length; i++)
         {
-            if ( isIgnoreWaitUnison && cd[i].isWaitUnison) continue;
+            if ( cd[i].isWaitUnison) continue;
             if ( cd[i].ctbNum <= 0) PlayerCount++;
         }
         for (int i = 0; i < ecd.Length; i++)
         {
-            if ( isIgnoreWaitUnison && ecd[i].isWaitUnison) continue;
+            if ( ecd[i].isWaitUnison) continue;
             if ( ecd[i].ctbNum <= 0) EnemyCount++;
         }
         return new Vector2(PlayerCount, EnemyCount);

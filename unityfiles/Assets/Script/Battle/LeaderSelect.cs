@@ -22,11 +22,10 @@ public class LeaderSelect : MonoBehaviour {
         buttonObj[3] = gameObject.transform.FindChild("Text").gameObject;
 
         // 親オブジェクトに自分自身を設定(一緒に破棄されて欲しい)
-        // ループ…つかお？
-        buttonObj[0].transform.SetParent(this.transform);
-        buttonObj[1].transform.SetParent(this.transform);
-        buttonObj[2].transform.SetParent(this.transform);
-        buttonObj[3].transform.SetParent(this.transform);
+        foreach( GameObject o in buttonObj)
+        {
+            o.transform.SetParent(this.transform);
+        }
 
         // 初期値の設定
         do

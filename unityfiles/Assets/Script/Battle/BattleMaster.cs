@@ -11,10 +11,11 @@ using UnityEngine.UI;
 // ----------------------------------------
 // ★戻る処理
 // ★コンボ
-// 　ランブル
+// ★ランブル
 // ★リーダーの選択（ ランブル / ユニゾン など）
 //　 ユニゾン処理
-// 　気絶処理
+// ★気絶処理
+//   ┗復帰予告
 // 　戦闘不能処理
 // 　エフェクトの表示順(よく分からない)
 
@@ -156,13 +157,14 @@ public class BattleMaster : MonoBehaviour
     // 行動できるキャラクターが出るまでループを回す
     IEnumerator DecideNextActionCharacter()
     {
-        Vector2 tmp = CtbManager.CountActionableCharacter(true, cd, enemyCd);
+        Vector2 tmp = CtbManager.CountActionableCharacter( cd, enemyCd);
         int isActionableChara = (int)tmp.x + (int)tmp.y;
         Debug.Log(tmp);
         while ( isActionableChara == 0 )
         {
             // CTBメータを 1 つ進める
             // 人数分のキャラクターデータの読込
+            CtbManager.SubStun(cd, enemyCd);
             isActionableChara += CtbManager.SubCtbNum( cd );
             isActionableChara += CtbManager.SubCtbNum( enemyCd );
 
@@ -176,7 +178,7 @@ public class BattleMaster : MonoBehaviour
     {
         // ランブル判定。( ユニゾン中のキャラは数えない )
         Vector2 countActionCharacterInfo = 
-            CtbManager.CountActionableCharacter(true, cd, enemyCd);
+            CtbManager.CountActionableCharacter(cd, enemyCd);
 
         // ランブル・ユニゾン・通常アクションの 3 パターンがありえる
         if( countActionCharacterInfo.x * countActionCharacterInfo.y == 0)
@@ -188,19 +190,47 @@ public class BattleMaster : MonoBehaviour
         {
             // ランブル
 
-            // 　1. それぞれの魔力レベルを取得
-            //   2. 両サイドの和を求める
-            //   3. 少ない方にスタン処理＆ダメージ。
-            //   4. 派手なエフェクト。いい感じに。
+            // 　1. 両サイドの和を求める
+            int playerMagSum = CtbManager.GetSumMoveableMag(cd);
+            int enemyMagSum = CtbManager.GetSumMoveableMag(enemyCd);
 
-            // ユニゾン・詠唱を終了
+            //   2.リーダーキャラクターの選択( 1体でも発動 )
+            int enemyLeader = SelectLeaderEnemy(countActionCharacterInfo);
+            GameObject enemyLeaderObj = DrawEnemyLeader(enemyLeader);
+
+            // 強制的に選択させる
+            selectedLeader = -1;
+            while ( selectedLeader == -1 ) yield return SelectLeaderPlayer(countActionCharacterInfo);
+
+            DestroyObject(enemyLeaderObj); 
+
+            int playerLeaderElement = cd[selectedLeader].element;
+            int enemyLeaderElement = enemyCd[enemyLeader].element;
+
+            //   2.2 勝敗判定
+            int isPlayerWin = 1;
+            if (playerMagSum < enemyMagSum) isPlayerWin = -1;
+            else if (playerMagSum == enemyMagSum)
+            {
+                // 属性による勝敗判定を行う
+                isPlayerWin = JudgeRamble(playerLeaderElement,enemyLeaderElement);
+            }
+
+            //   3. 少ない方にスタン処理＆ダメージ。
+            int stunCtbNum = 7; // 仮置
+            if (isPlayerWin == 1) CtbManager.CallStun(enemyCd,stunCtbNum);
+            else if (isPlayerWin == -1) CtbManager.CallStun( cd, stunCtbNum);
+
+            //   4. いい感じの派手なエフェクト。
+
+
+            //   5. ユニゾン・詠唱を終了
             CtbManager.EndWaitUnison(true, cd, enemyCd);
             CtbManager.EndWaitUnison(false, cd, enemyCd);
             CtbManager.EndMagic(true, cd, enemyCd);
             CtbManager.EndMagic(false, cd, enemyCd);
 
-            // CTB 値を再設定
-            // ( waitAction の値を格納 )
+            // 6. CTB 値を再設定( waitAction の値を格納 )
             CtbManager.SetCtbNum(cd, enemyCd);
         }
         yield return 0;
@@ -230,7 +260,7 @@ public class BattleMaster : MonoBehaviour
         CtbManager.EndWaitUnison( countActionCharacterInfo.x >= 1, cd, enemyCd);
         // 行動人数の情報を再度取得( コマンド選択前に )
         countActionCharacterInfo =
-            CtbManager.CountActionableCharacter(true, cd, enemyCd);
+            CtbManager.CountActionableCharacter(cd, enemyCd);
 
         // コマンド選択・リーダー決定・ターゲット選択を行う
         selectedCommand = -1;
@@ -645,7 +675,7 @@ public class BattleMaster : MonoBehaviour
         if (countActionCharacterInfo.x == 0)
         {
             // 敵キャラクターのリーダーは番号が若いキャラ
-            for( int i=0; i<enemyCd.Length; i++)
+            for (int i = 0; i < enemyCd.Length; i++)
             {
                 if (enemyCd[i].ctbNum == 0) selectedLeader = i;
             }
@@ -654,9 +684,57 @@ public class BattleMaster : MonoBehaviour
         // リーダー選択処理の本体を呼ぶ
         yield return DoSelectLeader();
     }
+    private IEnumerator SelectLeaderPlayer(Vector2 countActionCharacterInfo)
+    {
+        // 味方キャラクターのリーダーを決定。
+        // 行動可能キャラが 1 体であってもかならず起動する。
 
+        // 味方キャラが行動できないなら処理終了( 敵キャラの値を設定 )
+        if (countActionCharacterInfo.x == 0)
+        {
+            // 敵キャラクターのリーダーは番号が若いキャラ
+            for (int i = 0; i < enemyCd.Length; i++)
+            {
+                if (enemyCd[i].ctbNum == 0) selectedLeader = i;
+            }
+            yield break;
+        }
 
+        // リーダー選択処理の本体を呼ぶ
+        yield return DoSelectLeader();
+    }
+    private int SelectLeaderEnemy(Vector2 countActionCharacterInfo)
+    {
+        int selectedId = -1;
+        if (countActionCharacterInfo.y >= 1)
+        {
+            // 敵キャラクターのリーダーは番号が若いキャラ
+            for (int i = 0; i < enemyCd.Length; i++)
+            {
+                if (enemyCd[i].ctbNum == 0)
+                {
+                    selectedId = i;
+                    break;
+                }
+            }
+        }
+        return selectedId;
+    }
+    private GameObject DrawEnemyLeader( int elId)
+    {
+        // リーダーキャラクター選択処理
+        string FilePath = "Prefabs\\Battle\\EnemyLeader";
+        GameObject eObj = (GameObject)Instantiate(Resources.Load(FilePath),
+                            new Vector3(-400, 0, 0),
+                            Quaternion.identity);
+        eObj.transform.SetParent(canvas.transform, false);
 
+        GameObject ecObj = eObj.transform.FindChild("CharacterGraphic").gameObject;
+        ecObj.GetComponent<Image>().sprite = 
+            enemyCd[elId].FaceObj.GetComponent<Image>().sprite;
+
+        return eObj;
+    }
 
     /*
      * ================================================
@@ -676,12 +754,12 @@ public class BattleMaster : MonoBehaviour
             movePosTrue = movePos * 60 * Time.deltaTime;
             for (int i = 0; i <ConstantValue.playerNum; i++)
             {
-                if( !cd[i].isWaitUnison )
+                if( !cd[i].isWaitUnison && (cd[i].stunCount == 0) )
                     cd[i].FaceObj.transform.localPosition += movePosTrue;
             }
             for (int i = 0; i <ConstantValue.enemyNum; i++)
             {
-                if ( !enemyCd[i].isWaitUnison)
+                if ( !enemyCd[i].isWaitUnison && ( enemyCd[i].stunCount == 0))
                     enemyCd[i].FaceObj.transform.localPosition += movePosTrue;
             }
             yield return 0;
@@ -707,5 +785,13 @@ public class BattleMaster : MonoBehaviour
             enemyCd[i].SetStatusObj();
         }
 
+    }
+
+    // プレイヤーが勝利する場合に 1 敗北する場合に -1 を返す
+    private int JudgeRamble( int pEle, int eEle)
+    {
+        int result = 1;
+        if( pEle == eEle ) { result = 1; }
+        return result;
     }
 }
