@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Map = Variables.Map;
+
 public class miniMap : MonoBehaviour {
 
-    int MiniMapX;
-    int MiniMapY;
+    GameObject[,] minimap;
 
-    public GameObject minimap;
-    //gameobject[][]型の配列作る?
 
 
     // Use this for initialization
@@ -18,56 +17,52 @@ public class miniMap : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
 		
 	}
 
-    public void SetMinimap(string Filename) {
+    public void SetminiMap(string Filename) {
 
         //絶対もっといい書き方ある
 
-        //Canvas取得
-        minimap = GameObject.Find("MiniMap");
-
+  
         //マップ作成と基本的に同じ
-        string FilePath = "Assets\\Resources\\MapData\\";
-        FilePath += Filename;
-
         string[] buffer;
         string[] linebuffer;
-        buffer = System.IO.File.ReadAllLines(FilePath);
+
+        buffer = System.IO.File.ReadAllLines(Map.filepath + Filename);
 
         linebuffer = buffer[0].Split(',');
-        MiniMapX = int.Parse(linebuffer[0]);
-        MiniMapY = int.Parse(linebuffer[1]);
-        int[,] MapData = new int[MiniMapX, MiniMapY];
 
-        string[] MapChip = buffer[1].Split(',');
+        minimap = new GameObject[Map.mapX, Map.mapY];
 
-        for (int i = 0; i < 5; i++)
+        int[,] mapdata = new int[Map.mapX, Map.mapY];
+
+        string[] mapchip = buffer[1].Split(',');
+
+        for (int i = 0; i < mapchip.Length; i++)
         {
             //ミニマップ用のプレハブはマップ用のプレハブ+miniというファイルで作る
-            MapChip[i] += "mini";
+            mapchip[i] += "mini";
         }
-
-        //キャンバスの子オブジェクトとして作るため、一時的なgameobject型を作成
-        GameObject temp;
-
-        for (int i = 0; i < MiniMapY; i++)
+        
+        for (int i = 0; i < Map.mapY; i++)
         {
-            linebuffer = buffer[2 + MiniMapY - i].Split(',');
+            linebuffer = buffer[2 + Map.mapX - i].Split(',');
 
-            for (int j = 0; j < MiniMapX; j++)
+            for (int j = 0; j < Map.mapX; j++)
             {
-                MapData[j, i] = int.Parse(linebuffer[j]);
+                mapdata[j, i] = int.Parse(linebuffer[j]);
                 //最初に作る位置はどこでもいい
-                temp = Instantiate(Resources.Load(MapChip[MapData[j, i]]),
+                minimap[j, i] = Instantiate(Resources.Load(mapchip[mapdata[j, i]]),
                            new Vector3(0, 0, 0),
                            Quaternion.identity) as GameObject;
                 //Canvasの子オブジェクトにする
-                temp.transform.SetParent(minimap.transform);
+                minimap[j, i].transform.SetParent(Map.minimapobject.transform);
                 //最初は縮小モード
-                temp.transform.localScale = new Vector3(0.5f, 0.5f, 1);
-                temp.transform.localPosition = new Vector3(i * 10 - 100, j * 10 - 100, 0);
+                minimap[j, i].transform.localScale = new Vector3(0.5f, 0.5f, 1);
+                minimap[j, i].transform.localPosition = new Vector3(j * 10, i * 10, 0) - Map.OFFSET;
+                
             }
         }   
     }
@@ -79,7 +74,7 @@ public class miniMap : MonoBehaviour {
         if(mode == 0)
         {
             int count = 0;
-            foreach (Transform child in minimap.transform)
+            foreach (Transform child in Map.minimap.transform)
             {
                 child.gameObject.SetActive(false);
                 count++;
@@ -89,14 +84,14 @@ public class miniMap : MonoBehaviour {
         else if (mode == 1)
         {
             int count = 0;
-            foreach (Transform child in minimap.transform)
+            foreach (Transform child in Map.minimap.transform)
             {
 
                 child.gameObject.SetActive(true);
                 child.transform.localScale = new Vector3(1, 1, 1);
-                child.transform.localPosition += new Vector3(100, 100, 0);
+                child.transform.localPosition += Map.OFFSET;
                 child.transform.localPosition *= 2.0f;
-                child.transform.localPosition -= new Vector3(100, 100, 0);
+                child.transform.localPosition -= Map.OFFSET;
                 count++;
             }
         }
@@ -104,12 +99,12 @@ public class miniMap : MonoBehaviour {
         else if (mode == 2)
         {
             int count = 0;
-            foreach (Transform child in minimap.transform)
+            foreach (Transform child in Map.minimap.transform)
             {
                 child.transform.localScale = new Vector3(0.5f, 0.5f, 1);
-                child.transform.localPosition += new Vector3(100, 100, 0);
+                child.transform.localPosition += Map.OFFSET;
                 child.transform.localPosition *= 0.5f;
-                child.transform.localPosition -= new Vector3(100, 100, 0);
+                child.transform.localPosition -= Map.OFFSET;
                 count++;
             }
         }

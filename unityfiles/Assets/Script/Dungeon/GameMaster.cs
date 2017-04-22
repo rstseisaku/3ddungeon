@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Variables;
+
 public class GameMaster : MonoBehaviour {
     public int rotateTime = 10; // 回転にかかるフレームの設定
     public int moveTime = 10; // 移動フレームの設定
@@ -15,23 +17,30 @@ public class GameMaster : MonoBehaviour {
     //ミニマップのモード　　0：非表示　1：拡大　2：縮小
     private int mode = 0;
 
-    private GameObject lookTarget; // カメラ。スクリプト内で取得。
+    private GameObject playerobject; // カメラ。スクリプト内で取得。
+
 
     //unityに文句言われるからそのうち直す
-    Map1 map = new Map1();
-    miniMap minimap = new miniMap();
+    Map1 map;
+    miniMap minimap;
 
 
     // Resources/Prefabs から直接読み込む
 
     // Use this for initialization
     void Start () {
+
+        //マップ関連オブジェクトの取得
+        map = Map.map1;
+        minimap = Map.minimap;
+        
+
         // カメラオブジェクトの取得
-        lookTarget = GameObject.FindWithTag("MainCamera");
+        playerobject = Map.playerobject;
 
         // csvファイルに従ってマップを生成
         map.MakeMap("Map1.csv");
-        minimap.SetMinimap("Map1.csv");
+        minimap.SetminiMap("Map1.csv");
 
         // プレイヤーの位置設定
         SetPlayer(1,2);        
@@ -51,12 +60,12 @@ public class GameMaster : MonoBehaviour {
         while (true) // ゲームメインループ
         {
             // カメラ位置から 2Dマップでの(X,Y)を求める
-            PlayerPositionX = (int)Mathf.Round(lookTarget.transform.position.x);
-            PlayerPositionY = (int)Mathf.Round(lookTarget.transform.position.z);
+            PlayerPositionX = (int)Mathf.Round(playerobject.transform.position.x);
+            PlayerPositionY = (int)Mathf.Round(playerobject.transform.position.z);
 
             // 角度と現在位置から、真っすぐ進んだ際の2D(X,Y) を求めておく
-            int nextX = PlayerPositionX + (int)Mathf.Sin(lookTarget.transform.localEulerAngles.y * 2 * Mathf.PI / 360);
-            int nextY = PlayerPositionY + (int)Mathf.Cos(lookTarget.transform.localEulerAngles.y * 2 * Mathf.PI / 360);
+            int nextX = PlayerPositionX + (int)Mathf.Sin(playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360);
+            int nextY = PlayerPositionY + (int)Mathf.Cos(playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360);
 
             //↑キーが押されている間
             if (Input.GetAxis("Vertical") > 0)
@@ -64,6 +73,7 @@ public class GameMaster : MonoBehaviour {
                 // 前方に移動させる
                 if (map.isMoveable(nextX, nextY))
                 {
+                    Debug.Log(Map.playerpos);
                     yield return MyMove();
                     continue;
                 }
@@ -100,7 +110,7 @@ public class GameMaster : MonoBehaviour {
     {
         for (int i = 0; i < rotateTime; i++)
         {
-            lookTarget.transform.Rotate( vec3 / rotateTime );
+            playerobject.transform.Rotate( vec3 / rotateTime );
             yield return 0;
         }
         for (int i = 0; i < rotateWaitTime; i++)
@@ -113,33 +123,34 @@ public class GameMaster : MonoBehaviour {
     IEnumerator MyMove()
     {
         // 向いてる方向に 1 マス移動
-        Vector3 movePos = new Vector3(0, 0, 0);
-        movePos = lookTarget.transform.forward; // カメラを前方向に 1 だけ移動
+        Vector3 movePos = new Vector3(Mathf.Sin(playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360), 0, Mathf.Cos(playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360));
+        //movePos = playerobject.transform.forward; // カメラを前方向に 1 だけ移動
         movePos /= moveTime;
-        
         //一定フレームかけて移動する
         for (int i = 0; i < moveTime; i++)
         {
-            lookTarget.transform.position += movePos;
+            playerobject.transform.position += movePos;
             yield return 0;
         }
         // 誤差修正
-        lookTarget.transform.position =
-            new Vector3(Mathf.Round(lookTarget.transform.position.x),
-                        lookTarget.transform.position.y,
-                        Mathf.Round(lookTarget.transform.position.z));
+        playerobject.transform.position =
+            new Vector3(Mathf.Round(playerobject.transform.position.x),
+                        playerobject.transform.position.y,
+                        Mathf.Round(playerobject.transform.position.z));
         // 移動後のウェイト
         for (int i = 0; i < moveWaitTime; i++)
         {
             yield return 0;
         }
-
+        //プレイヤーの位置情報の更新
+        Map.GetPlayerPos();
+        GameObject.Find("playerpos").GetComponent<Transform>().localPosition = new Vector3(Map.playerpos.x * 10, Map.playerpos.y * 10, 0) -Map.OFFSET;
     }
 
     // プレイヤの配置
     private void SetPlayer(int StartX, int StartY)
     {
         // カメラの移動
-        lookTarget.transform.position = new Vector3(StartX, 0.5f, StartY);
+        playerobject.transform.position = new Vector3(StartX, 0.5f, StartY);
     }
 }
