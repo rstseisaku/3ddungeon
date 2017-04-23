@@ -45,7 +45,11 @@ public class BattleMaster : MonoBehaviour
     private int selectedCommand; // 選択されたコマンドの値
     private int selectedLeader; // 選択されたリーダーの値
     private int selectedTarget; // 選択されたターゲットの値
-    
+
+    // メインで動いているコルーチン
+    Coroutine coroutine;
+
+
     /*
      * =========================================
      * 関数宣言
@@ -72,6 +76,10 @@ public class BattleMaster : MonoBehaviour
         /* メインループスタート */
         StartCoroutine("MyUpdate");
     } // --- Start()
+
+    private void Update()
+    {
+    }
 
 
     /*
@@ -201,7 +209,6 @@ public class BattleMaster : MonoBehaviour
             // 強制的に選択させる
             selectedLeader = -1;
             while ( selectedLeader == -1 ) yield return SelectLeaderPlayer(countActionCharacterInfo);
-
             DestroyObject(enemyLeaderObj); 
 
             int playerLeaderElement = cd[selectedLeader].element;
@@ -270,6 +277,7 @@ public class BattleMaster : MonoBehaviour
         // 【要: ここの仕組みは、特にリファクタリングすべき】
         while (true)
         {
+            Debug.Log(selectedCommand + "," + selectedLeader + "," + selectedTarget);
             if ( selectedCommand == -1) {
                 // コマンド選択を行う( 攻撃・待機・詠唱など )
                 yield return SelectCommand(countActionCharacterInfo);
