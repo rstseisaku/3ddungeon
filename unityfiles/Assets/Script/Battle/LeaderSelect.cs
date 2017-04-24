@@ -12,6 +12,13 @@ public class LeaderSelect : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+    }
+
+    public void SetParameter( CharacterData[] _cd )
+    {
+        // cd を設定する
+        cd = _cd;
+
         // ボタンオブジェクトのインスタンス化
         buttonObj = new GameObject[4];
 
@@ -22,7 +29,7 @@ public class LeaderSelect : MonoBehaviour {
         buttonObj[3] = gameObject.transform.FindChild("Text").gameObject;
 
         // 親オブジェクトに自分自身を設定(一緒に破棄されて欲しい)
-        foreach( GameObject o in buttonObj)
+        foreach (GameObject o in buttonObj)
         {
             o.transform.SetParent(this.transform);
         }
@@ -32,16 +39,15 @@ public class LeaderSelect : MonoBehaviour {
         {
             selectId++;
             selectId %= cd.Length;
-        } while (cd[selectId].ctbNum > 0);
+        } while ( cd[selectId].ctbNum > 0 );
 
         // 顔グラ初期セット
         SetFaceGraphic();
-    }
 
-    public void SetParameter( CharacterData[] _cd )
-    {
-        // cd を設定する
-        cd = _cd;
+        // テキスト設定(魔力レベルの和)
+        int sum = CtbManager.GetSumMoveableMag(_cd);
+        Debug.Log(buttonObj[3]);
+        buttonObj[3].GetComponent<Text>().text = "詠唱 LV" + sum + "!";
     }
 
     public void myOnClick(int buttonId)
