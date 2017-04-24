@@ -8,13 +8,13 @@ public class LeaderSelect : MonoBehaviour {
     public int selectId = 0;
     public bool isDecided;
     GameObject[] buttonObj;
-    CharacterData[] cd;
+    PlayerCharacter[] cd;
 
     // Use this for initialization
     void Start () {
     }
 
-    public void SetParameter( CharacterData[] _cd )
+    public void SetParameter(PlayerCharacter[] _cd )
     {
         // cd を設定する
         cd = _cd;
@@ -45,8 +45,7 @@ public class LeaderSelect : MonoBehaviour {
         SetFaceGraphic();
 
         // テキスト設定(魔力レベルの和)
-        int sum = CtbManager.GetSumMoveableMag(_cd);
-        Debug.Log(buttonObj[3]);
+        int sum = OpeCharaList.GetSumMoveableMag(_cd);
         buttonObj[3].GetComponent<Text>().text = "詠唱 LV" + sum + "!";
     }
 

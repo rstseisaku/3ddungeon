@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class CharacterData : CharacterBase
+public class PlayerCharacter : BaseCharacter
 {
     // キャラクターのデータ読込(味方)
     public void LoadCharacterData(int characterId, int pId)
@@ -18,7 +18,7 @@ public class CharacterData : CharacterBase
     }
 
     // 通常攻撃。(プレイヤーキャラクター)
-    public IEnumerator PlayAction( int target, EnemyCharacterData[] enemyCd , ComboManager cm)
+    public IEnumerator PlayAction(int target, EnemyCharacterData[] enemyCd, ComboManager cm)
     {
         // ターゲットIDを取得
         targetId = target;
@@ -27,7 +27,7 @@ public class CharacterData : CharacterBase
         AfterAction();
 
         // 攻撃演出(仮)
-        yield return DrawBattleGraphic(enemyCd,cm);
+        yield return DrawBattleGraphic(enemyCd, cm);
 
         // 攻撃処理(計算)
         yield return Attack(enemyCd, cm.magnificationDamage);

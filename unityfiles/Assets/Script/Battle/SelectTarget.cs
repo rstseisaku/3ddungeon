@@ -9,7 +9,7 @@ public class SelectTarget : MonoBehaviour {
     GameObject[] buttonObj;
 
 
-    public void SetParameter( CharacterBase[] ecd )
+    public void SetParameter( BaseCharacter[] ecd )
     {
         // ボタンオブジェクトのインスタンス化
         buttonObj = new GameObject[ecd.Length];

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class EnemyCharacterData : CharacterBase
+public class EnemyCharacterData : BaseCharacter
 {
     // キャラクターのデータ読込(敵)
     public void LoadCharacterData(int characterId, int pId)
@@ -20,7 +20,7 @@ public class EnemyCharacterData : CharacterBase
     }
 
     // 通常攻撃。(敵キャラクター)
-    public IEnumerator PlayAction( int target, CharacterData[] cd, ComboManager cm)
+    public IEnumerator PlayAction( int target, PlayerCharacter[] cd, ComboManager cm)
     {
         // ユニゾンの場合は、ターゲットが既に決まっている
         targetId = target;

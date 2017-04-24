@@ -6,21 +6,41 @@ using UnityEngine.UI;
 
 
 
-enum Element { Fire, Water, Thunder, Light, Dark}
+/* 属性 */
+enum Element { Fire, Water, Thunder, Light, Dark }
 
 
 /*
- * キャラクターの情報を管理するクラス
+ * キャラクターの情報を管理する基底クラス
  */
-public class CharacterBase : MonoBehaviour
+public class BaseCharacter : MonoBehaviour
 {
+    GameObject dObj; // AddComponent を使うためのダミーオブジェクト
+
     // 画像関連
-    GameObject battleCanvas; // 描画対象となるキャンパス(SetCanvasで設定)
-    public string faceGraphicPath; // 顔グラファイルパス
-    public Texture2D faceTexture; // 顔グラテクスチャ
+    GameObject battleCanvas; // 描画対象となるキャンパス
+    public string faceGraphicPath; // 顔グラのファイルパス
+    public Texture2D faceTexture; // 顔グラのテクスチャ
     public GameObject FaceObj; // CTB 用の顔グラオブジェクト( Image オブジェクト)
     public GameObject StatusObj; // ステータス画面用の顔グラオブジェクト( Image オブジェクト)
     public GameObject magText; // 魔力値のテキスト表示
+
+    // getter setter の定義
+    public Vector3 FaceObjLocalScale
+    {
+        get { return FaceObj.GetComponent<RectTransform>().localScale; }
+        set { FaceObj.GetComponent<RectTransform>().localScale = value; }
+    }
+    public Sprite FaceObjSprite
+    {
+        get { return FaceObj.GetComponent<Image>().sprite; }
+        set { FaceObj.GetComponent<Image>().sprite = value; }
+    }
+    public Vector3 FaceObjLocalPosition
+    {
+        get { return FaceObj.GetComponent<RectTransform>().localPosition; }
+        set { FaceObj.GetComponent<RectTransform>().localPosition = value; }
+    }
 
     // キャラクターのステータスなど
     public string charaName; // キャラの名前
@@ -42,14 +62,23 @@ public class CharacterBase : MonoBehaviour
     public int partyId; // パーティ ID
     public int ctbNum; // CTB値
     protected int targetId; // 攻撃対象
-    public int TargetId { get { return this.targetId; }}
+    public int TargetId { get { return this.targetId; } }
 
+    // 予測オブジェクト管理
+    public PredictObject predictObj;
+
+    // ダミーオブジェクトの登録
+    public void Init(GameObject canvas)
+    {
+        dObj = GameObject.Find("Dummy");
+        battleCanvas = canvas;
+    }
 
     // キャラクターのデータ読み込み
     // FalePath: 設定フォルダの在り処
     //  ┗キャラクターデータ設定フォルダへのパス
     // characterId; キャラクターのID
-    public void LoadCharacterData( string FilePath, int characterId )
+    protected void LoadCharacterData(string FilePath, int characterId)
     {
         // 設定ファイルを読込
         string[] buffer;
@@ -95,10 +124,10 @@ public class CharacterBase : MonoBehaviour
      * ===========================================================
      */
     // 顔グラ(CTB)のオブジェクトをインスタンス化する
-    public void MakeCharacterGraphic(GameObject canvas, int statusObjY)
+    // TODO: StatusObj は BaseCharacter で扱わない
+    // TODO: もっと細かく分ける
+    public void MakeCharacterGraphic(int statusObjY)
     {
-        // キャンバスを登録しておく
-        battleCanvas = canvas;
         // Image オブジェクト生成
         string FilePath = "Prefabs\\Battle\\ImageBase";
         // 顔グラオブジェクトの生成
@@ -111,35 +140,40 @@ public class CharacterBase : MonoBehaviour
             new Rect(0, 0, faceTexture.width, faceTexture.height),
             Vector2.zero);
         // Canvas を親オブジェクトに設定
-        FaceObj.transform.SetParent(canvas.transform, false);
+        FaceObj.transform.SetParent(battleCanvas.transform, false);
         // サイズ設定
         FaceObj.GetComponent<RectTransform>().sizeDelta =
             new Vector2(ConstantValue.BATTLE_FACE_SIZE, ConstantValue.BATTLE_FACE_SIZE);
         // 顔グラのをCTBに応じた位置に表示
-        SetFaceObj( ConstantValue.BATTLE_PLAYERFACE_OFFSETY , 1);
+        SetFaceObj(ConstantValue.BATTLE_PLAYERFACE_OFFSETY, 1);
 
         // ステータスオブジェクトの生成
+        Debug.Log( "BaseChara: y = " + statusObjY);
         MakeStatusObj(statusObjY);
 
         // 魔力表示テキスト生成
         magText = MakeMagTextObj();
+
+        // 予測オブジェクトの追加
+        predictObj = dObj.AddComponent<PredictObject>();
+        predictObj.Init(this);
     } // --- MakeCharacterGraphic()
 
     // ctbNum に従った位置に顔グラフィック(CTB)を表示する
-    public void SetFaceObj( int OffsetY, int vy )
+    public void SetFaceObj(int OffsetY, int vy)
     {
         // 0,-1,1のいずれかのパラメータに正規化
         vy /= Mathf.Abs(vy);
 
         // 座標の設定 Canvas(x,y)
-        FaceObj.transform.localPosition =
-            new Vector3(ConstantValue.BATTLE_FACE_SIZE * ctbNum + ConstantValue.BATTLE_FACE_OFFSETX,
+        FaceObj.transform.localPosition = new Vector3(
+            BCV.VX_PER_CTBNUM * ctbNum + ConstantValue.BATTLE_FACE_OFFSETX,
             vy * partyId * ConstantValue.BATTLE_FACE_VY + OffsetY,
             0);
     } // --- SetFaceObj( int OffsetY, int vy  )
 
     // HP‣顔グラフィックの表示
-    public void MakeStatusObj( int Y )
+    public void MakeStatusObj(int Y)
     {
         // Image オブジェクト生成
         string FilePath = "Prefabs\\Battle\\Status";
@@ -158,10 +192,8 @@ public class CharacterBase : MonoBehaviour
         GameObject img = StatusObj.transform.FindChild("FaceGra").gameObject;
         img.GetComponent<Image>().sprite =
                         FaceObj.GetComponent<Image>().sprite;
-        // 表示順の設定( 値が小さいオブジェが上に表示される )
-        StatusObj.transform.SetSiblingIndex(100);
     } //---MakeStatusObj()
-    public void SetStatusObj( )
+    public void SetStatusObj()
     {
         UpdateHp(); // HPの更新
     } //---SetStatusObj()
@@ -171,7 +203,7 @@ public class CharacterBase : MonoBehaviour
         GameObject text = StatusObj.transform.FindChild("HpText").gameObject;
         text.GetComponent<Text>().text = "" + Hp;
     } // ---UpdateHp()
-    
+
     // 魔力表示テキストオブジェクトの生成
     // Set はCTB顔グラと同タイミング
     public GameObject MakeMagTextObj()
@@ -180,10 +212,13 @@ public class CharacterBase : MonoBehaviour
         GameObject magObj = (GameObject)Instantiate(Resources.Load(FilePath),
                             new Vector3(12, -12, 0),
                             Quaternion.identity);
-        magObj.transform.SetParent( FaceObj.transform , false);
-        magObj.GetComponent<Text>().text = "" + Mag;        
+        magObj.transform.SetParent(FaceObj.transform, false);
+        magObj.GetComponent<Text>().text = "" + Mag;
         return magObj;
     }
+
+
+
 
     /*
      * ===========================================================
@@ -191,7 +226,7 @@ public class CharacterBase : MonoBehaviour
      * ===========================================================
      */
     // 攻撃用の演出
-    protected IEnumerator DrawBattleGraphic(CharacterBase[] cd, ComboManager cm )
+    protected IEnumerator DrawBattleGraphic(BaseCharacter[] cd, ComboManager cm)
     {
         // 攻撃者の画像を貼り付ける
         GameObject atkObj = Attacker();
@@ -206,8 +241,8 @@ public class CharacterBase : MonoBehaviour
         yield return Utility.Wait(60);
 
         // ダメージ表示 
-        GameObject dmgObj = DrawDamage( (Atk * cm.magnificationDamage) / 100 );
-        GameObject cmbObj = DrawCombo( cm );
+        GameObject dmgObj = DrawDamage((Atk * cm.magnificationDamage) / 100);
+        GameObject cmbObj = DrawCombo(cm);
         yield return Utility.Wait(45);
 
         Destroy(cmbObj);
@@ -238,7 +273,7 @@ public class CharacterBase : MonoBehaviour
 
         return AttackChara;
     }
-    private GameObject TargetGraphicDraw( CharacterBase[] cd)
+    private GameObject TargetGraphicDraw(BaseCharacter[] cd)
     {
         // Image オブジェクト生成
         string FilePath = "Prefabs\\Battle\\ImageBase";
@@ -257,7 +292,7 @@ public class CharacterBase : MonoBehaviour
 
         return chara;
     }
-    protected GameObject AttackEffect(CharacterBase[] cd)
+    protected GameObject AttackEffect(BaseCharacter[] cd)
     {
         // カーソルオブジェクトの表示
         string FilePath = "Prefabs\\Effect\\Effect3";
@@ -284,14 +319,14 @@ public class CharacterBase : MonoBehaviour
     {
         EndUnison(this);
     }
-    public void EndUnison( CharacterBase cb )
+    public void EndUnison(BaseCharacter cb)
     {
         cb.isWaitUnison = false;
 
         // 演出処理
-        if( !isMagic )
-          cb.FaceObj.GetComponent<Image>().color
-               = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        if (!isMagic)
+            cb.FaceObj.GetComponent<Image>().color
+                 = new Color(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     // 詠唱開始処理
@@ -302,7 +337,7 @@ public class CharacterBase : MonoBehaviour
         Debug.LogError(" StartMagic() が呼ばれました ");
         StartMagic(magWait);
     }
-    public void StartMagic( int aveWaitMagic)
+    public void StartMagic(int aveWaitMagic)
     {
         // 詠唱開始
         isMagic = true;
@@ -311,7 +346,6 @@ public class CharacterBase : MonoBehaviour
 
         // ウェイト時間に乱数補正をかける
         ctbNum = aveWaitMagic;
-        Debug.Log(ctbNum);
         SetWaitTime();
 
         // 演出処理
@@ -342,7 +376,7 @@ public class CharacterBase : MonoBehaviour
         EndMagic(this);
     }
 
-    public void EndMagic( CharacterBase cb )
+    public void EndMagic(BaseCharacter cb)
     {
         if (cb.isMagic)
         {
@@ -358,10 +392,10 @@ public class CharacterBase : MonoBehaviour
     }
 
     // 攻撃用の処理
-    protected IEnumerator Attack(CharacterBase[] cd, int md)
+    protected IEnumerator Attack(BaseCharacter[] cd, int md)
     {
         // HPを削る
-        cd[targetId].Hp -= ( Atk * md ) / 100 ;
+        cd[targetId].Hp -= (Atk * md) / 100;
 
         // 吹き飛ばし
         int blow = knockback - cd[targetId].resistKnockback;
@@ -369,12 +403,12 @@ public class CharacterBase : MonoBehaviour
         cd[targetId].ctbNum += blow;
 
         // ユニゾン・詠唱の解除
-        EndUnison( cd[targetId] );
-        EndMagic( cd[targetId] );
+        EndUnison(cd[targetId]);
+        EndMagic(cd[targetId]);
 
         yield return 0;
     }
- 
+
     // 行動終了後の処理
     protected void AfterAction()
     {
@@ -388,7 +422,7 @@ public class CharacterBase : MonoBehaviour
     }
 
     // ダメージ表示
-    protected GameObject DrawDamage( int damage)
+    protected GameObject DrawDamage(int damage)
     {
         // カーソルオブジェクトの表示
         string FilePath = "Prefabs\\Battle\\AttackText";
@@ -401,7 +435,7 @@ public class CharacterBase : MonoBehaviour
     }
 
     // combo表示
-    protected GameObject DrawCombo( ComboManager cm )
+    protected GameObject DrawCombo(ComboManager cm)
     {
         // カーソルオブジェクトの表示
         string FilePath = "Prefabs\\Battle\\AttackText";
@@ -410,8 +444,24 @@ public class CharacterBase : MonoBehaviour
                             Quaternion.identity);
         cmbObj.transform.SetParent(battleCanvas.transform, false);
         cmbObj.transform.GetComponent<RectTransform>().localPosition =
-            new Vector3( -400, 280, 0 );
+            new Vector3(-400, 280, 0);
         cmbObj.GetComponent<Text>().text = cm.comboString;
         return cmbObj;
+    }
+
+
+    /* 自身の情報をもとに、予測オブジェクトを表示 */
+    // 行動終了後の予測位置を表示
+    public void SetPredictFromWaitAction() {
+        predictObj.SetFromUntilCtbNum( this, waitAction );  }
+    // 行動終了後の予測位置を表示(詠唱)
+    public void SetPredictFromMagWait()
+    {
+        predictObj.SetFromUntilCtbNum(this, magWait);
+    }
+    // 行動終了後の予測位置を表示(数値から )
+    public void SetPredictFromCtbNum( int ctbNum )
+    {
+        predictObj.SetFromUntilCtbNum(this, ctbNum);
     }
 }
