@@ -17,7 +17,6 @@ public class miniMap : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
 		
 	}
 
@@ -76,7 +75,7 @@ public class miniMap : MonoBehaviour {
             int count = 0;
             foreach (Transform child in Map.minimap.transform)
             {
-                child.gameObject.SetActive(false);
+                //child.gameObject.SetActive(false);
                 count++;
             }
         }
@@ -86,8 +85,7 @@ public class miniMap : MonoBehaviour {
             int count = 0;
             foreach (Transform child in Map.minimap.transform)
             {
-
-                child.gameObject.SetActive(true);
+                //child.gameObject.SetActive(true);
                 child.transform.localScale = new Vector3(1, 1, 1);
                 child.transform.localPosition += Map.OFFSET;
                 child.transform.localPosition *= 2.0f;

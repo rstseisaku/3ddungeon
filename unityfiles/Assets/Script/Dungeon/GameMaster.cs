@@ -43,7 +43,15 @@ public class GameMaster : MonoBehaviour {
         minimap.SetminiMap("Map1.csv");
 
         // プレイヤーの位置設定
-        SetPlayer(1,2);        
+        SetPlayer(1,2);
+        GameObject temp;
+        temp = Instantiate(Resources.Load("Prefabs/Map/playerpos"),
+                            new Vector3(0, 0, 0),
+                            Quaternion.identity) as GameObject;
+        temp.transform.SetParent(GameObject.Find("PlayerPos").transform);
+        temp.transform.localScale = new Vector3(1, 1, 1);
+        temp.transform.localPosition = new Vector3(10, 20, 0) - Map.OFFSET;
+
 
         // コルーチンの起動(メインループ)
         StartCoroutine("MyUpdate");
@@ -113,6 +121,7 @@ public class GameMaster : MonoBehaviour {
             playerobject.transform.Rotate( vec3 / rotateTime );
             yield return 0;
         }
+        GameObject.Find("playerpos(Clone)").GetComponent<Transform>().Rotate(new Vector3(0,0,-vec3.y));
         for (int i = 0; i < rotateWaitTime; i++)
         {
             yield return 0;
@@ -144,7 +153,7 @@ public class GameMaster : MonoBehaviour {
         }
         //プレイヤーの位置情報の更新
         Map.GetPlayerPos();
-        GameObject.Find("playerpos").GetComponent<Transform>().localPosition = new Vector3(Map.playerpos.x * 10, Map.playerpos.y * 10, 0) -Map.OFFSET;
+        GameObject.Find("playerpos(Clone)").GetComponent<Transform>().localPosition = new Vector3(Map.playerpos.x * 10, Map.playerpos.y * 10, 0) -Map.OFFSET;
     }
 
     // プレイヤの配置
