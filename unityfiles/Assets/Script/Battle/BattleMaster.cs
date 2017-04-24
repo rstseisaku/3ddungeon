@@ -19,6 +19,7 @@ using UnityEngine.UI;
 //   ┗(復帰予告必要？)
 // 　戦闘不能処理
 // 　エフェクト(CanvasとParticleとの表示順問題)
+//　 キャラクターの属性
 
 enum Command { Attack, Unison, Magic }
 
@@ -157,6 +158,10 @@ public class BattleMaster : MonoBehaviour
             // 行動可能キャラクターをカウントし、実際のアクションを行う
             yield return PlayAction();
             yield return AfterAction();
+
+            // 終了判定
+            int battleResult = CheckFinish();
+            if (battleResult != 0) break;
         }
     }
 
@@ -211,14 +216,25 @@ public class BattleMaster : MonoBehaviour
         DrawCharacterData();
     }
 
+    // 終了判定
+    // 1 = プレイヤー勝利
+    // -1 = 敵勝利
+    // 0 = 続行
+    private int CheckFinish()
+    {
+        if (OpeCharaList.GetSumHp(enemyCd) == 0) return 1;
+        if (OpeCharaList.GetSumHp(cd) == 0) return -1;
+        return 0;
+    }
+
 
     /*
      * ================================================
      * PlayAction の内部処理
      * ================================================
      */
-     // 通常攻撃・ユニゾンの場合に呼ばれる処理
-     // ( コマンド入力を行い、処理を実行する )
+    // 通常攻撃・ユニゾンの場合に呼ばれる処理
+    // ( コマンド入力を行い、処理を実行する )
     IEnumerator PlayActionNoRamble( Vector2 countActionCharacterInfo )
     {
         // 行動サイドのユニゾン待機を終了
@@ -655,6 +671,10 @@ public class BattleMaster : MonoBehaviour
         ecObj.GetComponent<Image>().sprite = 
             enemyCd[elId].FaceObj.GetComponent<Image>().sprite;
 
+        ecObj = eObj.transform.FindChild("Text").gameObject;
+        ecObj.GetComponent<Text>().text =
+            "詠唱 LV" + OpeCharaList.GetSumMoveableMag(enemyCd) + "!";
+
         return eObj;
     }
 
@@ -676,12 +696,12 @@ public class BattleMaster : MonoBehaviour
             movePosTrue = movePos * 60 * Time.deltaTime;
             for (int i = 0; i <cd.Length; i++)
             {
-                if( !cd[i].isWaitUnison && (cd[i].stunCount == 0) )
+                if( !cd[i].isWaitUnison && (cd[i].stunCount == 0) && (cd[i].Hp != 0) )
                     cd[i].FaceObj.transform.localPosition += movePosTrue;
             }
             for (int i = 0; i <enemyCd.Length; i++)
             {
-                if ( !enemyCd[i].isWaitUnison && ( enemyCd[i].stunCount == 0))
+                if ( !enemyCd[i].isWaitUnison && ( enemyCd[i].stunCount == 0) && (enemyCd[i].Hp != 0))
                     enemyCd[i].FaceObj.transform.localPosition += movePosTrue;
             }
             yield return 0;

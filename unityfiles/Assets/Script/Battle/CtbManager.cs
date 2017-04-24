@@ -47,8 +47,9 @@ public class CtbManager : MonoBehaviour
         int count = 0;
         for (int i = 0; i < cb.Length; i++)
         {
+            // TODO: CTBゲージを進めるか否かのフラグを持たせて逐次更新するべき？
             // ctbゲージを進める
-            if (cb[i].stunCount == 0) cb[i].ctbNum--;
+            if (cb[i].stunCount == 0 && cb[i].Hp != 0) cb[i].ctbNum--;
             if (cb[i].ctbNum < 0) cb[i].ctbNum = 0;
             // アクション可能キャラがいたら、フラグを立てる 
             if (cb[i].ctbNum <= 0 && !cb[i].isWaitUnison)

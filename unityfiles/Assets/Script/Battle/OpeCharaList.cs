@@ -161,4 +161,15 @@ public class OpeCharaList : MonoBehaviour
         else aveMagWait = -1;
         return aveMagWait;
     }
+
+    // 生存者がいるかを調べる
+    public static int GetSumHp(BaseCharacter[] cb)
+    {
+        int sum = 0;
+        for (int j = 0; j < cb.Length; j++)
+        {
+            sum += cb[j].Hp;
+        }
+        return sum;
+    }
 }

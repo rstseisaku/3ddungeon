@@ -93,10 +93,10 @@ public class BaseCharacter : MonoBehaviour
         faceGraphicPath = linebuffer[1]; // 画像パス
         Hp = int.Parse(linebuffer[2]); // 体力
         Atk = int.Parse(linebuffer[3]); // 攻撃力
+        Atk = 100000;
         Mag = 1; // 魔力値
         knockback = 6; // 吹き飛ばし力
         resistKnockback = UnityEngine.Random.Range(0, 5); // 吹き飛び耐性
-        element = (int)Element.Fire;
         waitActionBase = 9; // 行動後の待機時間
         magWaitBase = 2 + 3 * partyId; // 詠唱後の待機時間
         SetWaitTime();
@@ -396,6 +396,7 @@ public class BaseCharacter : MonoBehaviour
     {
         // HPを削る
         cd[targetId].Hp -= (Atk * md) / 100;
+        if (cd[targetId].Hp < 0) cd[targetId].Hp = 0;
 
         // 吹き飛ばし
         int blow = knockback - cd[targetId].resistKnockback;
