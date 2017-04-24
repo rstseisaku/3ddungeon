@@ -93,7 +93,7 @@ public class BaseCharacter : MonoBehaviour
         faceGraphicPath = linebuffer[1]; // 画像パス
         Hp = int.Parse(linebuffer[2]); // 体力
         Atk = int.Parse(linebuffer[3]); // 攻撃力
-        Atk = 100000;
+        Atk = 100;
         Mag = 1; // 魔力値
         knockback = 6; // 吹き飛ばし力
         resistKnockback = UnityEngine.Random.Range(0, 5); // 吹き飛び耐性
@@ -105,7 +105,7 @@ public class BaseCharacter : MonoBehaviour
         faceTexture = Utility.MyGetTexture(faceGraphicPath);
 
         // CTB 値を適当に初期化しておく
-        ctbNum = (int)UnityEngine.Random.Range(0, 10);
+        ctbNum = (int)UnityEngine.Random.Range(3, 10);
         isMagic = false;
         isWaitUnison = false;
     }
@@ -148,7 +148,6 @@ public class BaseCharacter : MonoBehaviour
         SetFaceObj(ConstantValue.BATTLE_PLAYERFACE_OFFSETY, 1);
 
         // ステータスオブジェクトの生成
-        Debug.Log( "BaseChara: y = " + statusObjY);
         MakeStatusObj(statusObjY);
 
         // 魔力表示テキスト生成
@@ -241,7 +240,7 @@ public class BaseCharacter : MonoBehaviour
         yield return Utility.Wait(60);
 
         // ダメージ表示 
-        GameObject dmgObj = DrawDamage((Atk * cm.magnificationDamage) / 100);
+        GameObject dmgObj = DrawDamage( CalDamage(cm) );
         GameObject cmbObj = DrawCombo(cm);
         yield return Utility.Wait(45);
 
@@ -302,6 +301,34 @@ public class BaseCharacter : MonoBehaviour
         effObj.GetComponent<ParticleSystem>().Play();
         return effObj;
     }
+
+    // ダメージ算出
+    private int CalDamage( ComboManager cm )
+    {
+        int damage = Atk;
+        damage = (damage * cm.magnificationDamage) / 100;
+        return damage;
+    }
+
+    // 攻撃用の処理
+    protected IEnumerator Attack(BaseCharacter[] cd, ComboManager cm)
+    {
+        // HPを削る
+        cd[targetId].Hp -= CalDamage(cm);
+        if (cd[targetId].Hp < 0) cd[targetId].Hp = 0;
+
+        // 吹き飛ばし
+        int blow = knockback - cd[targetId].resistKnockback;
+        if (blow < 0) blow = 0;
+        cd[targetId].ctbNum += blow;
+
+        // ユニゾン・詠唱の解除
+        EndUnison(cd[targetId]);
+        EndMagic(cd[targetId]);
+
+        yield return 0;
+    }
+
 
     // ユニゾン開始処理
     public void StartUnison()
@@ -389,25 +416,6 @@ public class BaseCharacter : MonoBehaviour
             cb.FaceObj.GetComponent<Image>().color
                 = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         }
-    }
-
-    // 攻撃用の処理
-    protected IEnumerator Attack(BaseCharacter[] cd, int md)
-    {
-        // HPを削る
-        cd[targetId].Hp -= (Atk * md) / 100;
-        if (cd[targetId].Hp < 0) cd[targetId].Hp = 0;
-
-        // 吹き飛ばし
-        int blow = knockback - cd[targetId].resistKnockback;
-        if (blow < 0) blow = 0;
-        cd[targetId].ctbNum += blow;
-
-        // ユニゾン・詠唱の解除
-        EndUnison(cd[targetId]);
-        EndMagic(cd[targetId]);
-
-        yield return 0;
     }
 
     // 行動終了後の処理

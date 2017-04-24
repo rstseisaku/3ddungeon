@@ -30,6 +30,6 @@ public class PlayerCharacter : BaseCharacter
         yield return DrawBattleGraphic(enemyCd, cm);
 
         // 攻撃処理(計算)
-        yield return Attack(enemyCd, cm.magnificationDamage);
+        yield return Attack(enemyCd, cm);
     }
 }

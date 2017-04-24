@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 
 // ----------------------------------------
-// これからの予定
+//  : 残タスク
 // ----------------------------------------
 // ★戻る処理
 // ★コンボ
@@ -19,7 +19,8 @@ using UnityEngine.UI;
 //   ┗(復帰予告必要？)
 // 　戦闘不能処理
 // 　エフェクト(CanvasとParticleとの表示順問題)
-//　 キャラクターの属性
+//　 キャラクターの属性の定義
+//　 定数・グローバル変数の管理方法
 
 enum Command { Attack, Unison, Magic }
 
@@ -72,6 +73,7 @@ public class BattleMaster : MonoBehaviour
 
         /* 初期化処理 */
         ComboInit();
+        DrawCharacterData();
 
         /* メインループスタート */
         StartCoroutine("MyUpdate");
@@ -292,46 +294,32 @@ public class BattleMaster : MonoBehaviour
 
     IEnumerator PlayActionRamble( Vector2 countActionCharacterInfo)
     {
-        // 　1. 両サイドの和を求める
-        int playerMagSum = OpeCharaList.GetSumMoveableMag(cd);
-        int enemyMagSum = OpeCharaList.GetSumMoveableMag(enemyCd);
-
-        //   2.リーダーキャラクターの選択( 1体でも発動 )
+        // 敵のリーダーキャラクターの選択( 1体でも発動 )
         int enemyLeader = SelectLeaderEnemy(countActionCharacterInfo);
         GameObject enemyLeaderObj = DrawEnemyLeader(enemyLeader);
 
-        // 強制的に選択させる
+        // 味方のリーダーキャラクター選択
         selectedLeader = -1;
-        while (selectedLeader == -1) yield return SelectLeaderPlayer(countActionCharacterInfo);
+        while ( selectedLeader == -1) yield return SelectLeaderPlayer(countActionCharacterInfo);
         DestroyObject(enemyLeaderObj);
 
-        int playerLeaderElement = cd[selectedLeader].element;
-        int enemyLeaderElement = enemyCd[enemyLeader].element;
+        // 勝敗判定
+        int isPlayerWin = JudgeRamble(enemyCd[enemyLeader].element);
 
-        //   2.2 勝敗判定
-        int isPlayerWin = 1;
-        if (playerMagSum < enemyMagSum) isPlayerWin = -1;
-        else if (playerMagSum == enemyMagSum)
-        {
-            // 属性による勝敗判定を行う
-            isPlayerWin = JudgeRamble(playerLeaderElement, enemyLeaderElement);
-        }
-
-        //   3. 少ない方にスタン処理＆ダメージ。
+        // 少ない方にスタン処理＆ダメージ。
         int stunCtbNum = 7; // 仮置
         if (isPlayerWin == 1) OpeCharaList.CallStun(enemyCd, stunCtbNum);
         else if (isPlayerWin == -1) OpeCharaList.CallStun(cd, stunCtbNum);
 
-        //   4. いい感じの派手なエフェクト。
+        //  エフェクト表示
 
-
-        //   5. ユニゾン・詠唱を終了
+        //  ユニゾン・詠唱を終了
         OpeCharaList.EndWaitUnison(true, cd, enemyCd);
         OpeCharaList.EndWaitUnison(false, cd, enemyCd);
         OpeCharaList.EndMagic(true, cd, enemyCd);
         OpeCharaList.EndMagic(false, cd, enemyCd);
 
-        // 6. CTB 値を再設定( waitAction の値を格納 )
+        // CTB 値を再設定( waitAction の値を格納 )
         CtbManager.SetCtbNum(cd, enemyCd);
     }
 
@@ -730,10 +718,19 @@ public class BattleMaster : MonoBehaviour
     }
 
     // プレイヤーが勝利する場合に 1 敗北する場合に -1 を返す
-    private int JudgeRamble( int pEle, int eEle)
+    private int JudgeRamble(int eEle)
     {
-        int result = 1;
-        if( pEle == eEle ) { result = 1; }
-        return result;
+        int isPlayerWin = 1;
+
+        // それぞれのサイドのMag値の和を求める
+        int playerMagSum = OpeCharaList.GetSumMoveableMag(cd);
+        int enemyMagSum = OpeCharaList.GetSumMoveableMag(enemyCd);
+        int pEle = cd[selectedLeader].element;
+
+        if ( playerMagSum < enemyMagSum) isPlayerWin = -1;
+
+        // 属性による勝敗判定
+        if( pEle == eEle ) { isPlayerWin = 1; }
+        return isPlayerWin;
     }
 }
