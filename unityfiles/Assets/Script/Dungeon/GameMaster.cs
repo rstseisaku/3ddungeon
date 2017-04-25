@@ -40,17 +40,12 @@ public class GameMaster : MonoBehaviour {
 
         // csvファイルに従ってマップを生成
         map.MakeMap("Map1.csv");
-        minimap.SetminiMap("Map1.csv");
 
         // プレイヤーの位置設定
         SetPlayer(1,2);
-        GameObject temp;
-        temp = Instantiate(Resources.Load("Prefabs/Map/playerpos"),
-                            new Vector3(0, 0, 0),
-                            Quaternion.identity) as GameObject;
-        temp.transform.SetParent(GameObject.Find("PlayerPos").transform);
-        temp.transform.localScale = new Vector3(1, 1, 1);
-        temp.transform.localPosition = new Vector3(10, 20, 0) - Map.OFFSET;
+        Map.GetPlayerPos();
+        minimap.SetminiMap("Map1.csv");
+        
 
 
         // コルーチンの起動(メインループ)
@@ -81,7 +76,6 @@ public class GameMaster : MonoBehaviour {
                 // 前方に移動させる
                 if (map.isMoveable(nextX, nextY))
                 {
-                    Debug.Log(Map.playerpos);
                     yield return MyMove();
                     continue;
                 }
@@ -105,6 +99,7 @@ public class GameMaster : MonoBehaviour {
             if (Input.GetKeyUp(KeyCode.Space))
             {
                 minimap.displaymode(mode);
+                minimap.updateminimap();
                 mode++;
                 mode %= 3;
             }
@@ -121,7 +116,8 @@ public class GameMaster : MonoBehaviour {
             playerobject.transform.Rotate( vec3 / rotateTime );
             yield return 0;
         }
-        GameObject.Find("playerpos(Clone)").GetComponent<Transform>().Rotate(new Vector3(0,0,-vec3.y));
+        GameObject.Find("playerpos(Clone)").GetComponent<Transform>().Rotate(new Vector3(0,0,vec3.y));
+        minimap.updateminimap();
         for (int i = 0; i < rotateWaitTime; i++)
         {
             yield return 0;
@@ -153,7 +149,9 @@ public class GameMaster : MonoBehaviour {
         }
         //プレイヤーの位置情報の更新
         Map.GetPlayerPos();
-        GameObject.Find("playerpos(Clone)").GetComponent<Transform>().localPosition = new Vector3(Map.playerpos.x * 10, Map.playerpos.y * 10, 0) -Map.OFFSET;
+        //GameObject.Find("playerpos(Clone)").GetComponent<Transform>().localPosition = new Vector3(Map.playerpos.x * 10, Map.playerpos.y * 10, 0) - Map.OFFSET;
+        //GameObject.Find("playerpos(Clone)").GetComponent<Transform>().localPosition = -Map.OFFSET;
+        minimap.updateminimap();
     }
 
     // プレイヤの配置

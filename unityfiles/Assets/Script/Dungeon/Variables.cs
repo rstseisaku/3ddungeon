@@ -15,11 +15,11 @@ namespace Variables
         public const string filepath = "Assets\\Resources\\MapData\\";
 
         //フィールドマップの親オブジェクト
-        public static GameObject mapobject = GameObject.Find("MapObject");
-        public static Map1 map1 = mapobject.GetComponent<Map1>();
+        public static GameObject map = GameObject.Find("Map");
+        public static Map1 map1 = map.GetComponent<Map1>();
         //ミニマップの親オブジェクト
-        public static GameObject minimapobject = GameObject.Find("MiniMap");
-        public static miniMap minimap = minimapobject.GetComponent<miniMap>();
+        public static GameObject minimapcanvas = GameObject.Find("MiniMap");
+        public static miniMap minimap = minimapcanvas.GetComponent<miniMap>();
 
         //プレイヤーオブジェクト
         public static GameObject playerobject = GameObject.FindWithTag("MainCamera");
@@ -31,14 +31,11 @@ namespace Variables
         }
 
         //ミニマップのオフセット
-        public const int OFFSET_X = 100;
-        public const int OFFSET_Y = 100;
+        public const int OFFSET_X = -100;
+        public const int OFFSET_Y = 0;
         public static Vector3 OFFSET = new Vector3(OFFSET_X, OFFSET_Y, 0);
 
-        
-
-        //ミニマップ関連
-
+        public static int range = 2;
 
         //プレイヤー移動関連
 
