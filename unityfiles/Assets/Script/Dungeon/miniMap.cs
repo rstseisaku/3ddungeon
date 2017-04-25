@@ -57,7 +57,7 @@ public class miniMap : MonoBehaviour {
         
         for (int i = 0; i < Map.mapY; i++)
         {
-            linebuffer = buffer[2 + Map.mapX - i].Split(',');
+            linebuffer = buffer[2 + Map.mapY - i].Split(',');
 
             for (int j = 0; j < Map.mapX; j++)
             {
