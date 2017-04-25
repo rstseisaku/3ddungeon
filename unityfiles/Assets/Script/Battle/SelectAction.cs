@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class SelectAction : MonoBehaviour {
-    // new を使わないためのダミーオブジェクト(new を使うと Warnigが出る)
     public int selectId;
+    public int mouseOverId = -1;
     GameObject[] buttonObj;
 
 	// Use this for initialization
@@ -41,5 +41,12 @@ public class SelectAction : MonoBehaviour {
     {
         // 押された ID を格納する
         selectId = buttonId;
+    }
+
+    public void MyMouseEnter(Button obj)
+    {
+        if (obj.name == "AtkButton") mouseOverId = 0;
+        if (obj.name == "UniButton") mouseOverId = 1;
+        if (obj.name == "MagButton") mouseOverId = 2;
     }
 }

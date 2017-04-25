@@ -7,17 +7,20 @@ using UnityEngine.UI;
 
 
 // ----------------------------------------
-// toDo
+//  : 残タスク
 // ----------------------------------------
 // ★戻る処理
 // ★コンボ
 // ★ランブル
-// ★リーダーの選択（ ランブル / ユニゾン など）
-//　 ユニゾン処理
+// ★リーダーの選択（ ランブル / ユニゾン など )
+// ★詠唱中の待機予測
+//　 ユニゾン追撃処理
 // ★気絶処理
-//   ┗復帰予告
+//   ┗(復帰予告必要？)
 // 　戦闘不能処理
-// 　エフェクトの表示順(よく分からない)
+// 　エフェクト(CanvasとParticleとの表示順問題)
+//　 キャラクターの属性の定義
+//　 定数・グローバル変数の管理方法
 
 enum Command { Attack, Unison, Magic }
 
@@ -35,7 +38,7 @@ public class BattleMaster : MonoBehaviour
     // 戦闘中利用データ
     private GameObject canvas; // キャンパス(描画先)
     private int[] Party; // キャラクターの ID を表す配列(添字はPtId)
-    private CharacterData[] cd; // キャラクターデータの配列
+    private PlayerCharacter[] cd; // キャラクターデータの配列
     private EnemyCharacterData[] enemyCd; // 敵キャラクターの配列
 
     // コンボデータ
@@ -46,8 +49,6 @@ public class BattleMaster : MonoBehaviour
     private int selectedLeader; // 選択されたリーダーの値
     private int selectedTarget; // 選択されたターゲットの値
 
-    // メインで動いているコルーチン
-    Coroutine coroutine;
 
 
     /*
@@ -61,7 +62,7 @@ public class BattleMaster : MonoBehaviour
     {
         /* オブジェクト読み込み */
         canvas = GameObject.Find("Canvas"); // Canvas オブジェクトを取得
-        dObj = new GameObject("Cube"); // AddComponent を使うためのダミーオブジェクト
+        dObj = GameObject.Find("Dummy"); ; // AddComponent を使うためのダミーオブジェクト
 
         /* 味方キャラクターの読み込み */
         LoadPartyInfo(); // パーティー情報の読み込み
@@ -72,15 +73,11 @@ public class BattleMaster : MonoBehaviour
 
         /* 初期化処理 */
         ComboInit();
+        DrawCharacterData();
 
         /* メインループスタート */
         StartCoroutine("MyUpdate");
     } // --- Start()
-
-    private void Update()
-    {
-    }
-
 
     /*
      * ================================================
@@ -106,17 +103,19 @@ public class BattleMaster : MonoBehaviour
     private void LoadPlayerChara()
     {
         // 味方キャラクターの領域確保
-        cd = new CharacterData[ConstantValue.playerNum]; // キャラクター DB 確保
-        for (int i = 0; i < ConstantValue.playerNum; i++)
+        cd = new PlayerCharacter[ConstantValue.playerNum]; // キャラクター DB 確保
+        for (int i = 0; i < cd.Length; i++)
         {
             // キャラクターデータの領域確保( new は使わない )
-            cd[i] = dObj.AddComponent<CharacterData>();
+            cd[i] = dObj.AddComponent<PlayerCharacter>();
+            cd[i].Init(canvas);
 
             // キャラクターデータをロード
             cd[i].LoadCharacterData(Party[i], i);
-            
+
             // キャラクター画像描画初期化
-            cd[i].MakeCharacterGraphic(canvas, ConstantValue.BATTLE_STATUS_PLAYERY);
+            BGV.statusObjPosY = BCV.STATUS_PLAYER_Y;
+            cd[i].MakeCharacterGraphic(BGV.statusObjPosY);
         }
     } // --- LoadPlayerChara()
     // 敵の情報を読み込む
@@ -128,12 +127,14 @@ public class BattleMaster : MonoBehaviour
         {
             // キャラクターデータの領域確保( new は使わない )
             enemyCd[i] = dObj.AddComponent<EnemyCharacterData>(); // キャラクターデータの領域確保
-                                                             
+            enemyCd[i].Init(canvas);
+
             // キャラクターデータをロード                                              
             enemyCd[i].LoadCharacterData(i, i);
 
             //  キャラクター画像描画初期化
-            enemyCd[i].MakeCharacterGraphic(canvas, ConstantValue.BATTLE_STATUS_ENEMYY);
+            BGV.statusObjPosY = BCV.STATUS_ENEMY_Y;
+            enemyCd[i].MakeCharacterGraphic(BGV.statusObjPosY);
         }
     } // --- LoadEnemyChara()
     // コンボ初期化処理
@@ -159,13 +160,17 @@ public class BattleMaster : MonoBehaviour
             // 行動可能キャラクターをカウントし、実際のアクションを行う
             yield return PlayAction();
             yield return AfterAction();
+
+            // 終了判定
+            int battleResult = CheckFinish();
+            if (battleResult != 0) break;
         }
     }
 
     // 行動できるキャラクターが出るまでループを回す
     IEnumerator DecideNextActionCharacter()
     {
-        Vector2 tmp = CtbManager.CountActionableCharacter( cd, enemyCd);
+        Vector2 tmp = OpeCharaList.CountActionableCharacter( cd, enemyCd);
         int isActionableChara = (int)tmp.x + (int)tmp.y;
         Debug.Log(tmp);
         while ( isActionableChara == 0 )
@@ -182,11 +187,12 @@ public class BattleMaster : MonoBehaviour
     } // --- DecideNextActionCharacter()
 
     // 誰かが動ける状況になると呼ばれる処理
+    // ( ランブル・通常アクション・ユニゾンに振り分ける )
     IEnumerator PlayAction()
     {
         // ランブル判定。( ユニゾン中のキャラは数えない )
         Vector2 countActionCharacterInfo = 
-            CtbManager.CountActionableCharacter(cd, enemyCd);
+            OpeCharaList.CountActionableCharacter(cd, enemyCd);
 
         // ランブル・ユニゾン・通常アクションの 3 パターンがありえる
         if( countActionCharacterInfo.x * countActionCharacterInfo.y == 0)
@@ -197,48 +203,7 @@ public class BattleMaster : MonoBehaviour
         else
         {
             // ランブル
-
-            // 　1. 両サイドの和を求める
-            int playerMagSum = CtbManager.GetSumMoveableMag(cd);
-            int enemyMagSum = CtbManager.GetSumMoveableMag(enemyCd);
-
-            //   2.リーダーキャラクターの選択( 1体でも発動 )
-            int enemyLeader = SelectLeaderEnemy(countActionCharacterInfo);
-            GameObject enemyLeaderObj = DrawEnemyLeader(enemyLeader);
-
-            // 強制的に選択させる
-            selectedLeader = -1;
-            while ( selectedLeader == -1 ) yield return SelectLeaderPlayer(countActionCharacterInfo);
-            DestroyObject(enemyLeaderObj); 
-
-            int playerLeaderElement = cd[selectedLeader].element;
-            int enemyLeaderElement = enemyCd[enemyLeader].element;
-
-            //   2.2 勝敗判定
-            int isPlayerWin = 1;
-            if (playerMagSum < enemyMagSum) isPlayerWin = -1;
-            else if (playerMagSum == enemyMagSum)
-            {
-                // 属性による勝敗判定を行う
-                isPlayerWin = JudgeRamble(playerLeaderElement,enemyLeaderElement);
-            }
-
-            //   3. 少ない方にスタン処理＆ダメージ。
-            int stunCtbNum = 7; // 仮置
-            if (isPlayerWin == 1) CtbManager.CallStun(enemyCd,stunCtbNum);
-            else if (isPlayerWin == -1) CtbManager.CallStun( cd, stunCtbNum);
-
-            //   4. いい感じの派手なエフェクト。
-
-
-            //   5. ユニゾン・詠唱を終了
-            CtbManager.EndWaitUnison(true, cd, enemyCd);
-            CtbManager.EndWaitUnison(false, cd, enemyCd);
-            CtbManager.EndMagic(true, cd, enemyCd);
-            CtbManager.EndMagic(false, cd, enemyCd);
-
-            // 6. CTB 値を再設定( waitAction の値を格納 )
-            CtbManager.SetCtbNum(cd, enemyCd);
+            yield return PlayActionRamble(countActionCharacterInfo);
         }
         yield return 0;
     }
@@ -253,6 +218,16 @@ public class BattleMaster : MonoBehaviour
         DrawCharacterData();
     }
 
+    // 終了判定
+    // 1 = プレイヤー勝利
+    // -1 = 敵勝利
+    // 0 = 続行
+    private int CheckFinish()
+    {
+        if (OpeCharaList.GetSumHp(enemyCd) == 0) return 1;
+        if (OpeCharaList.GetSumHp(cd) == 0) return -1;
+        return 0;
+    }
 
 
     /*
@@ -260,21 +235,22 @@ public class BattleMaster : MonoBehaviour
      * PlayAction の内部処理
      * ================================================
      */
-     // 通常攻撃・ユニゾンの場合に呼ばれる処理
+    // 通常攻撃・ユニゾンの場合に呼ばれる処理
+    // ( コマンド入力を行い、処理を実行する )
     IEnumerator PlayActionNoRamble( Vector2 countActionCharacterInfo )
     {
         // 行動サイドのユニゾン待機を終了
-        CtbManager.EndWaitUnison( countActionCharacterInfo.x >= 1, cd, enemyCd);
+        OpeCharaList.EndWaitUnison( countActionCharacterInfo.x >= 1, cd, enemyCd);
         // 行動人数の情報を再度取得( コマンド選択前に )
         countActionCharacterInfo =
-            CtbManager.CountActionableCharacter(cd, enemyCd);
+            OpeCharaList.CountActionableCharacter(cd, enemyCd);
 
         // コマンド選択・リーダー決定・ターゲット選択を行う
         selectedCommand = -1;
         selectedLeader = -1;
         selectedTarget = -1;
 
-        // 【要: ここの仕組みは、特にリファクタリングすべき】
+        // TODO: どこのコマンドを選択中かの制御をもうちょい工夫
         while (true)
         {
             Debug.Log(selectedCommand + "," + selectedLeader + "," + selectedTarget);
@@ -316,6 +292,37 @@ public class BattleMaster : MonoBehaviour
         yield return CallCharacterAction();
     }
 
+    IEnumerator PlayActionRamble( Vector2 countActionCharacterInfo)
+    {
+        // 敵のリーダーキャラクターの選択( 1体でも発動 )
+        int enemyLeader = SelectLeaderEnemy(countActionCharacterInfo);
+        GameObject enemyLeaderObj = DrawEnemyLeader(enemyLeader);
+
+        // 味方のリーダーキャラクター選択
+        selectedLeader = -1;
+        while ( selectedLeader == -1) yield return SelectLeaderPlayer(countActionCharacterInfo);
+        DestroyObject(enemyLeaderObj);
+
+        // 勝敗判定
+        int isPlayerWin = JudgeRamble(enemyCd[enemyLeader].element);
+
+        // 少ない方にスタン処理＆ダメージ。
+        int stunCtbNum = 7; // 仮置
+        if (isPlayerWin == 1) OpeCharaList.CallStun(enemyCd, stunCtbNum);
+        else if (isPlayerWin == -1) OpeCharaList.CallStun(cd, stunCtbNum);
+
+        //  エフェクト表示
+
+        //  ユニゾン・詠唱を終了
+        OpeCharaList.EndWaitUnison(true, cd, enemyCd);
+        OpeCharaList.EndWaitUnison(false, cd, enemyCd);
+        OpeCharaList.EndMagic(true, cd, enemyCd);
+        OpeCharaList.EndMagic(false, cd, enemyCd);
+
+        // CTB 値を再設定( waitAction の値を格納 )
+        CtbManager.SetCtbNum(cd, enemyCd);
+    }
+
     // コマンド内容をもとに
     // 動けるキャラクターすべての行動(攻撃・ユニゾン・詠唱)を行う
     // 　┗ 呼出元: PlayActionNoRamble
@@ -323,8 +330,8 @@ public class BattleMaster : MonoBehaviour
     IEnumerator CallCharacterAction()
     {
         // 詠唱中キャラの平均待機値を求めておく
-        int avePlayerMagWait = CtbManager.GetAverageMagWait(cd);
-        int aveEnemyMagWait = CtbManager.GetAverageMagWait(enemyCd);
+        int avePlayerMagWait = OpeCharaList.GetAverageMagWait(cd);
+        int aveEnemyMagWait = OpeCharaList.GetAverageMagWait(enemyCd);
 
         for (int i = 0; i < cd.Length; i++)
         {
@@ -396,7 +403,7 @@ public class BattleMaster : MonoBehaviour
         }
 
         // ノックバック値の和を求める
-        int knockback = CtbManager.GetSumKnockback(cd);
+        int knockback = OpeCharaList.GetSumKnockback(cd);
 
         // 攻撃コマンドの場合のみターゲット選択を行う
         if (selectedCommand == (int)Command.Attack)
@@ -413,7 +420,7 @@ public class BattleMaster : MonoBehaviour
     {
         // カーソルオブジェクトを作成
         GameObject cursorObj = MakeCursorObj();
-        GameObject predictObj = MakePredictObj(enemyCd);
+        // GameObject predictObj = MakePredictObj(enemyCd);
 
         string FilePath = "Prefabs\\Battle\\SelectTarget";
         GameObject tObj = (GameObject)Instantiate(Resources.Load(FilePath),
@@ -421,6 +428,9 @@ public class BattleMaster : MonoBehaviour
                             Quaternion.identity);
         tObj.GetComponent<SelectTarget>().SetParameter( enemyCd );
         tObj.transform.SetParent(canvas.transform, false);
+
+        // プレイヤの予測オブジェクトを表示
+        OpeCharaList.SetPredictActionableCharacter(cd);
 
         // コマンドを選ぶまでループ
         int _mouseOver = -1;
@@ -432,7 +442,10 @@ public class BattleMaster : MonoBehaviour
             if( _mouseOver != mouseOver)
             {
                 SetCursorObj(mouseOver, cursorObj); // カーソルオブジェクト登録
-                SetPredictObj(predictObj, mouseOver, enemyCd, sumKnockback); // 予測オブジェクト表示
+
+                PredictObject.SetInactiveAllPredictObj( null , enemyCd);
+                enemyCd[mouseOver].predictObj.SetFromCharacterStatus(enemyCd[mouseOver], sumKnockback);
+                _mouseOver = mouseOver;
             }
 
             // 終了判定
@@ -446,80 +459,9 @@ public class BattleMaster : MonoBehaviour
         }
         Destroy(tObj);
         Destroy(cursorObj);
-        Destroy(predictObj);
+
+        PredictObject.SetInactiveAllPredictObj(cd,enemyCd);
     }
-    /* 座標直書き DoSelectTarget  */
-    /*
-    public IEnumerator DoSelectTarget(int sumKnockback)
-    {
-        // カーソルオブジェクトを作成
-        GameObject cursorObj = MakeCursorObj();
-        GameObject predictObj = MakePredictObj(enemyCd);
-
-        // 初期化
-        int checkFinger = -1; // 監視指の ID
-        int nowSelect = 0; // 現在選択しているターゲットID
-        int newTouchSelect = 0; // 新押時の ターゲット ID
-        bool finishFlag = false; // ターゲットを決定可能か否かを示す。( 新押時に選択されているターゲットが、既に選択されている場合に true となる )
-
-        // 初期表示
-        SetCursorObj(nowSelect, cursorObj);
-        SetPredictObj(predictObj, nowSelect, enemyCd, sumKnockback); // 予測オブジェクト表示
-        while (selectedTarget == -1)
-        {
-            // 新タッチがあったら
-            if (mInput.existNewTouch >= 0)
-            {
-                // 監視指ID を登録
-                checkFinger = mInput.existNewTouch; // 新推指のID
-
-                // 入力座標Yを取得しカーソルIDを求める
-                int _nowSelect = nowSelect;
-                nowSelect = PosToTargetId(checkFinger);
-                newTouchSelect = nowSelect;
-
-                // 更新時のみ表示を更新
-                finishFlag = true;
-                if (nowSelect != _nowSelect)
-                {
-                    finishFlag = false; // 押す場所が変わった
-                    SetCursorObj(nowSelect, cursorObj); // カーソルオブジェクト登録
-                    SetPredictObj(predictObj, nowSelect, enemyCd, sumKnockback); // 予測オブジェクト表示
-                }
-            }
-            // 新推がなければ、監視指の中身を見る
-            else if (checkFinger >= 0)
-            {
-                // 入力座標Yを取得しカーソルIDを求める
-                int _nowSelect = nowSelect;
-                nowSelect = PosToTargetId(checkFinger);
-
-                // 更新時のみ表示を更新
-                if (nowSelect != _nowSelect)
-                {
-                    SetCursorObj(nowSelect, cursorObj); // カーソルオブジェクト登録
-                    SetPredictObj(predictObj, nowSelect, enemyCd, sumKnockback); // 予測オブジェクト表示
-                }
-
-                // 離されたら
-                if (mInput.existEndTouch == checkFinger)
-                {
-                    // 監視リストから除外
-                    checkFinger = -1;
-
-                    // 選択位置が変化していない場合
-                    if (finishFlag && nowSelect == newTouchSelect)
-                        selectedTarget = nowSelect;
-                }
-            }
-            yield return 0;
-        }
-
-        Destroy(cursorObj);
-        Destroy(predictObj);
-        yield return 0;
-    }
-    */
 
     // カーソルオブジェクトの操作(ターゲット選択時利用)
     private GameObject MakeCursorObj()
@@ -550,44 +492,7 @@ public class BattleMaster : MonoBehaviour
             posY,
             0);
     } // ---SetCursorObj
-    // 予測オブジェクトの操作(ターゲット選択時利用)
-    private GameObject MakePredictObj(EnemyCharacterData[] enemyCd)
-    {
-        // 顔グラフィックオブジェクトをコピー(ダミー)
-        GameObject predictObj = Instantiate(enemyCd[0].FaceObj);
-        predictObj.transform.SetParent(enemyCd[0].FaceObj.transform.parent);
-        predictObj.GetComponent<RectTransform>().localScale
-            = enemyCd[0].FaceObj.GetComponent<RectTransform>().localScale;
-        predictObj.transform.GetComponent<Image>().color =
-            new Color(1.0f, 1.0f, 1.0f, 0.5f);
-        return predictObj;
-    }
-    private void SetPredictObj(GameObject predictObj, int nowSelect, EnemyCharacterData[] enemyCd, int sumKnockback)
-    {
-        // 吹き飛び量を計算
-        int blow = sumKnockback - enemyCd[nowSelect].resistKnockback;
-        if (blow < 0) blow = 0;
-        // 座標更新
-        predictObj.GetComponent<RectTransform>().localPosition =
-            enemyCd[nowSelect].FaceObj.GetComponent<RectTransform>().localPosition;
-        predictObj.GetComponent<RectTransform>().localPosition +=
-            new Vector3(blow * ConstantValue.BATTLE_FACE_SIZE, 0, 0);
-        // Sprite 貼り付け
-        predictObj.GetComponent<Image>().sprite =
-            enemyCd[nowSelect].FaceObj.GetComponent<Image>().sprite;
-
-    }
-    // ターゲット ID を算出
-    private int PosToTargetId(int checkFinger)
-    {
-        int posY = (int)mInput.touchPos[checkFinger].y;
-        int nowSelect = posY - ConstantValue.BATTLE_ENEMYFACE_OFFSETY;
-        nowSelect /= -1 * ConstantValue.BATTLE_FACE_VY;
-        if (nowSelect < 0) nowSelect = 0;
-        if (nowSelect >= ConstantValue.enemyNum) nowSelect = ConstantValue.enemyNum - 1;
-        return nowSelect;
-    } // --- PosToTargetId
-
+    
 
 
     /*
@@ -608,9 +513,21 @@ public class BattleMaster : MonoBehaviour
         selObj.transform.SetParent(canvas.transform, false);
 
         // コマンドを選ぶまでループ
+        int mouseOverId = 0;
+        int _mouseOverId = -1;
         while (true)
         {
-            if (selObj.GetComponent<SelectAction>().selectId >= 0)
+            // マウスオーバーに基づく予測表示処理
+            if ( mouseOverId != _mouseOverId)
+            {
+                PredictObject.SetInactiveAllPredictObj(cd,null);
+                if (mouseOverId == 0) OpeCharaList.SetPredictActionableCharacter(cd);
+                if (mouseOverId == 2) OpeCharaList.SetMagPredictActionableCharacter(cd);
+            }
+            mouseOverId = selObj.GetComponent<SelectAction>().mouseOverId;
+
+            // 決定処理
+            if ( selObj.GetComponent<SelectAction>().selectId >= 0)
             {
                 selectedCommand = selObj.GetComponent<SelectAction>().selectId;
                 break;
@@ -618,6 +535,7 @@ public class BattleMaster : MonoBehaviour
             yield return 0;
         }
         Destroy(selObj);
+        PredictObject.SetInactiveAllPredictObj(cd,null);
     }
     private IEnumerator SelectCommand( Vector2 countActionCharacterInfo)
     {
@@ -635,7 +553,7 @@ public class BattleMaster : MonoBehaviour
         // ユニゾン状態の場合、ユニゾンを選択不可に
         if (countActionCharacterInfo.x >= 2) isUnisonEnable = 0;
         // 詠唱中キャラが含まれていたら 攻撃 のみ選択可
-        if (CtbManager.CountActionableMagic(cd, enemyCd) != 0)
+        if (OpeCharaList.CountActionableMagic(cd, enemyCd) != 0)
         {
             isMagicEnable = 0;
             isUnisonEnable = 0;
@@ -741,6 +659,10 @@ public class BattleMaster : MonoBehaviour
         ecObj.GetComponent<Image>().sprite = 
             enemyCd[elId].FaceObj.GetComponent<Image>().sprite;
 
+        ecObj = eObj.transform.FindChild("Text").gameObject;
+        ecObj.GetComponent<Text>().text =
+            "詠唱 LV" + OpeCharaList.GetSumMoveableMag(enemyCd) + "!";
+
         return eObj;
     }
 
@@ -753,21 +675,21 @@ public class BattleMaster : MonoBehaviour
     IEnumerator CtbMove()
     {
         // 1フレームあたりに動かす移動量を算出
-        Vector3 movePos = new Vector3(-ConstantValue.BATTLE_FACE_SIZE, 0, 0);
-        movePos /= ConstantValue.BATTLE_TIME_PER_ONECTB;
+        Vector3 movePos = new Vector3(-BCV.VX_PER_CTBNUM , 0, 0);
+        movePos /= BCV.FRAME_PER_CTB;
         Vector3 movePosTrue;
         // 一定フレームをかけて移動演出を行う
-        for (int j = 0; j < ConstantValue.BATTLE_TIME_PER_ONECTB; j++)
+        for (int j = 0; j < BCV.FRAME_PER_CTB; j++)
         {
             movePosTrue = movePos * 60 * Time.deltaTime;
-            for (int i = 0; i <ConstantValue.playerNum; i++)
+            for (int i = 0; i <cd.Length; i++)
             {
-                if( !cd[i].isWaitUnison && (cd[i].stunCount == 0) )
+                if( !cd[i].isWaitUnison && (cd[i].stunCount == 0) && (cd[i].Hp != 0) )
                     cd[i].FaceObj.transform.localPosition += movePosTrue;
             }
-            for (int i = 0; i <ConstantValue.enemyNum; i++)
+            for (int i = 0; i <enemyCd.Length; i++)
             {
-                if ( !enemyCd[i].isWaitUnison && ( enemyCd[i].stunCount == 0))
+                if ( !enemyCd[i].isWaitUnison && ( enemyCd[i].stunCount == 0) && (enemyCd[i].Hp != 0))
                     enemyCd[i].FaceObj.transform.localPosition += movePosTrue;
             }
             yield return 0;
@@ -781,7 +703,7 @@ public class BattleMaster : MonoBehaviour
     private void DrawCharacterData()
     {
         // CTB に応じた位置に再描画( CTB 顔グラ )
-        // Hpの更新
+        // HPの更新
         for (int i = 0; i < ConstantValue.playerNum; i++)
         {
             cd[i].SetFaceObj(ConstantValue.BATTLE_PLAYERFACE_OFFSETY, 1);
@@ -796,10 +718,19 @@ public class BattleMaster : MonoBehaviour
     }
 
     // プレイヤーが勝利する場合に 1 敗北する場合に -1 を返す
-    private int JudgeRamble( int pEle, int eEle)
+    private int JudgeRamble(int eEle)
     {
-        int result = 1;
-        if( pEle == eEle ) { result = 1; }
-        return result;
+        int isPlayerWin = 1;
+
+        // それぞれのサイドのMag値の和を求める
+        int playerMagSum = OpeCharaList.GetSumMoveableMag(cd);
+        int enemyMagSum = OpeCharaList.GetSumMoveableMag(enemyCd);
+        int pEle = cd[selectedLeader].element;
+
+        if ( playerMagSum < enemyMagSum) isPlayerWin = -1;
+
+        // 属性による勝敗判定
+        if( pEle == eEle ) { isPlayerWin = 1; }
+        return isPlayerWin;
     }
 }

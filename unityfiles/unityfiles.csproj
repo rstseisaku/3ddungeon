@@ -87,18 +87,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Event.cs" />
+    <Compile Include="Assets\Script\Battle\BaseCharacter.cs" />
     <Compile Include="Assets\Script\Battle\BattleMaster.cs" />
-    <Compile Include="Assets\Script\Battle\CharacterBase.cs" />
-    <Compile Include="Assets\Script\Battle\CharacterData.cs" />
+    <Compile Include="Assets\Script\Battle\BCV.cs" />
     <Compile Include="Assets\Script\Battle\ComboManager.cs" />
     <Compile Include="Assets\Script\Battle\ConstantValue.cs" />
     <Compile Include="Assets\Script\Battle\CtbManager.cs" />
     <Compile Include="Assets\Script\Battle\EnemyCharacterData.cs" />
     <Compile Include="Assets\Script\Battle\LeaderSelect.cs" />
+    <Compile Include="Assets\Script\Battle\OpeCharaList.cs" />
+    <Compile Include="Assets\Script\Battle\PlayerCharacter.cs" />
+    <Compile Include="Assets\Script\Battle\PredictObject.cs" />
     <Compile Include="Assets\Script\Battle\SelectAction.cs" />
     <Compile Include="Assets\Script\Battle\SelectTarget.cs" />
     <Compile Include="Assets\Script\Dungeon\GameMaster.cs" />
     <Compile Include="Assets\Script\Dungeon\Map1.cs" />
+    <Compile Include="Assets\Script\Dungeon\Variables.cs" />
     <Compile Include="Assets\Script\Dungeon\mHPcolor.cs" />
     <Compile Include="Assets\Script\Dungeon\miniMap.cs" />
     <Compile Include="Assets\Script\Utility.cs" />
