@@ -294,10 +294,9 @@ public class BaseCharacter : MonoBehaviour
     protected GameObject AttackEffect(BaseCharacter[] cd)
     {
         // カーソルオブジェクトの表示
-        string FilePath = "Prefabs\\Effect\\Effect3";
+        string FilePath = "Prefabs\\Effect\\Effect" + UnityEngine.Random.Range(1,4);
         // Canvas サイズに合わせてプレハブ化してあるのでそのまま利用
         GameObject effObj = (GameObject)Instantiate(Resources.Load(FilePath));
-        effObj.transform.SetParent(battleCanvas.transform, false);
         effObj.GetComponent<ParticleSystem>().Play();
         return effObj;
     }
