@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using Map = Variables.Map;
+using Variables;
 
 public class miniMap : MonoBehaviour {
 
@@ -11,18 +11,12 @@ public class miniMap : MonoBehaviour {
     //現在のモード
     int currentmode = 2;
     //プレイヤーの位置を表示するオブジェクト
-    GameObject playerpos;
+    public GameObject playerpos;
 
 
     // Use this for initialization
     void Start () {
-        //プレイヤーの位置を表示
-        playerpos = Instantiate(Resources.Load("Prefabs/Map/playerpos"),
-                            new Vector3(0, 0, 0),
-                            Quaternion.identity) as GameObject;
-        playerpos.transform.SetParent(GameObject.Find("MiniMap").transform);
-        playerpos.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-        playerpos.transform.localPosition = -Map.OFFSET;
+
     }
 	
 	// Update is called once per frame
@@ -30,11 +24,23 @@ public class miniMap : MonoBehaviour {
 		
 	}
 
+    public void SetPlayer()
+    {
+        //プレイヤーの位置を表示
+        playerpos = Instantiate(Resources.Load("Prefabs/Map/playerpos"),
+                            new Vector3(0, 0, 0),
+                            Quaternion.identity) as GameObject;
+        playerpos.transform.SetParent(GameObject.Find("MiniMap").transform);
+        playerpos.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        playerpos.transform.localPosition = -Map.OFFSET;
+        playerpos.transform.localEulerAngles = Map.direction;
+    }
+
     public void SetminiMap(string Filename) {
 
         //絶対もっといい書き方ある
 
-  
+
         //マップ作成と基本的に同じ
         string[] buffer;
         string[] linebuffer;

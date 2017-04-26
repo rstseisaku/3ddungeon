@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using  Map = Variables.Map;
+using  Variables;
 
 public class Map1 : MonoBehaviour {
     
@@ -12,6 +12,8 @@ public class Map1 : MonoBehaviour {
     public int[] ObjectType;
     //座標毎のオブジェクトの種類
     int[,] mapdata;
+
+
 
 	// Use this for initialization
 	void Start () {
@@ -73,7 +75,6 @@ public class Map1 : MonoBehaviour {
                  MapData[x, y]に直した
                  */
                 mapdata[j, i] = int.Parse(linebuffer[j]);
-                
             }
         }
 

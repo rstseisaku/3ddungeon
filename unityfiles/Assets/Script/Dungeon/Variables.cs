@@ -21,13 +21,23 @@ namespace Variables
         public static GameObject minimapcanvas = GameObject.Find("MiniMap");
         public static miniMap minimap = minimapcanvas.GetComponent<miniMap>();
 
+        public static void GetGameObject()
+        {
+            Debug.Log("fuck");
+            map = GameObject.Find("Map");
+            minimapcanvas = GameObject.Find("MiniMap");
+            playerobject = GameObject.FindWithTag("MainCamera");
+        }
+
         //プレイヤーオブジェクト
         public static GameObject playerobject = GameObject.FindWithTag("MainCamera");
         public static Vector2 playerpos = new Vector2(playerobject.transform.localPosition.x, playerobject.transform.localPosition.z);
+        public static Vector3 direction = playerobject.transform.localEulerAngles;
 
         public static void GetPlayerPos()
         {
             playerpos = new Vector2(playerobject.transform.localPosition.x, playerobject.transform.localPosition.z);
+            direction = playerobject.transform.localEulerAngles;
         }
 
         //ミニマップのオフセット
@@ -43,4 +53,13 @@ namespace Variables
         //その他
 
     }
+
+    public class Player
+    {
+        public static int ROTATETIME = 10; // 回転にかかるフレームの設定
+        public static int MOVETIME = 10; // 移動フレームの設定
+        public static int ROTATEWAITTIME = 10; // 回転にかかるフレームの設定
+        public static int MOVEWAITTIME = 10; // 移動フレームの設定
+    }
+
 }
