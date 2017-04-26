@@ -40,6 +40,9 @@ public class Map1 : MonoBehaviour {
         Map.mapX = int.Parse(linebuffer[0]);
         Map.mapY = int.Parse(linebuffer[1]);
         mapdata = new int[Map.mapX, Map.mapY];
+        
+
+    
         //マップ生成に使うプレハブの取得
         mapchip = buffer[1].Split(',');
         ObjectType = new int[mapchip.Length];
@@ -63,13 +66,14 @@ public class Map1 : MonoBehaviour {
         for (int i = 0; i < Map.mapY; i++)
         {
             linebuffer = buffer[2 + Map.mapY - i].Split(',');
-            
+
             for (int j = 0; j < Map.mapX; j++)
             {
                 /*
                  MapData[x, y]に直した
                  */
                 mapdata[j, i] = int.Parse(linebuffer[j]);
+                
             }
         }
 
@@ -90,13 +94,12 @@ public class Map1 : MonoBehaviour {
                 {
                     posY = 0.5f;
                 }
-
                 temp = Instantiate(Resources.Load(mapchip[mapdata[j, i]]),
                             new Vector3(j, posY, i), // Plane を 0.1 倍にすると 1x1 になる
                             Quaternion.identity) as GameObject;
 
                 //MapObjectの子オブジェクトにする
-                temp.transform.SetParent(Map.mapobject.transform);
+                temp.transform.SetParent(Map.map.transform);
 
             }
         }

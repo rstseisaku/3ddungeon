@@ -6,13 +6,23 @@ using Map = Variables.Map;
 
 public class miniMap : MonoBehaviour {
 
+    //ミニマップを構成する画像を格納する配列
     GameObject[,] minimap;
-
+    //現在のモード
+    int currentmode = 2;
+    //プレイヤーの位置を表示するオブジェクト
+    GameObject playerpos;
 
 
     // Use this for initialization
     void Start () {
-
+        //プレイヤーの位置を表示
+        playerpos = Instantiate(Resources.Load("Prefabs/Map/playerpos"),
+                            new Vector3(0, 0, 0),
+                            Quaternion.identity) as GameObject;
+        playerpos.transform.SetParent(GameObject.Find("MiniMap").transform);
+        playerpos.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        playerpos.transform.localPosition = -Map.OFFSET;
     }
 	
 	// Update is called once per frame
@@ -47,7 +57,7 @@ public class miniMap : MonoBehaviour {
         
         for (int i = 0; i < Map.mapY; i++)
         {
-            linebuffer = buffer[2 + Map.mapX - i].Split(',');
+            linebuffer = buffer[2 + Map.mapY - i].Split(',');
 
             for (int j = 0; j < Map.mapX; j++)
             {
@@ -57,11 +67,23 @@ public class miniMap : MonoBehaviour {
                            new Vector3(0, 0, 0),
                            Quaternion.identity) as GameObject;
                 //Canvasの子オブジェクトにする
-                minimap[j, i].transform.SetParent(Map.minimapobject.transform);
-                //最初は縮小モード
+                minimap[j, i].transform.SetParent(Map.minimapcanvas.transform);
+                //自分の周囲だけ表示
+                if ((i <= Map.playerpos.y + (Map.range * currentmode) && i >= Map.playerpos.y - (Map.range * currentmode)) &&
+                         (j <= Map.playerpos.x + (Map.range * currentmode) && j >= Map.playerpos.x - (Map.range * currentmode)))
+                {
+                    minimap[j, i].transform.gameObject.SetActive(true);
+                }
+                else
+                {
+                    minimap[j, i].transform.gameObject.SetActive(false);
+                }
+                //位置調整
                 minimap[j, i].transform.localScale = new Vector3(0.5f, 0.5f, 1);
-                minimap[j, i].transform.localPosition = new Vector3(j * 10, i * 10, 0) - Map.OFFSET;
-                
+                minimap[j, i].transform.localPosition = new Vector3(j * 10, i * 10, 0) 
+                                                                    - Map.OFFSET
+                                                                     - new Vector3(Map.playerpos.x * 10, Map.playerpos.y * 10);
+
             }
         }   
     }
@@ -69,18 +91,19 @@ public class miniMap : MonoBehaviour {
     //表示モード、通常、拡大、非表示
     public void displaymode(int mode)
     {
+        currentmode = mode;
         //非表示
-        if(mode == 0)
+        if (currentmode == 0)
         {
             int count = 0;
             foreach (Transform child in Map.minimap.transform)
             {
-                //child.gameObject.SetActive(false);
+                child.gameObject.SetActive(false);
                 count++;
             }
         }
         //拡大モード
-        else if (mode == 1)
+        else if (currentmode == 1)
         {
             int count = 0;
             foreach (Transform child in Map.minimap.transform)
@@ -94,7 +117,7 @@ public class miniMap : MonoBehaviour {
             }
         }
         //縮小モード
-        else if (mode == 2)
+        else if (currentmode == 2)
         {
             int count = 0;
             foreach (Transform child in Map.minimap.transform)
@@ -111,6 +134,40 @@ public class miniMap : MonoBehaviour {
         {
             Debug.Log("ここが出ちゃ駄目");
         }
-        Debug.Log("called");
     }
+
+    //位置などの更新
+    public void updateminimap()
+    {
+        if (currentmode == 0)
+        {
+
+        }
+        else if (currentmode == 1 || currentmode == 2)
+        {
+            playerpos.GetComponent<Transform>().gameObject.SetActive(true);
+            for (int i = 0;i< Map.mapY; i++)
+            {
+                for (int j = 0; j < Map.mapX; j++)
+                {
+                    //自分の周囲だけ表示
+                    if ((i <= Map.playerpos.y + (Map.range * currentmode) && i >= Map.playerpos.y - (Map.range * currentmode)) &&
+                         (j <= Map.playerpos.x + (Map.range * currentmode) && j >= Map.playerpos.x - (Map.range * currentmode)))
+                    {
+                        minimap[j,i].transform.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        minimap[j, i].transform.gameObject.SetActive(false);
+                    }
+                    minimap[j, i].transform.localPosition = new Vector3(j * 10, i * 10, 0) * (3 - currentmode)
+                                                                        - Map.OFFSET
+                                                                        - new Vector3(Map.playerpos.x * 10, Map.playerpos.y * 10, 0) * (3 - currentmode);
+                }
+            }
+        }
+
+
+    }
+
 }
