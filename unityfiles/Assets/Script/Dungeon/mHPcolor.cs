@@ -6,9 +6,9 @@ using UnityEngine.UI;
 public class mHPcolor : MonoBehaviour {
     
     //残りHP(現在HP)後々どっかから取ってくる
-    public int RemainingHP;
+    public int remainingHP;
     //最大HP後々どっかから取ってくる
-    public int MaxHP;
+    public int maxHP;
     //HPを文章として出すための文字列
     private string HP;
     //色
@@ -23,16 +23,16 @@ public class mHPcolor : MonoBehaviour {
 	void Update () {
 
         //文字列に変更
-        HP = RemainingHP.ToString() + " / \n " + MaxHP.ToString();
+        HP = remainingHP.ToString() + " / \n " + maxHP.ToString();
         
         //HPの割合に応じて色を変更
         //50~100%：緑
-        if ((float)RemainingHP / (float) MaxHP >= 0.5)
+        if ( (float)(remainingHP /  maxHP) >= 0.5 )
         {
             HPcolor = Color.green;
         }
         //25~50%：黄色
-        else if ((float)RemainingHP / (float) MaxHP >= 0.25)
+        else if ( (float)(remainingHP /  maxHP) >= 0.25 )
         {
             HPcolor = Color.yellow;
         }

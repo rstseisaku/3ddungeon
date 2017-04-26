@@ -6,12 +6,12 @@ using UnityEngine.SceneManagement;
 using Variables;
 
 public class GameMaster : MonoBehaviour {
-    
+
+    //現在のマップ
+    string mapname = "Map1.csv";
 
     //ミニマップのモード　　0：非表示　1：拡大　2：縮小
     private int mode = 0;
-
-    private GameObject playerobject; // カメラ。スクリプト内で取得。
 
     //エンカウント管理
     private int encount;
@@ -29,13 +29,14 @@ public class GameMaster : MonoBehaviour {
 
         Map.GetGameObject();
 
-        MakeMap("Map1.csv");
-        MakeminiMap("Map1.csv");
+        MakeMap( mapname );
+        MakeminiMap( mapname );
 
         firsttime = false;
 
         // コルーチンの起動(メインループ)
         StartCoroutine("MyUpdate");
+
     }
 
     // Update is called once per frame
@@ -53,33 +54,34 @@ public class GameMaster : MonoBehaviour {
             yield return UpdateminiMap();
 
             //↑キーが押されている間
-            if (Input.GetAxis("Vertical") > 0)
+            if ( Input.GetAxis("Vertical") > 0 )
             {
                 Vector2 nextpos = NextPosition();
                 // 前方に移動させる
-                if (map.isMoveable((int)nextpos.x, (int)nextpos.y))
+                if (map.isMoveable( (int)nextpos.x, (int)nextpos.y) )
                 {
                     yield return MyMove();
+                    Encounter();
                     continue;
                 }
             }
 
             //→キーが押されている間
-            if (Input.GetAxis("Horizontal") > 0)
+            if ( Input.GetAxis("Horizontal") > 0 )
             {
                 // 回転させる(右方向)
-                yield return MyRotate(new Vector3(0, 90, 0));
+                yield return MyRotate( new Vector3( 0, 90, 0 ) );
                 continue;
             }
             //←キーが押されている間
-            if (Input.GetAxis("Horizontal") < 0)
+            if ( Input.GetAxis("Horizontal") < 0 )
             {
                 // 回転させる(左方向)
-                yield return MyRotate(new Vector3(0, -90, 0));
+                yield return MyRotate( new Vector3( 0, -90, 0 ) );
                 continue;
             }
             //spaceキーが離された時にミニマップのモードを変更
-            if (Input.GetKeyUp(KeyCode.Space))
+            if ( Input.GetKeyUp(KeyCode.Space) )
             {
                 ChangeMode();
             }
@@ -93,14 +95,14 @@ public class GameMaster : MonoBehaviour {
     {
         //どっちがいいっすかね
   //      minimap.playerpos.GetComponent<Transform>().Rotate(new Vector3(0, 0, vec3.y));
-        for (int i = 0; i < Player.ROTATETIME; i++)
+        for ( int i = 0; i < Player.ROTATETIME; i++ )
         {
-            minimap.playerpos.GetComponent<Transform>().Rotate(new Vector3(0, 0, vec3.y) / Player.ROTATETIME);
+            minimap.playerpos.GetComponent<Transform>().Rotate( new Vector3( 0, 0, -vec3.y ) / Player.ROTATETIME );
 
-            playerobject.transform.Rotate( vec3 / Player.ROTATETIME );
+            Map.playerobject.transform.Rotate( vec3 / Player.ROTATETIME );
             yield return 0;
         }
-        for (int i = 0; i < Player.ROTATEWAITTIME; i++)
+        for ( int i = 0; i < Player.ROTATEWAITTIME; i++ )
         {
             yield return 0;
         }
@@ -110,27 +112,25 @@ public class GameMaster : MonoBehaviour {
     IEnumerator MyMove()
     {
         // 向いてる方向に 1 マス移動
-        Vector3 movePos = new Vector3(Mathf.Sin(playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360),
-                                      0,
-                                      Mathf.Cos(playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360));
+        Vector3 movePos = new Vector3( Mathf.Sin( Map.playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360 ),
+                                       0,
+                                       Mathf.Cos( Map.playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360 ) );
         //movePos = playerobject.transform.forward; // カメラを前方向に 1 だけ移動
         movePos /= Player.MOVETIME;
         //一定フレームかけて移動する
-        for (int i = 0; i < Player.MOVETIME; i++)
+        for ( int i = 0; i < Player.MOVETIME; i++ )
         {
-            playerobject.transform.position += movePos;
+            Map.playerobject.transform.position += movePos;
             yield return 0;
         }
         // 誤差修正
-        playerobject.transform.position =
-            new Vector3(Mathf.Round(playerobject.transform.position.x),
-                        playerobject.transform.position.y,
-                        Mathf.Round(playerobject.transform.position.z));
-
-        Encounter();
+        Map.playerobject.transform.position = new Vector3( Mathf.Round( Map.playerobject.transform.position.x ),
+                                                           Map.playerobject.transform.position.y,
+                                                           Mathf.Round( Map.playerobject.transform.position.z ) );
+        
 
         // 移動後のウェイト
-        for (int i = 0; i < Player.MOVEWAITTIME; i++)
+        for ( int i = 0; i < Player.MOVEWAITTIME; i++ )
         {
             yield return 0;
         }
@@ -155,48 +155,45 @@ public class GameMaster : MonoBehaviour {
     //移動場所が移動可能か判定
     private Vector2 NextPosition()
     {
-        int nextX = (int)Map.playerpos.x + (int)Mathf.Sin(playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360);
-        int nextY = (int)Map.playerpos.y + (int)Mathf.Cos(playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360);
+        int nextX = (int)Map.playerpos.x + (int)Mathf.Sin( Map.playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360 );
+        int nextY = (int)Map.playerpos.y + (int)Mathf.Cos( Map.playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360 );
 
-        return new Vector2(nextX, nextY);
+        return new Vector2( nextX, nextY );
     } 
 
     //ミニマップのモード変更
     private void ChangeMode()
     {
-        minimap.displaymode(mode);
+        minimap.displaymode( mode );
         minimap.updateminimap();
         mode++;
         mode %= 3;
     }
 
     //マップの作成
-    private void MakeMap(string MapName)
+    private void MakeMap( string MapName )
     {
         
         //マップオブジェクトの取得
         map = Map.map1;
-        
-        // カメラオブジェクトの取得
-        playerobject = Map.playerobject;
 
         // csvファイルに従ってマップを生成
-        map.MakeMap(MapName);
+        map.MakeMap( MapName );
 
         // プレイヤーの位置設定
-        if (firsttime)
+        if ( firsttime )
         {
-            SetPlayer(1, 2);
+            SetPlayer( 1, 2 );
         }
         else
         {
-            SetPlayer((int)Map.playerpos.x, (int)Map.playerpos.y);
+            SetPlayer( (int)Map.playerpos.x, (int)Map.playerpos.y );
         }
         Map.GetPlayerPos();
     } 
 
     //ミニマップの作成
-    private void MakeminiMap(string MapName)
+    private void MakeminiMap( string MapName )
     {
         //マップ関連オブジェクトの取得
         minimap = Map.minimap;
@@ -207,17 +204,17 @@ public class GameMaster : MonoBehaviour {
     }
 
     // プレイヤの配置
-    private void SetPlayer(int StartX, int StartY)
+    private void SetPlayer( int StartX, int StartY )
     {
         // カメラの移動
-        playerobject.transform.position = new Vector3(StartX, 0.5f, StartY);
-        playerobject.transform.localEulerAngles = Map.direction;
+        Map.playerobject.transform.position = new Vector3( StartX, 0.5f, StartY );
+        Map.playerobject.transform.localEulerAngles = new Vector3(0,Map.direction,0);
     }
 
     private void Encounter()
     {
-        encount += (int)(Random.Range(0f, 1.0f) * randomencount);
-        if(encount > 100)
+        encount += (int)( Random.Range( 0f, 1.0f ) * randomencount );
+        if( encount > 100 )
         {
             SceneManager.LoadScene("Map1");
 

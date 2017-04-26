@@ -15,29 +15,31 @@ namespace Variables
         public const string filepath = "Assets\\Resources\\MapData\\";
 
         //フィールドマップの親オブジェクト
-        public static GameObject map = GameObject.Find("Map");
-        public static Map1 map1 = map.GetComponent<Map1>();
+        public static GameObject map;
+        public static Map1 map1;
         //ミニマップの親オブジェクト
-        public static GameObject minimapcanvas = GameObject.Find("MiniMap");
-        public static miniMap minimap = minimapcanvas.GetComponent<miniMap>();
+        public static GameObject minimapcanvas;
+        public static miniMap minimap;
 
         public static void GetGameObject()
         {
             Debug.Log("fuck");
             map = GameObject.Find("Map");
+            map1 = map.GetComponent<Map1>();
             minimapcanvas = GameObject.Find("MiniMap");
+            minimap = minimapcanvas.GetComponent<miniMap>();
             playerobject = GameObject.FindWithTag("MainCamera");
         }
 
         //プレイヤーオブジェクト
-        public static GameObject playerobject = GameObject.FindWithTag("MainCamera");
-        public static Vector2 playerpos = new Vector2(playerobject.transform.localPosition.x, playerobject.transform.localPosition.z);
-        public static Vector3 direction = playerobject.transform.localEulerAngles;
+        public static GameObject playerobject;
+        public static Vector2 playerpos;
+        public static float direction;
 
         public static void GetPlayerPos()
         {
             playerpos = new Vector2(playerobject.transform.localPosition.x, playerobject.transform.localPosition.z);
-            direction = playerobject.transform.localEulerAngles;
+            direction = playerobject.transform.localEulerAngles.y;
         }
 
         //ミニマップのオフセット
