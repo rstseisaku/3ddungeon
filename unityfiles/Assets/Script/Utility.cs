@@ -11,9 +11,10 @@ public class Utility : MonoBehaviour
             yield return 0;
     }
 
+    // 止まらない？ ⇒ yield return 忘れてない？
     public static IEnumerator WaitKey()
     {
-        while ( mInput.existNewTouch == -1 )
+        while ( mInput.existNewTouch == -1 ) // 新押があるまで待機
         {
             yield return 0;
         }

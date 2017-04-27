@@ -75,6 +75,12 @@ public class PredictObject : MonoBehaviour
     /* FaceObj を生成する */
     private void GenerateObj(BaseCharacter bc)
     {
+        if (bc.ctbFaceObj == null)
+        {
+            Debug.LogError("※ベースキャラクターの ctbFaceObj が null です");
+            return;
+        }
+
         obj = Instantiate(bc.ctbFaceObj.faceObj);
         obj.transform.SetParent(bc.ctbFaceObj.faceObj.transform.parent, false);
         Color = new Color(1.0f, 1.0f, 1.0f, 0.5f);

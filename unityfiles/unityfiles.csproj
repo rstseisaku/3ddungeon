@@ -87,9 +87,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Event.cs" />
+    <Compile Include="Assets\Script\Base\Buttons.cs" />
+    <Compile Include="Assets\Script\Battle\BattleResult.cs" />
+    <Compile Include="Assets\Script\Battle\BCV.cs" />
     <Compile Include="Assets\Script\Battle\BaseCharacter.cs" />
     <Compile Include="Assets\Script\Battle\BattleMaster.cs" />
-    <Compile Include="Assets\Script\Battle\BCV.cs" />
     <Compile Include="Assets\Script\Battle\ComboManager.cs" />
     <Compile Include="Assets\Script\Battle\ConstantValue.cs" />
     <Compile Include="Assets\Script\Battle\CtbFaceObj.cs" />
@@ -109,6 +111,7 @@
     <Compile Include="Assets\Script\Utility.cs" />
     <Compile Include="Assets\Script\mInput.cs" />
     <Compile Include="Assets\Test.cs" />
+    <Compile Include="Assets\movescene.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />

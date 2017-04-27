@@ -154,12 +154,6 @@ public class BaseCharacter : MonoBehaviour
         MakeStatusObj(statusObjY);
     } // --- MakeCharacterGraphic()
 
-    // ctbNum に従った位置に顔グラフィック(CTB)を表示する
-    public void SetFaceObj()
-    {
-        ctbFaceObj.SetPosX(ctbNum);
-    } // --- SetFaceObj( int OffsetY, int vy  )
-
     // HP‣顔グラフィックの表示
     public void MakeStatusObj(int Y)
     {
@@ -411,22 +405,6 @@ public class BaseCharacter : MonoBehaviour
         SetFaceObjColorFromStatus(this);
     }
 
-    /*    
-     * 顔グラフィックの色・演出を変更
-     * キャラの状態から(詠唱・ユニゾン・戦闘不能など)
-     *  引数がいる理由: 攻撃の対象を書き換える場合があるから
-     */
-    public void SetFaceObjColorFromStatus(BaseCharacter bc)
-    {
-        Color c = bc.ctbFaceObj.faceObj.GetComponent<Image>().color;
-        
-        if (bc.isMagic) c = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-        else if (bc.isStun) c = new Color(0.3f, 0.3f, 0.3f, 1.0f);
-        else if (bc.isWaitUnison) c = new Color(0.5f, 0.5f, 1.0f, 1.0f);
-        else if (bc.isknockout) c = new Color(0.6f, 0.2f, 0.2f, 1.0f);
-        else c = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-    }
-
     // 行動終了後の処理
     // ( 各キャラクタのプレイアクションで呼ばれてる )
     protected void AfterAction()
@@ -441,7 +419,15 @@ public class BaseCharacter : MonoBehaviour
     }
 
 
-
+    /* ==================================================
+     * CTB 顔グラオブジェへのインタフェース 
+     * ================================================== */
+    // 現在のステータスに応じて顔グラの色を変更
+    public void SetFaceObjColorFromStatus(BaseCharacter bc) {
+        ctbFaceObj.SetFaceObjColorFromStatus(bc); }
+    // ctbNum に従った位置に顔グラを表示
+    public void SetFaceObj() {
+        ctbFaceObj.SetPosX(ctbNum); }
 
     /* ==================================================
      * 予測オブジェクトを表示するインタフェースを提供 
@@ -450,13 +436,9 @@ public class BaseCharacter : MonoBehaviour
     public void SetPredictFromWaitAction() {
         predictObj.SetFromUntilCtbNum( this, waitAction );  }
     // 行動終了後の予測位置を表示(詠唱)
-    public void SetPredictFromMagWait()
-    {
-        predictObj.SetFromUntilCtbNum(this, magWait);
-    }
+    public void SetPredictFromMagWait() {
+        predictObj.SetFromUntilCtbNum(this, magWait); }
     // 行動終了後の予測位置を表示(数値から)
-    public void SetPredictFromCtbNum( int ctbNum )
-    {
-        predictObj.SetFromUntilCtbNum(this, ctbNum);
-    }
+    public void SetPredictFromCtbNum( int ctbNum ) {
+        predictObj.SetFromUntilCtbNum(this, ctbNum); }
 }

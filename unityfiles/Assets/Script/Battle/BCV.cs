@@ -17,9 +17,13 @@ public class BCV
     public const int CTB_ENEMY_UPPER = -50; // 敵の CTB 顔グラのY座標をどの程度ずらすか
     public const int CTB_PLAYER_BOTTOM = 50; // 味方の CTB 顔グラのY座標をどの程度ずらすか
 
+    public const int PLAYER_MAX = 5; // (6以上にするのは現実的じゃない)
+
     public const string FACE_IMAGE_PREFAB = "Prefabs\\Battle\\ImageBase"; // 顔グラフィックのプレハブ
     public const string MAG_TEXT_PREFAB = "Prefabs\\Battle\\MagText"; // 魔力テキストのプレハブ
     public const string STATUSOBJ_PREFAB = "Prefabs\\Battle\\Status"; // ステータスオブジェクトのプレハブ
+    public const string RESULT_PREFAB = "Prefabs\\Battle\\ResultObject"; // リザルトオブジェクト
+    public const string RESULT_LOSE_PREFAB = "Prefabs\\Battle\\ResultLoseObject"; // リザルトオブジェクト(敗北時)
 
     // ステータス表示関連
     public const int STATUS_PLAYER_Y = 310;

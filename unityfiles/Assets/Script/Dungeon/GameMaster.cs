@@ -216,7 +216,7 @@ public class GameMaster : MonoBehaviour {
         encount += (int)( Random.Range( 0f, 1.0f ) * randomencount );
         if( encount > 100 )
         {
-            SceneManager.LoadScene("Map1");
+            SceneManager.LoadScene("BattleScene");
 
             Debug.Log("met");
             encount = 0;
