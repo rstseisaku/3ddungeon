@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using  Map = Variables.Map;
+using  Variables;
 
 public class Map1 : MonoBehaviour {
     
@@ -24,7 +24,7 @@ public class Map1 : MonoBehaviour {
 	}
 
     //マップを作成する関数
-    public void MakeMap(string FileName)
+    public void MakeMap( string FileName )
     {
         //一時的に文字列を格納するファイル
         string[] buffer;
@@ -33,12 +33,12 @@ public class Map1 : MonoBehaviour {
         GameObject temp;
 
         //bufferにファイルから読み込んだものを格納
-        buffer = System.IO.File.ReadAllLines(Map.filepath + FileName);
+        buffer = System.IO.File.ReadAllLines( Map.filepath + FileName );
         //カンマで区切られている情報ごとに分割
         linebuffer = buffer[0].Split(',');
         //マップのサイズを格納
-        Map.mapX = int.Parse(linebuffer[0]);
-        Map.mapY = int.Parse(linebuffer[1]);
+        Map.mapX = int.Parse( linebuffer[0] );
+        Map.mapY = int.Parse( linebuffer[1] );
         mapdata = new int[Map.mapX, Map.mapY];
         
 
@@ -49,57 +49,58 @@ public class Map1 : MonoBehaviour {
 
         //オブジェクトの種類の取得
         linebuffer = buffer[2].Split(',');
-        for (int i = 0; i < ObjectType.Length; i++) // マップチップの要素数(種類)
+        for ( int i = 0; i < ObjectType.Length; i++ ) // マップチップの要素数(種類)
         {
             //何もない所は-1として置く
-            if(linebuffer[i] == "")
+            if( linebuffer[i] == "" )
             {
                 ObjectType[i] = -1;
             }
             else
             {
-                ObjectType[i] = int.Parse(linebuffer[i]);
+                ObjectType[i] = int.Parse( linebuffer[i] );
             }
         }
 
         //マップデータを起こす
-        for (int i = 0; i < Map.mapY; i++)
+        for ( int i = 0; i < Map.mapY; i++ )
         {
             linebuffer = buffer[2 + Map.mapY - i].Split(',');
 
-            for (int j = 0; j < Map.mapX; j++)
+            for ( int j = 0; j < Map.mapX; j++ )
             {
                 /*
                  MapData[x, y]に直した
                  */
-                mapdata[j, i] = int.Parse(linebuffer[j]);
-                
+                mapdata[j, i] = int.Parse( linebuffer[j] );
             }
         }
 
         //マップデータ通りにプレハブを配置
-        for (int i = 0; i < Map.mapY; i++)
+        for ( int i = 0; i < Map.mapY; i++ )
         {
 
-            for (int j = 0; j < Map.mapX; j++)
+            for ( int j = 0; j < Map.mapX; j++ )
             {
                 float posY = 0.0f;
                 //床オブジェクト
-                if (ObjectType[mapdata[j, i]] == 0 || ObjectType[mapdata[j, i]] == 1)
+                if ( ObjectType[mapdata[j, i]] == 0 ||
+                     ObjectType[mapdata[j, i]] == 1 )
                 {
                     posY = 0.0f;
                 }
                 //壁オブジェクト
-                else if(ObjectType[mapdata[j, i]] == 2 || ObjectType[mapdata[j, i]] == 3)
+                else if( ObjectType[mapdata[j, i]] == 2 ||
+                         ObjectType[mapdata[j, i]] == 3 )
                 {
                     posY = 0.5f;
                 }
-                temp = Instantiate(Resources.Load(mapchip[mapdata[j, i]]),
-                            new Vector3(j, posY, i), // Plane を 0.1 倍にすると 1x1 になる
-                            Quaternion.identity) as GameObject;
+                temp = Instantiate( Resources.Load( mapchip[mapdata[j, i]] ),
+                                    new Vector3( j, posY, i ),
+                                    Quaternion.identity ) as GameObject;
 
                 //MapObjectの子オブジェクトにする
-                temp.transform.SetParent(Map.map.transform);
+                temp.transform.SetParent( Map.map.transform );
 
             }
         }
@@ -107,10 +108,10 @@ public class Map1 : MonoBehaviour {
 
 
     // input: 移動先の座標
-    public bool isMoveable(int x,int y)
+    public bool isMoveable( int x,int y )
     {
         int tmp = ObjectType[mapdata[x, y]];
-        if (tmp == 0 || tmp == 2) return true;
+        if ( tmp == 0 || tmp == 2 ) return true;
         else return false;
     }
 }
