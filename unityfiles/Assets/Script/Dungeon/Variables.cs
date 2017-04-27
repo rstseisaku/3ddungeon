@@ -23,7 +23,6 @@ namespace Variables
 
         public static void GetGameObject()
         {
-            Debug.Log("fuck");
             map = GameObject.Find("Map");
             map1 = map.GetComponent<Map1>();
             minimapcanvas = GameObject.Find("MiniMap");
