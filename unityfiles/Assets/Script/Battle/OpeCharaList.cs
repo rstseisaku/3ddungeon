@@ -162,7 +162,7 @@ public class OpeCharaList : MonoBehaviour
         return aveMagWait;
     }
 
-    // 生存者がいるかを調べる
+    // HP の和を求める
     public static int GetSumHp(BaseCharacter[] cb)
     {
         int sum = 0;
@@ -171,5 +171,23 @@ public class OpeCharaList : MonoBehaviour
             sum += cb[j].Hp;
         }
         return sum;
+    }
+
+    // 戦闘不能でないものがいるかを調べる
+    public static bool isAllKnockout(BaseCharacter[] cb)
+    {
+        bool f = true;
+        for (int j = 0; j < cb.Length; j++)
+        {
+            if (!cb[j].isknockout) f = false;
+        }
+        return f;
+    }
+
+    // 戦闘不能になったキャラに、戦闘不能の演出を入れる
+    public static void KnockoutEffect(BaseCharacter[] cb)
+    {
+        for( int i=0; i<cb.Length; i++)
+            cb[i].KnockoutEffect();
     }
 }

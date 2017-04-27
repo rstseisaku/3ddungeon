@@ -92,6 +92,7 @@
     <Compile Include="Assets\Script\Battle\BCV.cs" />
     <Compile Include="Assets\Script\Battle\ComboManager.cs" />
     <Compile Include="Assets\Script\Battle\ConstantValue.cs" />
+    <Compile Include="Assets\Script\Battle\CtbFaceObj.cs" />
     <Compile Include="Assets\Script\Battle\CtbManager.cs" />
     <Compile Include="Assets\Script\Battle\EnemyCharacterData.cs" />
     <Compile Include="Assets\Script\Battle\LeaderSelect.cs" />

@@ -11,8 +11,8 @@ public class mInput : MonoBehaviour
     public static int touchNum; // タッチされた個数
     public static Vector2[] touchPos; // タッチされた座標
     public static TouchPhase[] touchPhase; // タッチされている状況(新押し判定など)
-    public static int existNewTouch; // 新タッチへの ID を返す
-    public static int existEndTouch; // 話されたタッチへの ID を返す(座標とかは残るからデータを使える)
+    public static int existNewTouch = -1; // 新タッチへの ID を返す
+    public static int existEndTouch = -1; // 話されたタッチへの ID を返す(座標とかは残るからデータを使える)
 
     // Update is called once per frame
     void Start()
