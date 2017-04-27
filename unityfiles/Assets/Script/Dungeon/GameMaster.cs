@@ -8,7 +8,7 @@ using Variables;
 public class GameMaster : MonoBehaviour {
 
     //現在のマップ
-    string mapname = "Map1.csv";
+    public  string mapname;
 
     //ミニマップのモード　　0：非表示　1：拡大　2：縮小
     private int mode = 0;

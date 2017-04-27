@@ -96,12 +96,11 @@ public class Map1 : MonoBehaviour {
                     posY = 0.5f;
                 }
                 temp = Instantiate( Resources.Load( mapchip[mapdata[j, i]] ),
-                                    new Vector3( j, posY, i ),
+                                    new Vector3(j, posY, i),
                                     Quaternion.identity ) as GameObject;
 
                 //MapObjectの子オブジェクトにする
                 temp.transform.SetParent( Map.map.transform );
-
             }
         }
     } //---MakeMap
