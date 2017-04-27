@@ -89,7 +89,7 @@ public class LeaderSelect : MonoBehaviour {
 
         // 画像張替
         buttonObj[2].GetComponent<Image>().sprite =
-            cd[selectId].FaceObj.GetComponent<Image>().sprite;
+            cd[selectId].ctbFaceObj.faceObj.GetComponent<Image>().sprite;
     }
 
 

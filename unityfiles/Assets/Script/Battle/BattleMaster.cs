@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
@@ -14,13 +15,18 @@ using UnityEngine.UI;
 // ★ランブル
 // ★リーダーの選択（ ランブル / ユニゾン など )
 // ★詠唱中の待機予測
-//　 ユニゾン追撃処理
 // ★気絶処理
 //   ┗(復帰予告必要？)
-// 　戦闘不能処理
-// 　エフェクト(CanvasとParticleとの表示順問題)
-//　 キャラクターの属性の定義
+// ★戦闘不能処理
+// ★エフェクト(CanvasとParticleとの表示順問題)
+//　 ユニゾン追撃処理
+// ★キャラクターの属性の定義・表示
+//    ┗  ★顔グラフィック周りの表示方法変更
+//        ★グラフィック・魔力レベル・属性を1つの塊として扱うべき
+//    　　読み込みこれから
 //　 定数・グローバル変数の管理方法
+//　 リザルト画面
+
 
 enum Command { Attack, Unison, Magic }
 
@@ -112,10 +118,6 @@ public class BattleMaster : MonoBehaviour
 
             // キャラクターデータをロード
             cd[i].LoadCharacterData(Party[i], i);
-
-            // キャラクター画像描画初期化
-            BGV.statusObjPosY = BCV.STATUS_PLAYER_Y;
-            cd[i].MakeCharacterGraphic(BGV.statusObjPosY);
         }
     } // --- LoadPlayerChara()
     // 敵の情報を読み込む
@@ -131,10 +133,6 @@ public class BattleMaster : MonoBehaviour
 
             // キャラクターデータをロード                                              
             enemyCd[i].LoadCharacterData(i, i);
-
-            //  キャラクター画像描画初期化
-            BGV.statusObjPosY = BCV.STATUS_ENEMY_Y;
-            enemyCd[i].MakeCharacterGraphic(BGV.statusObjPosY);
         }
     } // --- LoadEnemyChara()
     // コンボ初期化処理
@@ -153,18 +151,31 @@ public class BattleMaster : MonoBehaviour
      //メインループのコルーチン
     IEnumerator MyUpdate()
     {
+        /* キー入力を待つ(戦闘開始前に) */
+        yield return Utility.WaitKey();
+
+        int battleResult;
         while (true) {
-            // 行動できるキャラが出てくるまで CTB を進行
+            /* 行動できるキャラが出てくるまで CTB を進行 */
             yield return DecideNextActionCharacter();
 
-            // 行動可能キャラクターをカウントし、実際のアクションを行う
+            /* 行動可能キャラクターをカウントし、実際のアクションを行う*/
             yield return PlayAction();
             yield return AfterAction();
 
-            // 終了判定
-            int battleResult = CheckFinish();
+            /* 終了判定 */
+            battleResult = CheckFinish();
             if (battleResult != 0) break;
         }
+
+        /* 勝敗表示 */
+        yield return Utility.Wait(60);
+        if ( battleResult == 1) { yield return BattleResult.ResultWinScene(cd, canvas); }
+        else { yield return BattleResult.ResultLoseScene(cd, canvas); }
+        yield return BattleResult.ResultFadeout(canvas);
+
+        /* 戦闘が終わったので元のマップに返す */
+        SceneManager.LoadScene("TES");
     }
 
     // 行動できるキャラクターが出るまでループを回す
@@ -214,6 +225,10 @@ public class BattleMaster : MonoBehaviour
         // ウェイトを挟む
         yield return Utility.Wait(30);
 
+        // 戦闘不能判定
+        OpeCharaList.KnockoutEffect(cd);
+        OpeCharaList.KnockoutEffect(enemyCd);
+
         // 情報を再描画
         DrawCharacterData();
     }
@@ -224,8 +239,8 @@ public class BattleMaster : MonoBehaviour
     // 0 = 続行
     private int CheckFinish()
     {
-        if (OpeCharaList.GetSumHp(enemyCd) == 0) return 1;
-        if (OpeCharaList.GetSumHp(cd) == 0) return -1;
+        if (OpeCharaList.isAllKnockout(enemyCd) ) return 1;
+        if (OpeCharaList.isAllKnockout(cd)) return -1;
         return 0;
     }
 
@@ -253,7 +268,7 @@ public class BattleMaster : MonoBehaviour
         // TODO: どこのコマンドを選択中かの制御をもうちょい工夫
         while (true)
         {
-            Debug.Log(selectedCommand + "," + selectedLeader + "," + selectedTarget);
+            // Debug.Log(selectedCommand + "," + selectedLeader + "," + selectedTarget);
             if ( selectedCommand == -1) {
                 // コマンド選択を行う( 攻撃・待機・詠唱など )
                 yield return SelectCommand(countActionCharacterInfo);
@@ -657,7 +672,7 @@ public class BattleMaster : MonoBehaviour
 
         GameObject ecObj = eObj.transform.FindChild("CharacterGraphic").gameObject;
         ecObj.GetComponent<Image>().sprite = 
-            enemyCd[elId].FaceObj.GetComponent<Image>().sprite;
+            enemyCd[elId].ctbFaceObj.faceObj.GetComponent<Image>().sprite;
 
         ecObj = eObj.transform.FindChild("Text").gameObject;
         ecObj.GetComponent<Text>().text =
@@ -685,12 +700,12 @@ public class BattleMaster : MonoBehaviour
             for (int i = 0; i <cd.Length; i++)
             {
                 if( !cd[i].isWaitUnison && (cd[i].stunCount == 0) && (cd[i].Hp != 0) )
-                    cd[i].FaceObj.transform.localPosition += movePosTrue;
+                    cd[i].ctbFaceObj.faceObj.transform.localPosition += movePosTrue;
             }
             for (int i = 0; i <enemyCd.Length; i++)
             {
                 if ( !enemyCd[i].isWaitUnison && ( enemyCd[i].stunCount == 0) && (enemyCd[i].Hp != 0))
-                    enemyCd[i].FaceObj.transform.localPosition += movePosTrue;
+                    enemyCd[i].ctbFaceObj.faceObj.transform.localPosition += movePosTrue;
             }
             yield return 0;
         }
@@ -706,12 +721,12 @@ public class BattleMaster : MonoBehaviour
         // HPの更新
         for (int i = 0; i < ConstantValue.playerNum; i++)
         {
-            cd[i].SetFaceObj(ConstantValue.BATTLE_PLAYERFACE_OFFSETY, 1);
+            cd[i].SetFaceObj();
             cd[i].SetStatusObj();
         }
         for (int i = 0; i < ConstantValue.enemyNum; i++)
         {
-            enemyCd[i].SetFaceObj(ConstantValue.BATTLE_ENEMYFACE_OFFSETY, -1);
+            enemyCd[i].SetFaceObj();
             enemyCd[i].SetStatusObj();
         }
 
@@ -727,7 +742,12 @@ public class BattleMaster : MonoBehaviour
         int enemyMagSum = OpeCharaList.GetSumMoveableMag(enemyCd);
         int pEle = cd[selectedLeader].element;
 
-        if ( playerMagSum < enemyMagSum) isPlayerWin = -1;
+        // 魔力レベル合計値のよる勝敗判定
+        if (playerMagSum < enemyMagSum)
+        {
+            isPlayerWin = -1;
+            return isPlayerWin;
+        }
 
         // 属性による勝敗判定
         if( pEle == eEle ) { isPlayerWin = 1; }

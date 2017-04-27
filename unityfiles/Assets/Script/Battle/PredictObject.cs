@@ -14,11 +14,6 @@ public class PredictObject : MonoBehaviour
     // ( このオブジェクトへのインタフェースを提供する )
     private GameObject obj;
 
-    public Vector3 LocalScale
-    {
-        get { return obj.GetComponent<RectTransform>().localScale; }
-        set { obj.GetComponent<RectTransform>().localScale = value; }
-    }
     public Color Color
     {
         get { return obj.GetComponent<Image>().color; }
@@ -80,9 +75,14 @@ public class PredictObject : MonoBehaviour
     /* FaceObj を生成する */
     private void GenerateObj(BaseCharacter bc)
     {
-        obj = Instantiate(bc.FaceObj);
-        obj.transform.SetParent(bc.FaceObj.transform.parent);
-        LocalScale = bc.FaceObjLocalScale;
+        if (bc.ctbFaceObj == null)
+        {
+            Debug.LogError("※ベースキャラクターの ctbFaceObj が null です");
+            return;
+        }
+
+        obj = Instantiate(bc.ctbFaceObj.faceObj);
+        obj.transform.SetParent(bc.ctbFaceObj.faceObj.transform.parent, false);
         Color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
         Sprite = bc.FaceObjSprite;
     }

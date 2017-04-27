@@ -17,29 +17,30 @@ public class BaseCharacter : MonoBehaviour
 {
     GameObject dObj; // AddComponent を使うためのダミーオブジェクト
 
+    // 敵・味方のフラグを立てておく
+    protected bool isPlayerCharacter = false;
+
     // 画像関連
-    GameObject battleCanvas; // 描画対象となるキャンパス
+    public GameObject battleCanvas; // 描画対象となるキャンパス
     public string faceGraphicPath; // 顔グラのファイルパス
-    public Texture2D faceTexture; // 顔グラのテクスチャ
-    public GameObject FaceObj; // CTB 用の顔グラオブジェクト( Image オブジェクト)
+
     public GameObject StatusObj; // ステータス画面用の顔グラオブジェクト( Image オブジェクト)
-    public GameObject magText; // 魔力値のテキスト表示
 
     // getter setter の定義
     public Vector3 FaceObjLocalScale
     {
-        get { return FaceObj.GetComponent<RectTransform>().localScale; }
-        set { FaceObj.GetComponent<RectTransform>().localScale = value; }
+        get { return ctbFaceObj.faceObj.GetComponent<RectTransform>().localScale; }
+        set { ctbFaceObj.faceObj.GetComponent<RectTransform>().localScale = value; }
     }
     public Sprite FaceObjSprite
     {
-        get { return FaceObj.GetComponent<Image>().sprite; }
-        set { FaceObj.GetComponent<Image>().sprite = value; }
+        get { return ctbFaceObj.faceObj.GetComponent<Image>().sprite; }
+        set { ctbFaceObj.faceObj.GetComponent<Image>().sprite = value; }
     }
     public Vector3 FaceObjLocalPosition
     {
-        get { return FaceObj.GetComponent<RectTransform>().localPosition; }
-        set { FaceObj.GetComponent<RectTransform>().localPosition = value; }
+        get { return ctbFaceObj.faceObj.GetComponent<RectTransform>().localPosition; }
+        set { ctbFaceObj.faceObj.GetComponent<RectTransform>().localPosition = value; }
     }
 
     // キャラクターのステータスなど
@@ -57,6 +58,8 @@ public class BaseCharacter : MonoBehaviour
     public int waitAction; // 待機時間の乱数加算後
     public int element; // キャラクターの属性
     public int stunCount; // スタン時間
+    public bool isknockout; // 戦闘不能フラグ
+    public bool isStun; // スタンフラグ
 
     // CTB 関連
     public int partyId; // パーティ ID
@@ -66,6 +69,10 @@ public class BaseCharacter : MonoBehaviour
 
     // 予測オブジェクト管理
     public PredictObject predictObj;
+
+    // CTB 顔グラオブジェ
+    public CtbFaceObj ctbFaceObj;
+
 
     // ダミーオブジェクトの登録
     public void Init(GameObject canvas)
@@ -93,7 +100,7 @@ public class BaseCharacter : MonoBehaviour
         faceGraphicPath = linebuffer[1]; // 画像パス
         Hp = int.Parse(linebuffer[2]); // 体力
         Atk = int.Parse(linebuffer[3]); // 攻撃力
-        Atk = 100;
+        Atk = 1000;
         Mag = 1; // 魔力値
         knockback = 6; // 吹き飛ばし力
         resistKnockback = UnityEngine.Random.Range(0, 5); // 吹き飛び耐性
@@ -101,16 +108,18 @@ public class BaseCharacter : MonoBehaviour
         magWaitBase = 2 + 3 * partyId; // 詠唱後の待機時間
         SetWaitTime();
 
-        // テクスチャ読込
-        faceTexture = Utility.MyGetTexture(faceGraphicPath);
-
         // CTB 値を適当に初期化しておく
         ctbNum = (int)UnityEngine.Random.Range(3, 10);
         isMagic = false;
         isWaitUnison = false;
+        isknockout = false;
+        isStun = false;
+
+        // 画像オブジェクトの定義など
+        MakeCharacterGraphic();
     }
 
-    // ウェイトに乱数補正をかける(初期化時、行動後呼出)
+    // ウェイトに乱数補正をかける(初期化時・行動後に呼出)
     public void SetWaitTime()
     {
         magWait = magWaitBase + UnityEngine.Random.Range(-1, 1);
@@ -126,71 +135,39 @@ public class BaseCharacter : MonoBehaviour
     // 顔グラ(CTB)のオブジェクトをインスタンス化する
     // TODO: StatusObj は BaseCharacter で扱わない
     // TODO: もっと細かく分ける
-    public void MakeCharacterGraphic(int statusObjY)
+    public void MakeCharacterGraphic()
     {
-        // Image オブジェクト生成
-        string FilePath = "Prefabs\\Battle\\ImageBase";
-        // 顔グラオブジェクトの生成
-        FaceObj = (GameObject)Instantiate(Resources.Load(FilePath),
-                            new Vector3(0, 0, 0),
-                            Quaternion.identity);
-        // 作成した Image オブジェクトにテクスチャを貼り付ける
-        FaceObj.GetComponent<Image>().sprite =
-            Sprite.Create(faceTexture,
-            new Rect(0, 0, faceTexture.width, faceTexture.height),
-            Vector2.zero);
-        // Canvas を親オブジェクトに設定
-        FaceObj.transform.SetParent(battleCanvas.transform, false);
-        // サイズ設定
-        FaceObj.GetComponent<RectTransform>().sizeDelta =
-            new Vector2(ConstantValue.BATTLE_FACE_SIZE, ConstantValue.BATTLE_FACE_SIZE);
-        // 顔グラのをCTBに応じた位置に表示
-        SetFaceObj(ConstantValue.BATTLE_PLAYERFACE_OFFSETY, 1);
+        // CTB 顔グラオブジェの追加
+        ctbFaceObj = dObj.AddComponent<CtbFaceObj>();
+        ctbFaceObj.Init(this); // 初期化(3オブジェクトインスタンス化)
+        ctbFaceObj.SetPosY( isPlayerCharacter, partyId); // Y座標セット
 
-        // ステータスオブジェクトの生成
-        MakeStatusObj(statusObjY);
-
-        // 魔力表示テキスト生成
-        magText = MakeMagTextObj();
-
+        /*
+         * ステータスオブジェクトの生成(CTB 顔グラオブジェ生成後)
+         */
         // 予測オブジェクトの追加
         predictObj = dObj.AddComponent<PredictObject>();
         predictObj.Init(this);
+        // ステータスオブジェクトの生成(CTB 顔グラオブジェ生成後)
+        int statusObjY = BCV.STATUS_ENEMY_Y;
+        if (isPlayerCharacter) statusObjY = BCV.STATUS_PLAYER_Y;
+        MakeStatusObj(statusObjY);
     } // --- MakeCharacterGraphic()
-
-    // ctbNum に従った位置に顔グラフィック(CTB)を表示する
-    public void SetFaceObj(int OffsetY, int vy)
-    {
-        // 0,-1,1のいずれかのパラメータに正規化
-        vy /= Mathf.Abs(vy);
-
-        // 座標の設定 Canvas(x,y)
-        FaceObj.transform.localPosition = new Vector3(
-            BCV.VX_PER_CTBNUM * ctbNum + ConstantValue.BATTLE_FACE_OFFSETX,
-            vy * partyId * ConstantValue.BATTLE_FACE_VY + OffsetY,
-            0);
-    } // --- SetFaceObj( int OffsetY, int vy  )
 
     // HP‣顔グラフィックの表示
     public void MakeStatusObj(int Y)
     {
         // Image オブジェクト生成
-        string FilePath = "Prefabs\\Battle\\Status";
-        // ステータスオブジェクトの生成
-        StatusObj = (GameObject)Instantiate(Resources.Load(FilePath),
-                            new Vector3(0, 0, 0),
-                            Quaternion.identity);
-        // Canvas を親オブジェクトに設定
-        StatusObj.transform.SetParent(battleCanvas.transform, false);
+        StatusObj = Utility.MyInstantiate(
+            BCV.STATUSOBJ_PREFAB,
+            battleCanvas);
         // 座標指定
         StatusObj.transform.localPosition = new Vector3(
-            partyId * ConstantValue.BATTLE_STATUS_VX + ConstantValue.BATTLE_STATUS_OFFSETX,
-            Y,
-            0);
+            partyId * BCV.STATUS_VX + BCV.STATUS_LEFT_END, Y, 0);
         // 画像を貼る(画像のアドレス)
         GameObject img = StatusObj.transform.FindChild("FaceGra").gameObject;
         img.GetComponent<Image>().sprite =
-                        FaceObj.GetComponent<Image>().sprite;
+                        ctbFaceObj.faceObj.GetComponent<Image>().sprite;
     } //---MakeStatusObj()
     public void SetStatusObj()
     {
@@ -203,28 +180,10 @@ public class BaseCharacter : MonoBehaviour
         text.GetComponent<Text>().text = "" + Hp;
     } // ---UpdateHp()
 
-    // 魔力表示テキストオブジェクトの生成
-    // Set はCTB顔グラと同タイミング
-    public GameObject MakeMagTextObj()
-    {
-        string FilePath = "Prefabs\\Battle\\MagText";
-        GameObject magObj = (GameObject)Instantiate(Resources.Load(FilePath),
-                            new Vector3(12, -12, 0),
-                            Quaternion.identity);
-        magObj.transform.SetParent(FaceObj.transform, false);
-        magObj.GetComponent<Text>().text = "" + Mag;
-        return magObj;
-    }
-
-
-
-
     /*
-     * ===========================================================
-     *  攻撃関係の処理
-     * ===========================================================
+     * 攻撃演出処理
+     * ( この関数群を DrawBattleGraphic で利用する )
      */
-    // 攻撃用の演出
     protected IEnumerator DrawBattleGraphic(BaseCharacter[] cd, ComboManager cm)
     {
         // 攻撃者の画像を貼り付ける
@@ -256,21 +215,13 @@ public class BaseCharacter : MonoBehaviour
         // Image オブジェクト生成
         string FilePath = "Prefabs\\Battle\\ImageBase";
         // 顔グラオブジェクトの生成
-        GameObject AttackChara = (GameObject)Instantiate(Resources.Load(FilePath),
-                            new Vector3(0, 0, 0),
-                            Quaternion.identity);
-        // 作成した Image オブジェクトにテクスチャを貼り付ける
-        AttackChara.GetComponent<Image>().sprite =
-            Sprite.Create(faceTexture,
-            new Rect(0, 0, faceTexture.width, faceTexture.height),
-            Vector2.zero);
-        // Canvas を親オブジェクトに設定
-        AttackChara.transform.SetParent(battleCanvas.transform, false);
+        GameObject atkChara = 
+            Utility.MyInstantiate(FilePath, battleCanvas, faceGraphicPath);
         // サイズ設定
-        AttackChara.transform.localScale =
+        atkChara.transform.localScale =
             new Vector2(ConstantValue.BATTLE_ATTACKFACE_SIZE, ConstantValue.BATTLE_ATTACKFACE_SIZE);
 
-        return AttackChara;
+        return atkChara;
     }
     private GameObject TargetGraphicDraw(BaseCharacter[] cd)
     {
@@ -282,7 +233,7 @@ public class BaseCharacter : MonoBehaviour
                             Quaternion.identity);
         // 作成した Image オブジェクトにテクスチャを貼り付ける
         chara.GetComponent<Image>().sprite =
-            cd[targetId].FaceObj.GetComponent<Image>().sprite;
+            cd[targetId].ctbFaceObj.faceObj.GetComponent<Image>().sprite;
         // Canvas を親オブジェクトに設定
         chara.transform.SetParent(battleCanvas.transform, false);
         // サイズ設定
@@ -299,6 +250,30 @@ public class BaseCharacter : MonoBehaviour
         GameObject effObj = (GameObject)Instantiate(Resources.Load(FilePath));
         effObj.GetComponent<ParticleSystem>().Play();
         return effObj;
+    }
+    protected GameObject DrawDamage(int damage)
+    {
+        // カーソルオブジェクトの表示
+        string FilePath = "Prefabs\\Battle\\AttackText";
+        GameObject damageObj = (GameObject)Instantiate(Resources.Load(FilePath),
+                            new Vector3(0, 0, 0),
+                            Quaternion.identity);
+        damageObj.transform.SetParent(battleCanvas.transform, false);
+        damageObj.GetComponent<Text>().text = "" + damage;
+        return damageObj;
+    }
+    protected GameObject DrawCombo(ComboManager cm)
+    {
+        // カーソルオブジェクトの表示
+        string FilePath = "Prefabs\\Battle\\AttackText";
+        GameObject cmbObj = (GameObject)Instantiate(Resources.Load(FilePath),
+                            new Vector3(0, 0, 0),
+                            Quaternion.identity);
+        cmbObj.transform.SetParent(battleCanvas.transform, false);
+        cmbObj.transform.GetComponent<RectTransform>().localPosition =
+            new Vector3(-400, 280, 0);
+        cmbObj.GetComponent<Text>().text = cm.comboString;
+        return cmbObj;
     }
 
     // ダメージ算出
@@ -328,8 +303,25 @@ public class BaseCharacter : MonoBehaviour
         yield return 0;
     }
 
+    // 戦闘不能処理
+    public void KnockoutEffect()
+    {
+        if( isknockout == false && (Hp <= 0))
+        {
+            // 効果音を鳴らすとか
+            // はじけ飛ぶ演出とか(色々見て気持ちの良い演出を研究)
 
-    // ユニゾン開始処理
+            // 戦闘不能フラグを立てる
+            isknockout = true;
+
+            // フラグを立てたので、顔グラフィックをセット
+            SetFaceObjColorFromStatus(this);
+        }
+    }
+
+    /* ==================================
+     * ユニゾン関連の処理 
+     * ================================== */
     public void StartUnison()
     {
         isWaitUnison = true;
@@ -338,8 +330,8 @@ public class BaseCharacter : MonoBehaviour
         // FaceObj.GetComponent<Image>().material = 
         // (※ 加算描画のシェーダーを貼り付ける )
 
-        FaceObj.GetComponent<Image>().color =
-            new Color(0.5f, 0.5f, 1.0f, 1.0f);
+        // 演出処理
+        SetFaceObjColorFromStatus(this);
     }
     public void EndUnison()
     {
@@ -350,12 +342,12 @@ public class BaseCharacter : MonoBehaviour
         cb.isWaitUnison = false;
 
         // 演出処理
-        if (!isMagic)
-            cb.FaceObj.GetComponent<Image>().color
-                 = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        SetFaceObjColorFromStatus(this);
     }
 
-    // 詠唱開始処理
+    /* ==================================
+     * 詠唱関連の処理 
+     * ================================== */
     public void StartMagic()
     {
         // 平均値 = 自分自身の値
@@ -368,40 +360,19 @@ public class BaseCharacter : MonoBehaviour
         // 詠唱開始
         isMagic = true;
         Mag += 2;
-        magText.GetComponent<Text>().text = "" + Mag;
+        ctbFaceObj.magText.GetComponent<Text>().text = "" + Mag;
 
         // ウェイト時間に乱数補正をかける
         ctbNum = aveWaitMagic;
         SetWaitTime();
 
         // 演出処理
-        FaceObj.GetComponent<Image>().color
-            = new Color(1.6f, 0.6f, 0.6f, 1.0f);
+        SetFaceObjColorFromStatus(this);
     }
-
-    // スタン処理起動
-    public void StartStun(int stunCtbNum)
-    {
-        stunCount = stunCtbNum;
-
-        // 演出処理
-        FaceObj.GetComponent<Image>().color
-            = new Color(0.3f, 0.3f, 0.3f, 1.0f);
-    }
-
-    // スタン処理終了
-    public void EndStun()
-    {
-        // 演出処理
-        FaceObj.GetComponent<Image>().color
-            = new Color(1.0f, 1.9f, 1.0f, 1.0f);
-    }
-
     public void EndMagic()
     {
         EndMagic(this);
     }
-
     public void EndMagic(BaseCharacter cb)
     {
         if (cb.isMagic)
@@ -409,15 +380,33 @@ public class BaseCharacter : MonoBehaviour
             // 詠唱解除
             cb.isMagic = false;
             cb.Mag -= 2;
-            cb.magText.GetComponent<Text>().text = "" + Mag;
+            cb.ctbFaceObj.magText.GetComponent<Text>().text = "" + Mag;
 
             // 演出処理
-            cb.FaceObj.GetComponent<Image>().color
-                = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+            SetFaceObjColorFromStatus(cb);
         }
     }
 
+    /* ==================================
+     * スタン関連の処理 
+     * ================================== */
+    public void StartStun(int stunCtbNum)
+    {
+        stunCount = stunCtbNum;
+        isStun = true;
+
+        // 演出処理
+        SetFaceObjColorFromStatus(this);
+    }
+    public void EndStun()
+    {
+        // 演出処理
+        isStun = false;
+        SetFaceObjColorFromStatus(this);
+    }
+
     // 行動終了後の処理
+    // ( 各キャラクタのプレイアクションで呼ばれてる )
     protected void AfterAction()
     {
         // 個々のキャラクターでできる終了処理
@@ -429,47 +418,27 @@ public class BaseCharacter : MonoBehaviour
         SetWaitTime();
     }
 
-    // ダメージ表示
-    protected GameObject DrawDamage(int damage)
-    {
-        // カーソルオブジェクトの表示
-        string FilePath = "Prefabs\\Battle\\AttackText";
-        GameObject damageObj = (GameObject)Instantiate(Resources.Load(FilePath),
-                            new Vector3(0, 0, 0),
-                            Quaternion.identity);
-        damageObj.transform.SetParent(battleCanvas.transform, false);
-        damageObj.GetComponent<Text>().text = "" + damage;
-        return damageObj;
-    }
 
-    // combo表示
-    protected GameObject DrawCombo(ComboManager cm)
-    {
-        // カーソルオブジェクトの表示
-        string FilePath = "Prefabs\\Battle\\AttackText";
-        GameObject cmbObj = (GameObject)Instantiate(Resources.Load(FilePath),
-                            new Vector3(0, 0, 0),
-                            Quaternion.identity);
-        cmbObj.transform.SetParent(battleCanvas.transform, false);
-        cmbObj.transform.GetComponent<RectTransform>().localPosition =
-            new Vector3(-400, 280, 0);
-        cmbObj.GetComponent<Text>().text = cm.comboString;
-        return cmbObj;
-    }
+    /* ==================================================
+     * CTB 顔グラオブジェへのインタフェース 
+     * ================================================== */
+    // 現在のステータスに応じて顔グラの色を変更
+    public void SetFaceObjColorFromStatus(BaseCharacter bc) {
+        ctbFaceObj.SetFaceObjColorFromStatus(bc); }
+    // ctbNum に従った位置に顔グラを表示
+    public void SetFaceObj() {
+        ctbFaceObj.SetPosX(ctbNum); }
 
-
-    /* 自身の情報をもとに、予測オブジェクトを表示 */
+    /* ==================================================
+     * 予測オブジェクトを表示するインタフェースを提供 
+     * ================================================== */
     // 行動終了後の予測位置を表示
     public void SetPredictFromWaitAction() {
         predictObj.SetFromUntilCtbNum( this, waitAction );  }
     // 行動終了後の予測位置を表示(詠唱)
-    public void SetPredictFromMagWait()
-    {
-        predictObj.SetFromUntilCtbNum(this, magWait);
-    }
-    // 行動終了後の予測位置を表示(数値から )
-    public void SetPredictFromCtbNum( int ctbNum )
-    {
-        predictObj.SetFromUntilCtbNum(this, ctbNum);
-    }
+    public void SetPredictFromMagWait() {
+        predictObj.SetFromUntilCtbNum(this, magWait); }
+    // 行動終了後の予測位置を表示(数値から)
+    public void SetPredictFromCtbNum( int ctbNum ) {
+        predictObj.SetFromUntilCtbNum(this, ctbNum); }
 }
