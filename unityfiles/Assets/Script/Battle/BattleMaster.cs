@@ -25,7 +25,7 @@ using UnityEngine.UI;
 //        ★グラフィック/魔力レベル/属性を1つの塊として扱うべき
 //    　　読み込みこれから
 //　 定数・グローバル変数の管理方法
-//　 リザルト画面
+// ★リザルト画面
 
 
 enum Command { Attack, Unison, Magic }
@@ -175,6 +175,7 @@ public class BattleMaster : MonoBehaviour
         yield return BattleResult.ResultFadeout(canvas);
 
         /* 戦闘が終わったので元のマップに返す */
+        // TODO: Utility.MoveSceneを使った処理に書き直す
         SceneManager.LoadScene("TES");
     }
 

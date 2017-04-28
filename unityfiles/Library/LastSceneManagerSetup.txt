@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Map1.unity
+- path: Assets/TES.unity
   isLoaded: 1
   isActive: 1
