@@ -22,7 +22,7 @@ using UnityEngine.UI;
 //　 ユニゾン追撃処理
 // ★キャラクターの属性の定義・表示
 //    ┗  ★顔グラフィック周りの表示方法変更
-//        ★グラフィック・魔力レベル・属性を1つの塊として扱うべき
+//        ★グラフィック/魔力レベル/属性を1つの塊として扱うべき
 //    　　読み込みこれから
 //　 定数・グローバル変数の管理方法
 //　 リザルト画面
@@ -493,15 +493,15 @@ public class BattleMaster : MonoBehaviour
             Vector2.zero);
         cursorObj.transform.SetParent(canvas.transform, false);
         cursorObj.GetComponent<RectTransform>().sizeDelta =
-            new Vector2(1200, ConstantValue.BATTLE_FACE_SIZE);
+            new Vector2(1200, BCV.FACE_SIZE);
         cursorObj.GetComponent<Image>().color
             = new Color(1.0f, 1.0f, 1.0f, 0.5f);
         return cursorObj;
     } // ---MakeCursorObj
     private void SetCursorObj(int nowSelect, GameObject cursorObj)
     {
-        int posY = ConstantValue.BATTLE_ENEMYFACE_OFFSETY;
-        posY += -1 * nowSelect * ConstantValue.BATTLE_FACE_VY;
+        int posY = BCV.CTB_ENEMY_UPPER;
+        posY += -1 * nowSelect * BCV.CTB_FACE_VY;
         cursorObj.transform.localPosition = new Vector3(
             0,
             posY,
@@ -690,43 +690,55 @@ public class BattleMaster : MonoBehaviour
     IEnumerator CtbMove()
     {
         // 1フレームあたりに動かす移動量を算出
-        Vector3 movePos = new Vector3(-BCV.VX_PER_CTBNUM , 0, 0);
+        Vector3 movePos = new Vector3(-BCV.VX_PER_CTBNUM, 0, 0);
         movePos /= BCV.FRAME_PER_CTB;
-        Vector3 movePosTrue;
         // 一定フレームをかけて移動演出を行う
         for (int j = 0; j < BCV.FRAME_PER_CTB; j++)
         {
-            movePosTrue = movePos * 60 * Time.deltaTime;
-            for (int i = 0; i <cd.Length; i++)
+            for (int i = 0; i < cd.Length; i++)
             {
-                if( !cd[i].isWaitUnison && (cd[i].stunCount == 0) && (cd[i].Hp != 0) )
-                    cd[i].ctbFaceObj.faceObj.transform.localPosition += movePosTrue;
+                if (!cd[i].isWaitUnison && (cd[i].stunCount == 0) && (cd[i].Hp != 0))
+                {
+                    cd[i].ctbFaceObj.faceObj.transform.localPosition += movePos;
+                }
+                if (cd[i].stunCount != 0)
+                {
+                    cd[i].MovePredictTowardX(movePos.x);
+                }
             }
-            for (int i = 0; i <enemyCd.Length; i++)
+            for (int i = 0; i < enemyCd.Length; i++)
             {
-                if ( !enemyCd[i].isWaitUnison && ( enemyCd[i].stunCount == 0) && (enemyCd[i].Hp != 0))
-                    enemyCd[i].ctbFaceObj.faceObj.transform.localPosition += movePosTrue;
+                if (!enemyCd[i].isWaitUnison && (enemyCd[i].stunCount == 0) && (enemyCd[i].Hp != 0))
+                {
+                    enemyCd[i].ctbFaceObj.faceObj.transform.localPosition += movePos;
+                }
+                if (enemyCd[i].stunCount != 0)
+                {
+                    enemyCd[i].MovePredictTowardX(movePos.x);
+                }
+                yield return 0;
             }
-            yield return 0;
         }
         // 移動後に再描画
         DrawCharacterData();
         yield return 0;
-    } // --- CtbMove()
+    }// --- CtbMove()
 
     // キャラクター情報の描画を更新
     private void DrawCharacterData()
     {
         // CTB に応じた位置に再描画( CTB 顔グラ )
         // HPの更新
-        for (int i = 0; i < ConstantValue.playerNum; i++)
+        for (int i = 0; i < cd.Length; i++)
         {
             cd[i].SetFaceObj();
+            cd[i].SetPredictFromStun();
             cd[i].SetStatusObj();
         }
-        for (int i = 0; i < ConstantValue.enemyNum; i++)
+        for (int i = 0; i < enemyCd.Length; i++)
         {
             enemyCd[i].SetFaceObj();
+            enemyCd[i].SetPredictFromStun();
             enemyCd[i].SetStatusObj();
         }
 

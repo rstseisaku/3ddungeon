@@ -11,11 +11,12 @@ public class BCV
 {
     // CTB 関連
     public const int VX_PER_CTBNUM = 48; // CTB1数値当たりずらすX座標
-    public const int FRAME_PER_CTB = 5; // CTB1数値あたりのウェイト
+    public const int FRAME_PER_CTB = 10; // CTB1数値あたりのウェイト
     public const int FACE_SIZE = 72; // 顔グラのサイズ設定
     public const int CTB_LEFTEND_POS = -504; // CTB予測の左端
     public const int CTB_ENEMY_UPPER = -50; // 敵の CTB 顔グラのY座標をどの程度ずらすか
     public const int CTB_PLAYER_BOTTOM = 50; // 味方の CTB 顔グラのY座標をどの程度ずらすか
+    public const int CTB_FACE_VY = 45; // CTB 顔グラの縦方向の変位値
 
     public const int PLAYER_MAX = 5; // (6以上にするのは現実的じゃない)
 
