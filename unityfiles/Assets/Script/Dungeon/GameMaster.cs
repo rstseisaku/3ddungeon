@@ -15,7 +15,7 @@ public class GameMaster : MonoBehaviour {
 
     //エンカウント管理
     private int encount;
-    int randomencount = 0;
+    int randomencount = 9999999;
     
     private static bool firsttime = true;
 
@@ -61,7 +61,7 @@ public class GameMaster : MonoBehaviour {
                 if (map.isMoveable( (int)nextpos.x, (int)nextpos.y) )
                 {
                     yield return MyMove();
-                    Encounter();
+                    yield return Encounter();
                     continue;
                 }
             }
@@ -211,13 +211,12 @@ public class GameMaster : MonoBehaviour {
         Map.playerobject.transform.localEulerAngles = new Vector3(0,Map.direction,0);
     }
 
-    private void Encounter()
+    private IEnumerator Encounter()
     {
         encount += (int)( Random.Range( 0f, 1.0f ) * randomencount );
-        if( encount > 100 )
+        if ( encount > 100 )
         {
-            SceneManager.LoadScene("BattleScene");
-
+            yield return Utility.MoveScene("BattleScene");
             Debug.Log("met");
             encount = 0;
         }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Utility : MonoBehaviour
@@ -68,6 +69,24 @@ public class Utility : MonoBehaviour
         RectTransform rect = obj.GetComponent<RectTransform>();
         if (rect != null) rect.sizeDelta = vec;
         return obj;
+    }
+
+
+    public static IEnumerator MoveScene( string sceneName )
+    {
+        // トラジション演出
+        GameObject canvas = GameObject.Find("FadeCanvas");
+        GameObject obj = MyInstantiate("Prefabs\\Fade\\Fadeout2",canvas);
+        obj.GetComponent<FadeoutScript>().addNum = ( 1.0f / 60.0f );
+        obj.name = "Fade2";
+        yield return Wait(75);
+
+        // 移動
+        SceneManager.LoadScene( sceneName );
+
+
+        // トラジション終了
+        yield return 0;
     }
 
 }

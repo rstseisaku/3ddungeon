@@ -115,6 +115,10 @@ public class BaseCharacter : MonoBehaviour
         isknockout = false;
         isStun = false;
 
+        // Debug
+        isStun = true;
+        stunCount = 7;
+
         // 画像オブジェクトの定義など
         MakeCharacterGraphic();
     }
@@ -403,6 +407,7 @@ public class BaseCharacter : MonoBehaviour
         // 演出処理
         isStun = false;
         SetFaceObjColorFromStatus(this);
+        SetPredictInactive();
     }
 
     // 行動終了後の処理
@@ -434,11 +439,20 @@ public class BaseCharacter : MonoBehaviour
      * ================================================== */
     // 行動終了後の予測位置を表示
     public void SetPredictFromWaitAction() {
-        predictObj.SetFromUntilCtbNum( this, waitAction );  }
+        predictObj.SetFromNum( this, waitAction );  }
     // 行動終了後の予測位置を表示(詠唱)
     public void SetPredictFromMagWait() {
-        predictObj.SetFromUntilCtbNum(this, magWait); }
+        predictObj.SetFromNum(this, magWait); }
     // 行動終了後の予測位置を表示(数値から)
     public void SetPredictFromCtbNum( int ctbNum ) {
-        predictObj.SetFromUntilCtbNum(this, ctbNum); }
+        predictObj.SetFromNum(this, ctbNum); }
+    // 復帰時間を予測(スタン)
+    public void SetPredictFromStun() {
+        if (isStun) predictObj.SetFromNum(this, stunCount); }
+    // X方向への移動
+    public void MovePredictTowardX(float vx) {
+        predictObj.MoveTowardX(vx); }
+    // 非表示に
+    public void SetPredictInactive() {
+        predictObj.SetInactive();}
 }

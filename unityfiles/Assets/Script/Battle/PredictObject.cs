@@ -8,6 +8,11 @@ using UnityEngine.UI;
 /*
  * 攻撃時の予測表示を管理するクラス
  */
+// ★やる
+//  状態を投げ込み、表示するかどうかはこちらで判断する
+//   状態⇒
+//　　　スタン
+//　 　攻撃対象状態
 public class PredictObject : MonoBehaviour
 {
     // オブジェクト本体
@@ -45,16 +50,22 @@ public class PredictObject : MonoBehaviour
         int blowFrame = sumKnockback - targetChara.resistKnockback;
         if (blowFrame < 0) blowFrame = 0;
         // 求めた吹飛び量をもとに予測オブジェクトを表示
-        SetFromUntilCtbNum(targetChara, blowFrame);
+        SetFromNum(targetChara, blowFrame);
     }
 
     /* 行動できるまでのフレームを元に移動 */
-    public void SetFromUntilCtbNum(BaseCharacter actionChara, int untilFrame )
+    public void SetFromNum(BaseCharacter actionChara, int untilFrame )
     {
         // 座標を更新し、オブジェクトをアクティブに
         LocalPosition = actionChara.FaceObjLocalPosition;
         LocalPosition += new Vector3( untilFrame * BCV.VX_PER_CTBNUM, 0, 0);
         obj.SetActive(true);
+    }
+
+    /* 予測オブジェクト移動 */
+    public void MoveTowardX( float vx )
+    {
+        LocalPosition += new Vector3( vx, 0, 0);
     }
 
     /* 予測オブジェクトを全て非ｱｸﾃｨﾌﾞに */
@@ -64,6 +75,12 @@ public class PredictObject : MonoBehaviour
             pChara[i].predictObj.obj.GetComponent<Transform>().gameObject.SetActive(false);
         for (int i = 0; eChara != null && i < eChara.Length; i++)
             eChara[i].predictObj.obj.GetComponent<Transform>().gameObject.SetActive(false);
+    }
+
+    /* 予測オブジェクトを非ｱｸﾃｨﾌﾞに */
+    public void SetInactive()
+    {
+        obj.GetComponent<Transform>().gameObject.SetActive(false);
     }
 
 

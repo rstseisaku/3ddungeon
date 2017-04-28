@@ -5,33 +5,39 @@ using UnityEngine.UI;
 
 public class TEST : MonoBehaviour {
 
-    public float time = 0.1f;
+    public float fill = 0;
 
-    Image transition;
-    float rate;
-    float temp = 0;
+    Image fuck;
 
     // Use this for initialization
     void Start () {
-        transition = GetComponent<Image>();
-        rate = 1.0f / (time * 60);
+        fuck = GetComponent<Image>();
+        fuck.material.EnableKeyword("_Cutoff");
+        fuck.material.EnableKeyword("_Blend");
         //fuck.material.shader = Shader.Find("Transition");
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (temp < 1)
+        if (fill < 1)
         {
-            temp += rate;
-            if (transition.name == "Image")
+            fill += 0.010f;
+            if (fuck.name == "Image")
             {
-                transition.material.EnableKeyword("_Cutoff");
-                transition.material.SetFloat("_Cutoff", temp);
+                fuck.material.SetFloat("_Cutoff", fill);
             }
-            if (transition.name == "Image2")
+            if (fuck.name == "FadeoutObj" || fuck.name == "Image2")
             {
-                transition.fillAmount = temp;
+                fuck.fillAmount = fill;
+            }
+            if (fuck.name == "Image3")
+            {
+                fuck.material.SetFloat("_Blend", fill);
+            }
+            if (fuck.name == "ImageFuck" || fuck.name == "FuckFuck")
+            {
+                fuck.material.SetFloat("_Blend", fill);
             }
         }
     }
