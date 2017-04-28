@@ -15,7 +15,7 @@ public class GameMaster : MonoBehaviour {
 
     //エンカウント管理
     private int encount;
-    int randomencount = 50;
+    int randomencount = 0;
     
     private static bool firsttime = true;
 
