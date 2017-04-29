@@ -71,22 +71,35 @@ public class Utility : MonoBehaviour
         return obj;
     }
 
-
-    public static IEnumerator MoveScene( string sceneName )
+    /*
+     * "Prefabs\\Fade\\Fadeout2"
+     */
+    public static IEnumerator MoveScene(
+        string sceneName,
+        string FadeObjPath,
+        float frame)
     {
         // トラジション演出
         GameObject canvas = GameObject.Find("FadeCanvas");
-        GameObject obj = MyInstantiate("Prefabs\\Fade\\Fadeout2",canvas);
-        obj.GetComponent<FadeoutScript>().addNum = ( 1.0f / 60.0f );
-        obj.name = "Fade2";
-        yield return Wait(75);
+        if( canvas == null) { Debug.LogError("Canvas: FadeCanvas が見つかりません");  }
+
+        GameObject obj = MyInstantiate( FadeObjPath , canvas);
+        obj.GetComponent<FadeoutScript>().addNum = (1.0f / frame);
+        obj.name = "Fade";
+        yield return Wait( (int)frame + 10 );
 
         // 移動
-        SceneManager.LoadScene( sceneName );
+        SceneManager.LoadScene(sceneName);
 
 
         // トラジション終了
         yield return 0;
     }
 
+    public static IEnumerator MoveScene( string sceneName )
+    {
+        yield return MoveScene(sceneName, "Prefabs\\Fade\\Fadeout2", 60);
+    }
+
 }
+ 

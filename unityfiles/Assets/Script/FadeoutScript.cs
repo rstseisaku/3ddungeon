@@ -17,6 +17,10 @@ public class FadeoutScript : MonoBehaviour
         img = GetComponent<Image>();
         img.material.EnableKeyword("_Cutoff");
         img.material.EnableKeyword("_Blend");
+
+        /* ない場合はスルーされる */
+        img.material.SetFloat("_Blend", 0);
+        img.material.SetFloat("_Cutoff",0);
     }
 
     // Update is called once per frame
@@ -28,9 +32,6 @@ public class FadeoutScript : MonoBehaviour
             if (img.name == "Fade")
             {
                 img.fillAmount = fill;
-            }
-            if (img.name == "Fade2")
-            {
                 img.material.SetFloat("_Blend", fill);
             }
         }
