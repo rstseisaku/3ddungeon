@@ -1,8 +1,11 @@
-﻿Shader "Custom/TransitionShader" {
+﻿Shader "Custom/BWout" {
 	Properties{
-		[HideInInspector] _MainTex("Base (RGB) Trans (A)", 2D) = "white" {}
-		_BGTex("BGTexture", 2D) = "white" {}
+		[HideInInspector] 
+		_MainTex("Base (RGB) Trans (A)", 2D) = "white" {}
+		_Rule("Rule", 2D) = "white" {}
 		_Cutoff("Cutoff", Range(0,1)) = 0.5
+		_Blackout("Blackout", Range(0,0.99)) = 0
+		_Whiteout("Whiteout", Range(0,0.99)) = 0
 	}
 		SubShader{
 			Tags{ "RenderType" = "Opaque" }
@@ -28,11 +31,13 @@
 
 		sampler2D _MainTex;
 		float4 _MainTex_ST;
-		sampler2D _BGTex;
+		sampler2D _Rule;
 		float _Clip;
 		float4 _SrcCol;
 		float4 _DstCol;
 		float _Cutoff;
+		float _Blackout;
+		float _Whiteout;
 
 		v2f vert(appdata v)
 		{
@@ -44,15 +49,16 @@
 
 		fixed4 frag(v2f i) : SV_Target
 		{
-			float4 mask = tex2D(_MainTex, i.uv); // 表示したい画像
-			float4 bg = tex2D(_BGTex, i.uv); // トラジション画像
+			float4 main = tex2D(_MainTex, i.uv); // 表示したい画像
+			float4 rule = tex2D(_Rule, i.uv); // トラジション画像
 			//float4 col = lerp(mask, bg, _Blend); // 画像合成( A ⇒ B に移ろう)
 			//return col;
-			if (bg.a < _Cutoff)
-				discard;
-				//mask.rgb *= 0.2;
-
-			return mask;
+			if (rule.a < _Cutoff) 
+			{
+				main.rgb *= (1 - _Blackout);
+				main.rgb /= (1 - _Whiteout);
+			}
+			return main;
 		}
 		ENDCG
 		}
