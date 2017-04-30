@@ -33,6 +33,13 @@ public class SelectTarget : MonoBehaviour {
         }
     }
 
+    public void SetEnableButtonFromKnockout( BaseCharacter[] enemyBc)
+    {
+        for (int i = 0; i < enemyBc.Length; i++)
+            buttonObj[i].GetComponent<Button>().interactable =
+                !enemyBc[i].isknockout;
+    }
+
     public void MyOnClick( Button obj )
     {
         if( obj.name == "Return")

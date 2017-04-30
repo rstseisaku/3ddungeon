@@ -11,7 +11,7 @@ enum Element { Fire, Water, Thunder, Light, Dark }
 
 
 /*
- * キャラクターの情報を管理する基底クラス
+ * 戦闘中に利用するキャラクターの情報を管理する基底クラス
  */
 public class BaseCharacter : MonoBehaviour
 {
@@ -22,8 +22,6 @@ public class BaseCharacter : MonoBehaviour
 
     // 画像関連
     public GameObject battleCanvas; // 描画対象となるキャンパス
-    public string faceGraphicPath; // 顔グラのファイルパス
-
     public GameObject StatusObj; // ステータス画面用の顔グラオブジェクト( Image オブジェクト)
 
     // getter setter の定義
@@ -43,20 +41,23 @@ public class BaseCharacter : MonoBehaviour
         set { ctbFaceObj.faceObj.GetComponent<RectTransform>().localPosition = value; }
     }
 
-    // キャラクターのステータスなど
+    // キャラクターのステータスなど( 戦闘時以外にも利用 )
     public string charaName; // キャラの名前
+    public string faceGraphicPath; // 顔グラのファイルパス
     public int Hp; // 体力( 雑魚戦用 )
     public int Atk; // 攻撃力
     public int Mag; // 魔力値
     public int knockback; // 吹き飛ばし力
     public int resistKnockback; // 吹き飛ばし耐性
+    public int magWaitBase; // 詠唱待機時間のベース値
+    public int waitActionBase; // 待機時間のベース値
+    public int element; // キャラクターの属性
+
+    // 戦闘中専用値
     public bool isWaitUnison; // ユニゾン待機中か否か
     public bool isMagic; // 詠唱中か否か
-    public int magWaitBase; // 詠唱待機時間のベース値
     public int magWait; // 詠唱待機時間の乱数加算後
-    public int waitActionBase; // 待機時間のベース値
     public int waitAction; // 待機時間の乱数加算後
-    public int element; // キャラクターの属性
     public int stunCount; // スタン時間
     public bool isknockout; // 戦闘不能フラグ
     public bool isStun; // スタンフラグ

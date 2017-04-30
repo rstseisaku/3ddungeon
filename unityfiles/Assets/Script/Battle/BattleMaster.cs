@@ -26,6 +26,7 @@ using UnityEngine.UI;
 //    　　読み込みこれから
 //　 定数・グローバル変数の管理方法
 // ★リザルト画面
+// ★死体を殴れる修正
 
 
 enum Command { Attack, Unison, Magic }
@@ -414,7 +415,11 @@ public class BattleMaster : MonoBehaviour
         // 味方キャラが行動できないなら処理終了( 敵キャラの値を設定 )
         if (countActionCharacterInfo.x == 0)
         {
-            selectedTarget = UnityEngine.Random.Range(0, cd.Length - 1);
+            for (int i=0;i<10000;i++)
+            {
+                selectedTarget = UnityEngine.Random.Range(0, cd.Length);
+                if (!cd[selectedTarget].isknockout) break;
+            }
             yield break;
         }
 
@@ -443,6 +448,7 @@ public class BattleMaster : MonoBehaviour
                             new Vector3(400, 0, 0),
                             Quaternion.identity);
         tObj.GetComponent<SelectTarget>().SetParameter( enemyCd );
+        tObj.GetComponent<SelectTarget>().SetEnableButtonFromKnockout(enemyCd);
         tObj.transform.SetParent(canvas.transform, false);
 
         // プレイヤの予測オブジェクトを表示
