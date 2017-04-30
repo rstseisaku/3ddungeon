@@ -80,8 +80,20 @@ public class Utility : MonoBehaviour
         float frame)
     {
         // トラジション演出
-        GameObject canvas = GameObject.Find("FadeCanvas");
-        if( canvas == null) { Debug.LogError("Canvas: FadeCanvas が見つかりません");  }
+
+        // 描画先キャンバスを生成
+        GameObject canvas = new GameObject("Canvas");
+        canvas.name = "FadeCanvas";
+
+        canvas.AddComponent<GraphicRaycaster>();
+
+        CanvasScaler scaler = canvas.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1280, 720);
+
+        Canvas c = canvas.AddComponent<Canvas>();
+        c.renderMode = RenderMode.ScreenSpaceOverlay;
+
 
         GameObject obj = MyInstantiate( FadeObjPath , canvas);
         obj.GetComponent<FadeoutScript>().addNum = (1.0f / frame);

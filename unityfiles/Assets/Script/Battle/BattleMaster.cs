@@ -38,13 +38,9 @@ public class BattleMaster : MonoBehaviour
      * 変数宣言
      * =========================================
      */
-    // new を使わないためのダミーオブジェクト
-    // (new を使うと Warnigが出るので回避する)
-    GameObject dObj;
-
     // 戦闘中利用データ
     private GameObject canvas; // キャンパス(描画先)
-    private int[] Party; // キャラクターの ID を表す配列(添字はPtId)
+    Party mParty; // パーティー情報の管理 
     private PlayerCharacter[] cd; // キャラクターデータの配列
     private EnemyCharacterData[] enemyCd; // 敵キャラクターの配列
 
@@ -67,9 +63,23 @@ public class BattleMaster : MonoBehaviour
     // ( 読み込み処理を呼び出す )
     void Start()
     {
+        /* メインループスタート */
+        StartCoroutine("MyUpdate");
+    } // --- Start()
+
+
+    /*
+     * ================================================
+     * 読み込み処理ここから
+     * ================================================
+     */
+    IEnumerator BattleInit()
+    {
+        // 他オブジェクトの Start より後に起動する 
+        yield return 0;
+
         /* オブジェクト読み込み */
         canvas = GameObject.Find("Canvas"); // Canvas オブジェクトを取得
-        dObj = GameObject.Find("Dummy"); ; // AddComponent を使うためのダミーオブジェクト
 
         /* 味方キャラクターの読み込み */
         LoadPartyInfo(); // パーティー情報の読み込み
@@ -81,44 +91,26 @@ public class BattleMaster : MonoBehaviour
         /* 初期化処理 */
         ComboInit();
         DrawCharacterData();
-
-        /* メインループスタート */
-        StartCoroutine("MyUpdate");
-    } // --- Start()
-
-    /*
-     * ================================================
-     * 読み込み処理ここから
-     * ================================================
-     */
+    }
     // パーティー情報の設定
     private void LoadPartyInfo()
     {
-        // ★本来はどっか別のクラスから読み込んでくる
-        ConstantValue.playerNum = 4; // どっかから取ってくる
-
-        // パーティー情報から、キャラクターID を読み込む。(一時的に設定)
-        Party = new int[ConstantValue.playerNum]; // パーティ配列定義
-        
-        // キャラクターの ID を設定
-        Party[0] = 8;
-        Party[1] = 7;
-        Party[2] = 10;
-        Party[3] = 9;
+        GameObject pObj = GameObject.Find("Party"); ; // パーティーオブジェクトを探す
+        int id = pObj.GetComponent<ManegementParty>().mainPartyId;
+        mParty = pObj.GetComponent<ManegementParty>().partyList[id];
+        cd = new PlayerCharacter[mParty.partyNum]; // キャラクターDBの領域確保
     } // --- LoadPartyInfo()
     // パーティー情報をもとにキャラクターデータを読み込む
     private void LoadPlayerChara()
     {
-        // 味方キャラクターの領域確保
-        cd = new PlayerCharacter[ConstantValue.playerNum]; // キャラクター DB 確保
         for (int i = 0; i < cd.Length; i++)
         {
             // キャラクターデータの領域確保( new は使わない )
-            cd[i] = dObj.AddComponent<PlayerCharacter>();
+            cd[i] = gameObject.AddComponent<PlayerCharacter>();
             cd[i].Init(canvas);
 
             // キャラクターデータをロード
-            cd[i].LoadCharacterData(Party[i], i);
+             cd[i].LoadCharacterData(mParty.partyCharacter[i].GetBattleCharacerStatus() , i);
         }
     } // --- LoadPlayerChara()
     // 敵の情報を読み込む
@@ -129,11 +121,11 @@ public class BattleMaster : MonoBehaviour
         for (int i = 0; i <ConstantValue.enemyNum; i++)
         {
             // キャラクターデータの領域確保( new は使わない )
-            enemyCd[i] = dObj.AddComponent<EnemyCharacterData>(); // キャラクターデータの領域確保
+            enemyCd[i] = gameObject.AddComponent<EnemyCharacterData>(); // キャラクターデータの領域確保
             enemyCd[i].Init(canvas);
 
             // キャラクターデータをロード                                              
-            enemyCd[i].LoadCharacterData(i, i);
+            enemyCd[i].LoadCharacterData(5, i);
         }
     } // --- LoadEnemyChara()
     // コンボ初期化処理
@@ -152,6 +144,11 @@ public class BattleMaster : MonoBehaviour
      //メインループのコルーチン
     IEnumerator MyUpdate()
     {
+        /* 初期化(読み込み処理) */
+        // Startの内部処理にはしない。
+        // (他オブジェクトのStartより後に呼ばれることを保証するべき)
+        yield return BattleInit(); 
+
         /* キー入力を待つ(戦闘開始前に) */
         yield return Utility.WaitKey();
 
@@ -321,7 +318,7 @@ public class BattleMaster : MonoBehaviour
         DestroyObject(enemyLeaderObj);
 
         // 勝敗判定
-        int isPlayerWin = JudgeRamble(enemyCd[enemyLeader].element);
+        int isPlayerWin = JudgeRamble(enemyCd[enemyLeader].cs.element);
 
         // 少ない方にスタン処理＆ダメージ。
         int stunCtbNum = 7; // 仮置
@@ -704,7 +701,7 @@ public class BattleMaster : MonoBehaviour
         {
             for (int i = 0; i < cd.Length; i++)
             {
-                if (!cd[i].isWaitUnison && (cd[i].stunCount == 0) && (cd[i].Hp != 0))
+                if (!cd[i].isWaitUnison && (cd[i].stunCount == 0) && (cd[i].hp != 0))
                 {
                     cd[i].ctbFaceObj.faceObj.transform.localPosition += movePos;
                 }
@@ -715,7 +712,7 @@ public class BattleMaster : MonoBehaviour
             }
             for (int i = 0; i < enemyCd.Length; i++)
             {
-                if (!enemyCd[i].isWaitUnison && (enemyCd[i].stunCount == 0) && (enemyCd[i].Hp != 0))
+                if (!enemyCd[i].isWaitUnison && (enemyCd[i].stunCount == 0) && (enemyCd[i].hp != 0))
                 {
                     enemyCd[i].ctbFaceObj.faceObj.transform.localPosition += movePos;
                 }
@@ -759,7 +756,7 @@ public class BattleMaster : MonoBehaviour
         // それぞれのサイドのMag値の和を求める
         int playerMagSum = OpeCharaList.GetSumMoveableMag(cd);
         int enemyMagSum = OpeCharaList.GetSumMoveableMag(enemyCd);
-        int pEle = cd[selectedLeader].element;
+        int pEle = cd[selectedLeader].cs.element;
 
         // 魔力レベル合計値のよる勝敗判定
         if (playerMagSum < enemyMagSum)

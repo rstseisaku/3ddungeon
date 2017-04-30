@@ -47,7 +47,7 @@ public class PredictObject : MonoBehaviour
     public void SetFromCharacterStatus(BaseCharacter targetChara, int sumKnockback)
     {
         // 吹き飛び量を計算
-        int blowFrame = sumKnockback - targetChara.resistKnockback;
+        int blowFrame = sumKnockback - targetChara.cs.resistKnockback;
         if (blowFrame < 0) blowFrame = 0;
         // 求めた吹飛び量をもとに予測オブジェクトを表示
         SetFromNum(targetChara, blowFrame);

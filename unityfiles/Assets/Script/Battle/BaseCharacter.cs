@@ -41,19 +41,12 @@ public class BaseCharacter : MonoBehaviour
         set { ctbFaceObj.faceObj.GetComponent<RectTransform>().localPosition = value; }
     }
 
-    // キャラクターのステータスなど( 戦闘時以外にも利用 )
-    public string charaName; // キャラの名前
-    public string faceGraphicPath; // 顔グラのファイルパス
-    public int Hp; // 体力( 雑魚戦用 )
-    public int Atk; // 攻撃力
-    public int Mag; // 魔力値
-    public int knockback; // 吹き飛ばし力
-    public int resistKnockback; // 吹き飛ばし耐性
-    public int magWaitBase; // 詠唱待機時間のベース値
-    public int waitActionBase; // 待機時間のベース値
-    public int element; // キャラクターの属性
+    // キャラクターのステータスなど
+    // 戦闘時以外にも利用する値で、戦闘中には書き換わらない
+    public CharacterStatus cs;
 
-    // 戦闘中専用値
+    // 戦闘中利用値
+    public int hp; // HP
     public bool isWaitUnison; // ユニゾン待機中か否か
     public bool isMagic; // 詠唱中か否か
     public int magWait; // 詠唱待機時間の乱数加算後
@@ -86,27 +79,9 @@ public class BaseCharacter : MonoBehaviour
     // FalePath: 設定フォルダの在り処
     //  ┗キャラクターデータ設定フォルダへのパス
     // characterId; キャラクターのID
-    protected void LoadCharacterData(string FilePath, int characterId)
+    protected void LoadCharacterData()
     {
-        // 設定ファイルを読込
-        string[] buffer;
-        buffer = System.IO.File.ReadAllLines(FilePath);
-
-        // linebuffer にキャラクターの情報( characterId 番目の )を格納
-        string[] linebuffer;
-        linebuffer = buffer[characterId].Split(',');
-
-        // ステータス読込
-        charaName = linebuffer[0]; // 名前
-        faceGraphicPath = linebuffer[1]; // 画像パス
-        Hp = int.Parse(linebuffer[2]); // 体力
-        Atk = int.Parse(linebuffer[3]); // 攻撃力
-        Atk = 1000;
-        Mag = 1; // 魔力値
-        knockback = 6; // 吹き飛ばし力
-        resistKnockback = UnityEngine.Random.Range(0, 5); // 吹き飛び耐性
-        waitActionBase = 9; // 行動後の待機時間
-        magWaitBase = 2 + 3 * partyId; // 詠唱後の待機時間
+        // ウェイトのBase値をもとに計算
         SetWaitTime();
 
         // CTB 値を適当に初期化しておく
@@ -115,6 +90,7 @@ public class BaseCharacter : MonoBehaviour
         isWaitUnison = false;
         isknockout = false;
         isStun = false;
+        hp = cs.maxHp;
 
         // Debug
         isStun = true;
@@ -123,12 +99,17 @@ public class BaseCharacter : MonoBehaviour
         // 画像オブジェクトの定義など
         MakeCharacterGraphic();
     }
+    protected void LoadCharacterData(string FilePath, int characterId)
+    {
+        // csの設定をここでやる
+        LoadCharacterData();
+    }
 
     // ウェイトに乱数補正をかける(初期化時・行動後に呼出)
     public void SetWaitTime()
     {
-        magWait = magWaitBase + UnityEngine.Random.Range(-1, 1);
-        waitAction = waitActionBase + UnityEngine.Random.Range(-1, 1);
+        magWait = cs.magWaitBase + UnityEngine.Random.Range(-1, 1);
+        waitAction = cs.waitActionBase + UnityEngine.Random.Range(-1, 1);
     }
 
 
@@ -143,7 +124,7 @@ public class BaseCharacter : MonoBehaviour
     public void MakeCharacterGraphic()
     {
         // CTB 顔グラオブジェの追加
-        ctbFaceObj = dObj.AddComponent<CtbFaceObj>();
+        ctbFaceObj = gameObject.AddComponent<CtbFaceObj>();
         ctbFaceObj.Init(this); // 初期化(3オブジェクトインスタンス化)
         ctbFaceObj.SetPosY( isPlayerCharacter, partyId); // Y座標セット
 
@@ -151,7 +132,7 @@ public class BaseCharacter : MonoBehaviour
          * ステータスオブジェクトの生成(CTB 顔グラオブジェ生成後)
          */
         // 予測オブジェクトの追加
-        predictObj = dObj.AddComponent<PredictObject>();
+        predictObj = gameObject.AddComponent<PredictObject>();
         predictObj.Init(this);
         // ステータスオブジェクトの生成(CTB 顔グラオブジェ生成後)
         int statusObjY = BCV.STATUS_ENEMY_Y;
@@ -182,7 +163,7 @@ public class BaseCharacter : MonoBehaviour
     {
         // HP の更新
         GameObject text = StatusObj.transform.FindChild("HpText").gameObject;
-        text.GetComponent<Text>().text = "" + Hp;
+        text.GetComponent<Text>().text = "" + hp;
     } // ---UpdateHp()
 
     /*
@@ -221,7 +202,7 @@ public class BaseCharacter : MonoBehaviour
         string FilePath = "Prefabs\\Battle\\ImageBase";
         // 顔グラオブジェクトの生成
         GameObject atkChara = 
-            Utility.MyInstantiate(FilePath, battleCanvas, faceGraphicPath);
+            Utility.MyInstantiate(FilePath, battleCanvas, cs.faceGraphicPath);
         // サイズ設定
         atkChara.transform.localScale =
             new Vector2(ConstantValue.BATTLE_ATTACKFACE_SIZE, ConstantValue.BATTLE_ATTACKFACE_SIZE);
@@ -284,7 +265,7 @@ public class BaseCharacter : MonoBehaviour
     // ダメージ算出
     private int CalDamage( ComboManager cm )
     {
-        int damage = Atk;
+        int damage = cs.atk;
         damage = (damage * cm.magnificationDamage) / 100;
         return damage;
     }
@@ -293,11 +274,11 @@ public class BaseCharacter : MonoBehaviour
     protected IEnumerator Attack(BaseCharacter[] cd, ComboManager cm)
     {
         // HPを削る
-        cd[targetId].Hp -= CalDamage(cm);
-        if (cd[targetId].Hp < 0) cd[targetId].Hp = 0;
+        cd[targetId].hp -= CalDamage(cm);
+        if (cd[targetId].hp < 0) cd[targetId].hp = 0;
 
         // 吹き飛ばし
-        int blow = knockback - cd[targetId].resistKnockback;
+        int blow = cs.knockback - cd[targetId].cs.resistKnockback;
         if (blow < 0) blow = 0;
         cd[targetId].ctbNum += blow;
 
@@ -311,7 +292,7 @@ public class BaseCharacter : MonoBehaviour
     // 戦闘不能処理
     public void KnockoutEffect()
     {
-        if( isknockout == false && (Hp <= 0))
+        if( isknockout == false && (hp <= 0))
         {
             // 効果音を鳴らすとか
             // はじけ飛ぶ演出とか(色々見て気持ちの良い演出を研究)
@@ -364,8 +345,8 @@ public class BaseCharacter : MonoBehaviour
     {
         // 詠唱開始
         isMagic = true;
-        Mag += 2;
-        ctbFaceObj.magText.GetComponent<Text>().text = "" + Mag;
+        cs.mag += 2;
+        ctbFaceObj.magText.GetComponent<Text>().text = "" + cs.mag;
 
         // ウェイト時間に乱数補正をかける
         ctbNum = aveWaitMagic;
@@ -384,8 +365,8 @@ public class BaseCharacter : MonoBehaviour
         {
             // 詠唱解除
             cb.isMagic = false;
-            cb.Mag -= 2;
-            cb.ctbFaceObj.magText.GetComponent<Text>().text = "" + Mag;
+            cb.cs.mag -= 2;
+            cb.ctbFaceObj.magText.GetComponent<Text>().text = "" + cs.mag;
 
             // 演出処理
             SetFaceObjColorFromStatus(cb);

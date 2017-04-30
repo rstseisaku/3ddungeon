@@ -8,15 +8,19 @@ using UnityEngine.UI;
 public class PlayerCharacter : BaseCharacter
 {
     // キャラクターのデータ読込(味方)
-    public void LoadCharacterData(int characterId, int pId)
+    public void LoadCharacterData(CharacterStatus _cs, int pId)
     {
         // プレイヤーサイド
         isPlayerCharacter = true;
+        
         // パーティーの何番目にいるのかを設定
         partyId = pId;
+
         // キャラクターデータの読込処理
-        string FilePath = "Assets\\Resources\\CharacterData\\data.csv";
-        LoadCharacterData(FilePath, characterId);        
+        cs = _cs;
+
+        // 戦闘中利用データのセット
+        LoadCharacterData();
     }
 
     // 通常攻撃。(プレイヤーキャラクター)

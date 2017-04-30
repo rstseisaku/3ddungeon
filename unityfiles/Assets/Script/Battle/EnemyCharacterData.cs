@@ -12,8 +12,12 @@ public class EnemyCharacterData : BaseCharacter
     {
         // パーティーIDの設定
         partyId = pId;
+
         // キャラクターデータの読込処理
         string FilePath = "Assets\\Resources\\CharacterData\\enemyData.csv";
+        cs = gameObject.AddComponent<CharacterStatus>();
+        cs.LoadCharacterData(FilePath, characterId);
+
         LoadCharacterData(FilePath, characterId);
     }
 

@@ -10,5 +10,4 @@ public class ConstantValue : MonoBehaviour {
 
     // グローバル変数
     public static int enemyNum;
-    public static int playerNum;
 }

@@ -19,7 +19,7 @@ public class SelectTarget : MonoBehaviour {
         buttonObj[0].transform.SetParent(this.transform);
         buttonObj[0].name = "" + 0;
         buttonObj[0].transform.FindChild("Text").GetComponent<Text>().text =
-             ecd[0].charaName;
+             ecd[0].cs.charaName;
 
         for (int i = 1; i < ecd.Length; i++)
         {
@@ -29,7 +29,7 @@ public class SelectTarget : MonoBehaviour {
                new Vector3(0, -i * 88, 0);
             buttonObj[i].name = "" + i;
             buttonObj[i].transform.FindChild("Text").GetComponent<Text>().text =
-                ecd[i].charaName;
+                ecd[i].cs.charaName;
         }
     }
 

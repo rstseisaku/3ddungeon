@@ -45,7 +45,7 @@ public class CtbFaceObj : MonoBehaviour
         faceObj = Utility.MyInstantiate(
             BCV.FACE_IMAGE_PREFAB,
             bc.battleCanvas,
-            bc.faceGraphicPath,
+            bc.cs.faceGraphicPath,
             new Vector2(BCV.FACE_SIZE, BCV.FACE_SIZE));
 
         // 魔力テキストの生成
@@ -54,7 +54,7 @@ public class CtbFaceObj : MonoBehaviour
             faceObj);
         magText.GetComponent<RectTransform>().localPosition -=
             new Vector3(-12, 12, 0);
-        magText.GetComponent<Text>().text = "" + bc.Mag;
+        magText.GetComponent<Text>().text = "" + bc.cs.mag;
 
         // 属性エレメントの生成
         string iconFilePath = "Images/Icon/icon" + 0;
