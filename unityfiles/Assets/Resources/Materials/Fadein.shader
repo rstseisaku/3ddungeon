@@ -1,12 +1,13 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Custom/UiTransition"
+Shader "Custom/FadeIn"
 {
 	Properties
 	{
-		[HideInInspector] _MainTex("Texture", 2D) = "white" {}
-			_BGTex("BGTexture", 2D) = "white" {}
-			_Blend("Blend", Range(0,1)) = 0.5
+		[HideInInspector]
+		_MainTex("Base (RGB) Trans (A)", 2D) = "white" {}
+		_Rule("Rule", 2D) = "white" {}
+		_Blend("Blend", Range(0,1)) = 0.5
 	}
 		SubShader
 	{
@@ -35,7 +36,7 @@ Shader "Custom/UiTransition"
 
 	sampler2D _MainTex;
 	float4 _MainTex_ST;
-	sampler2D _BGTex;
+	sampler2D _Rule;
 	float _Clip;
 	float4 _SrcCol;
 	float4 _DstCol;
@@ -52,15 +53,9 @@ Shader "Custom/UiTransition"
 	fixed4 frag(v2f i) : SV_Target
 	{
 		float4 mask = tex2D(_MainTex, i.uv); // 表示したい画像
-		float4 bg = tex2D(_BGTex, i.uv); // トラジション画像
-
-		float4 col = mask; // その座標のα値をトラジション画像・Blend値から算出
-
-		// やりたいこと
-		// 最初 ⇒ 黒い部分だけ表示される
-		// だんだんと ⇒ グレー・白い部分も表示される
-		col.a =  1 - ( ( 1 + bg.rgb ) * ( 1 - _Blend ) );
-		return col;
+		float4 bg = tex2D(_Rule, i.uv); // トラジション画像
+		mask.a =  1 - ( ( 1 + bg.rgb ) * ( 1 - _Blend ) );
+		return mask;
 	}
 		ENDCG
 	}

@@ -72,7 +72,7 @@ public class Utility : MonoBehaviour
     }
 
     /*
-     * "Prefabs\\Fade\\Fadeout2"
+     * ここら辺の処理は、書き直す
      */
     public static IEnumerator MoveScene(
         string sceneName,
@@ -96,6 +96,7 @@ public class Utility : MonoBehaviour
         yield return 0;
     }
 
+    // ここら辺の処理は、書き直す
     public static IEnumerator MoveScene( string sceneName )
     {
         yield return MoveScene(sceneName, "Prefabs\\Fade\\Fadeout2", 60);

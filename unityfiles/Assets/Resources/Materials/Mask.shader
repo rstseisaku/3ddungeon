@@ -50,7 +50,8 @@
 		float4 main = tex2D(_MainTex, i.uv); // 表示したい画像
 		float4 rule = tex2D(_Rule, i.uv); // トラジション画像
 		float4 mask = tex2D(_Mask, i.uv);
-		if (rule.a < _Cutoff)
+		// if (rule.a < _Cutoff)
+		if (rule.r < _Cutoff)
 		{
 			main.rgb = lerp(main, mask, _Cutoff);
 		}

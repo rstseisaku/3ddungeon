@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.6.0f3</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -109,16 +107,18 @@
     <Compile Include="Assets\Script\Dungeon\mHPcolor.cs" />
     <Compile Include="Assets\Script\Dungeon\miniMap.cs" />
     <Compile Include="Assets\Script\FadeoutScript.cs" />
-    <Compile Include="Assets\Script\TEST.cs" />
+    <Compile Include="Assets\Script\Transition.cs" />
     <Compile Include="Assets\Script\Utility.cs" />
     <Compile Include="Assets\Script\mInput.cs" />
     <Compile Include="Assets\Test.cs" />
     <Compile Include="Assets\movescene.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Resources\Materials\TransitionShader.shader" />
+    <None Include="Assets\Resources\Materials\BWout.shader" />
+    <None Include="Assets\Resources\Materials\ColorInversion.shader" />
+    <None Include="Assets\Resources\Materials\Fadein.shader" />
+    <None Include="Assets\Resources\Materials\Mask.shader" />
     <None Include="Assets\Resources\Materials\UiTrans.shader" />
-    <None Include="Assets\Resources\Materials\UiTransition.shader" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
     <None Include="Assets\Standard Assets\ParticleSystems\Shaders\PriorityParticleAdd.shader" />
     <None Include="Assets\Standard Assets\ParticleSystems\Shaders\PriorityParticleAddSoft.shader" />

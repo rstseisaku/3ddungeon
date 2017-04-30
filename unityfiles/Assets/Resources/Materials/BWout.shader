@@ -53,11 +53,21 @@
 			float4 rule = tex2D(_Rule, i.uv); // トラジション画像
 			//float4 col = lerp(mask, bg, _Blend); // 画像合成( A ⇒ B に移ろう)
 			//return col;
-			if (rule.a < _Cutoff) 
+
+			/* ルール画像のRGB値をもとにしたい
+			 * ┗ルール画像をグレースケールのやつだけに限定できないかしら…？
+			 * 最悪R値だけをもとにしても良いのかも
+			 */
+			// if ( (( rule.r + rule.g + rule.b)/3) < _Cutoff)
+			if ( rule.r < _Cutoff)
+
+			// 元のやつ
+			// if (rule.a < _Cutoff)
 			{
-				main.rgb *= (1 - _Blackout);
-				main.rgb /= (1 - _Whiteout);
+				 main.rgb *= (1 - _Blackout);
+				 main.rgb /= (1 - _Whiteout);
 			}
+
 			return main;
 		}
 		ENDCG
