@@ -21,11 +21,20 @@ public class Utility : MonoBehaviour
         }
     }
 
-
     // ファイル名からテクスチャを返す
     public static Texture2D MyGetTexture(string FilePath)
     {
         return Resources.Load<Texture2D>(FilePath);
+    }
+    // ファイル名からスプライトを返す
+    public static Sprite MyGetSprite(string FilePath)
+    {
+        Texture2D t = MyGetTexture(FilePath);
+        if( t == null) { Debug.LogError("ファイル "+FilePath+"は見つかりません");  return null; }
+        Sprite sp = Sprite.Create(t,
+                new Rect(0, 0, t.width, t.height),
+                Vector2.zero);
+        return sp;
     }
 
     // ファイル名からオブジェクトを返す
@@ -71,17 +80,10 @@ public class Utility : MonoBehaviour
         return obj;
     }
 
-    /*
-     * ここら辺の処理は、書き直す
-     */
-    public static IEnumerator MoveScene(
-        string sceneName,
-        string FadeObjPath,
-        float frame)
-    {
-        // トラジション演出
 
-        // 描画先キャンバスを生成
+    // キャンパスの生成
+    public static GameObject GenerateCanvas()
+    {
         GameObject canvas = new GameObject("Canvas");
         canvas.name = "FadeCanvas";
 
@@ -91,18 +93,40 @@ public class Utility : MonoBehaviour
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1280, 720);
 
-        Canvas c = canvas.AddComponent<Canvas>();
-        c.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+
+        return canvas;
+    }
 
 
-        GameObject obj = MyInstantiate( FadeObjPath , canvas);
-        obj.GetComponent<FadeoutScript>().addNum = (1.0f / frame);
+    /*
+     * ここら辺の処理は、書き直す
+     */
+    public static IEnumerator MoveScene(
+        string sceneName,
+        string FadeImagePath,
+        float frame)
+    {
+        /*
+         * トラジション演出
+         */
+        // 描画先キャンバスを生成
+        GameObject canvas = GenerateCanvas();
+
+        // トランジションオブジェクト
+        GameObject obj = MyInstantiate(
+            "Prefabs\\Fade\\Trasition", 
+            canvas,
+            FadeImagePath, 
+            new Vector2(1280, 960));
+        obj.GetComponent<Transition>().rule = MyGetTexture("Images\\Transition\\transition_1");
+        obj.GetComponent<Transition>().mode = Transition.TRANSITION_MODE._FADEIN;
+        obj.GetComponent<Transition>().time = ( frame / 60 );
         obj.name = "Fade";
         yield return Wait( (int)frame + 10 );
 
         // 移動
         SceneManager.LoadScene(sceneName);
-
 
         // トラジション終了
         yield return 0;
@@ -111,7 +135,7 @@ public class Utility : MonoBehaviour
     // ここら辺の処理は、書き直す
     public static IEnumerator MoveScene( string sceneName )
     {
-        yield return MoveScene(sceneName, "Prefabs\\Fade\\Fadeout2", 60);
+        yield return MoveScene(sceneName, "Images\\Background\\Background1", 60);
     }
 
 }

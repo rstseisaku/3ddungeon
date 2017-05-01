@@ -40,7 +40,7 @@ public class BattleMaster : MonoBehaviour
      */
     // 戦闘中利用データ
     private GameObject canvas; // キャンパス(描画先)
-    Party mParty; // パーティー情報の管理 
+    Party party; // パーティー情報の管理 
     private PlayerCharacter[] cd; // キャラクターデータの配列
     private EnemyCharacterData[] enemyCd; // 敵キャラクターの配列
 
@@ -96,9 +96,8 @@ public class BattleMaster : MonoBehaviour
     private void LoadPartyInfo()
     {
         GameObject pObj = GameObject.Find("Party"); ; // パーティーオブジェクトを探す
-        int id = pObj.GetComponent<ManegementParty>().mainPartyId;
-        mParty = pObj.GetComponent<ManegementParty>().partyList[id];
-        cd = new PlayerCharacter[mParty.partyNum]; // キャラクターDBの領域確保
+        party = pObj.GetComponent<Party>();
+        cd = new PlayerCharacter[party.partyNum]; // キャラクターDBの領域確保
     } // --- LoadPartyInfo()
     // パーティー情報をもとにキャラクターデータを読み込む
     private void LoadPlayerChara()
@@ -110,7 +109,7 @@ public class BattleMaster : MonoBehaviour
             cd[i].Init(canvas);
 
             // キャラクターデータをロード
-             cd[i].LoadCharacterData(mParty.partyCharacter[i].GetBattleCharacerStatus() , i);
+             cd[i].LoadCharacterData(party.partyCharacter[i].GetBattleCharacerStatus() , i);
         }
     } // --- LoadPlayerChara()
     // 敵の情報を読み込む

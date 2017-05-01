@@ -63,4 +63,13 @@ namespace Variables
         public static int MOVEWAITTIME = 10; // 移動フレームの設定
     }
 
+
+    public class Unit
+    {
+        // キャラクターの情報
+        public static int Num = 3; // キャラクター数
+        public static string PlayerDataFilePath = "Assets\\Resources\\CharacterData\\data.csv";
+
+    }
+
 }
