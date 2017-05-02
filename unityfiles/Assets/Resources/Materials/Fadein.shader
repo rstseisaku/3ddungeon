@@ -7,7 +7,7 @@ Shader "Custom/FadeIn"
 		[HideInInspector]
 		_MainTex("Base (RGB) Trans (A)", 2D) = "white" {}
 		_Rule("Rule", 2D) = "white" {}
-		_Blend("Blend", Range(0,1)) = 0.5
+		_Value("Value", Range(0,1)) = 0.5
 	}
 		SubShader
 	{
@@ -40,7 +40,7 @@ Shader "Custom/FadeIn"
 	float _Clip;
 	float4 _SrcCol;
 	float4 _DstCol;
-	float _Blend;
+	float _Value;
 
 	v2f vert(appdata v)
 	{
@@ -54,7 +54,8 @@ Shader "Custom/FadeIn"
 	{
 		float4 mask = tex2D(_MainTex, i.uv); // 表示したい画像
 		float4 bg = tex2D(_Rule, i.uv); // トラジション画像
-		mask.a =  1 - ( ( 1 + bg.rgb ) * ( 1 - _Blend ) );
+		mask.a *=  1 - ( ( 1 + bg.r ) * ( 1 - _Value ) );
+
 		return mask;
 	}
 		ENDCG

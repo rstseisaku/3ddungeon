@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+#if UNITY_EDITOR
+using UnityEditor;      //!< デプロイ時にEditorスクリプトが入るとエラーになるので UNITY_EDITOR で括ってね！
+#endif
+
+namespace fuck { 
+
+[System.Serializable]
 public class Transition : MonoBehaviour {
 
     public bool enableonplay = true;
@@ -10,6 +17,7 @@ public class Transition : MonoBehaviour {
     private float rate;
     public float fill = 0;
 
+    [SerializeField]
     public Texture2D rule;
     Image image;
 
@@ -22,14 +30,15 @@ public class Transition : MonoBehaviour {
     public enum TRANSITION_MODE
     {
         //ここに作ったものを列記
-        _ALPHACUTOFF = 0,
-        _MASK = 1, // このシェーダー何してるやつ？
-        _BLEND = 2,
-        _BLACKOUT = 3,
-        _WHITEOUT = 4,
-        _COLOR_INVERSION = 5,
-        _FADEIN = 6
+        _MASK = 0, // このシェーダー何してるやつ？
+        _BLACKOUT = 1,
+        _WHITEOUT = 2,
+        _COLOR_INVERSION = 3,
+        _FADEIN = 4,
+        _FADEOUT = 5,
+        _GRAYSCALE = 6
     }
+    [SerializeField]
     public TRANSITION_MODE mode;
 
     // Use this for initialization
@@ -39,18 +48,8 @@ public class Transition : MonoBehaviour {
         switch (mode)
         {
             //モードの内容を記入
-            case TRANSITION_MODE._ALPHACUTOFF:
-                if (mask != null)
-                    ALPHACUTOFF_MASK();
-                if (mask == null)
-                    ALPHACUTOFF_CUTOUT();
-                break;
             case TRANSITION_MODE._MASK:
-                ALPHACUTOFF_MASK();
-                break;
-            case TRANSITION_MODE._BLEND:
-                image.material.EnableKeyword("_Blend");
-                //image.material = materials[1];
+                MASK();
                 break;
             case TRANSITION_MODE._WHITEOUT:
                 WHITEOUT();
@@ -64,6 +63,12 @@ public class Transition : MonoBehaviour {
             case TRANSITION_MODE._FADEIN:
                 FADEIN();
                 break;
+            case TRANSITION_MODE._FADEOUT:
+                FADEOUT();
+                break;
+            case TRANSITION_MODE._GRAYSCALE:
+                GRAYSCALE();
+                break;
             default:
                 break;
         }
@@ -75,37 +80,18 @@ public class Transition : MonoBehaviour {
         if (fill < 1)
         {
             fill += rate;
-            switch (mode)
-            {
-                case TRANSITION_MODE._BLEND:
-                    image.material.SetFloat("_Blend", fill);
-                    break;
-                case TRANSITION_MODE._FADEIN:
-                    image.material.SetFloat("_Blend", fill);
-                    break;
-                default:
-                    image.material.SetFloat("_Cutoff", fill);
-                    break;
-            }
+
+            image.material.SetFloat("_Value", fill);
         }
         
     }
 
     // アルファカット，マスク画像が設定されている場合
-    void ALPHACUTOFF_MASK()
+    void MASK()
     {
         image.material = new Material(Shader.Find("Custom/Mask"));
         image.material.SetTexture("_Rule", rule);
         image.material.SetTexture("_Mask", mask);
-    }
-
-    // アルファカット，マスク画像が設定されていない場合
-    void ALPHACUTOFF_CUTOUT()
-    {
-        image.material = new Material(Shader.Find("Custom/BWout"));
-        image.material.SetTexture("_Rule", rule);
-        image.material.SetFloat("_Blackout", blackout);
-        image.material.SetFloat("_Whiteout", whiteout);
     }
 
     // ブラックアウト
@@ -113,8 +99,7 @@ public class Transition : MonoBehaviour {
     {
         image.material = new Material(Shader.Find("Custom/BWout"));
         image.material.SetTexture("_Rule", rule);
-        image.material.SetFloat("_Blackout", 1.0f);
-        image.material.SetFloat("_Whiteout", 0.0f);
+        image.material.SetFloat("_Blackout", blackout);
     }
 
     // ホワイトアウト
@@ -122,8 +107,7 @@ public class Transition : MonoBehaviour {
     {
         image.material = new Material(Shader.Find("Custom/BWout"));
         image.material.SetTexture("_Rule", rule);
-        image.material.SetFloat("_Blackout", 0.0f);
-        image.material.SetFloat("_Whiteout", 1.0f);
+        image.material.SetFloat("_Whiteout", whiteout);
     }
 
     // 色彩反転
@@ -139,4 +123,69 @@ public class Transition : MonoBehaviour {
         image.material = new Material(Shader.Find("Custom/FadeIn"));
         image.material.SetTexture("_Rule", rule);
     }
+    
+    // フェードイン
+    void FADEOUT()
+    {
+        image.material = new Material(Shader.Find("Custom/FadeOut"));
+        image.material.SetTexture("_Rule", rule);
+    }
+
+    //グレースケール変換
+    void GRAYSCALE()
+    {
+        image.material = new Material(Shader.Find("Custom/Grayscale"));
+        image.material.SetTexture("_Rule", rule);
+    }
+}
+
+/* ---- ここから拡張コード ---- */
+#if UNITY_EDITOR
+/**
+ * Inspector拡張クラス
+ */
+[CustomEditor(typeof(Transition))]
+public class CustomTransition : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        Transition custom = target as Transition;
+
+        custom.rule = EditorGUILayout.ObjectField("ルール画像", custom.rule, typeof(Texture2D), true) as Texture2D;
+        custom.time = EditorGUILayout.FloatField("時間(s)", custom.time);
+        custom.mode = (Transition.TRANSITION_MODE)EditorGUILayout.EnumPopup("種類", custom.mode);
+
+        if (custom.mode == Transition.TRANSITION_MODE._MASK)
+        {
+            custom.mask = EditorGUILayout.ObjectField("マスク画像", custom.mask, typeof(Texture2D), true) as Texture2D;
+        }
+        if (custom.mode == Transition.TRANSITION_MODE._WHITEOUT)
+        {
+            custom.whiteout = EditorGUILayout.Slider("whiteout", custom.whiteout, 0, 1);
+        }
+        if (custom.mode == Transition.TRANSITION_MODE._BLACKOUT)
+        {
+            custom.blackout = EditorGUILayout.Slider("blackout", custom.blackout, 0, 1);
+        }
+        if (custom.mode == Transition.TRANSITION_MODE._COLOR_INVERSION)
+        {
+
+        }
+        if (custom.mode == Transition.TRANSITION_MODE._FADEIN)
+        {
+
+        }
+        if (custom.mode == Transition.TRANSITION_MODE._FADEOUT)
+        {
+
+        }
+        if (custom.mode == Transition.TRANSITION_MODE._GRAYSCALE)
+        {
+
+        }
+
+        EditorUtility.SetDirty(target);
+    }
+}
+#endif
 }

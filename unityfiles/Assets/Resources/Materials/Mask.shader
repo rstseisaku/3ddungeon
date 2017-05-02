@@ -3,7 +3,7 @@
 		[HideInInspector] 
 		_MainTex("Base (RGB) Trans (A)", 2D) = "white" {}
 		_Rule("Rule", 2D) = "white" {}
-		_Cutoff("Cutoff", Range(0,1)) = 0.5
+		_Value("Value", Range(0,1)) = 0.5
 		_Mask("Base (RGB) Trans (A)", 2D) = "white" {}
 	}
 		SubShader{
@@ -34,7 +34,7 @@
 	float _Clip;
 	float4 _SrcCol;
 	float4 _DstCol;
-	float _Cutoff;
+	float _Value;
 	sampler2D _Mask;
 
 	v2f vert(appdata v)
@@ -51,9 +51,9 @@
 		float4 rule = tex2D(_Rule, i.uv); // トラジション画像
 		float4 mask = tex2D(_Mask, i.uv);
 		// if (rule.a < _Cutoff)
-		if (rule.r < _Cutoff)
+		if (rule.r < _Value)
 		{
-			main.rgb = lerp(main, mask, _Cutoff);
+			main.rgb = lerp(main, mask, _Value);
 		}
 		return main;
 	}

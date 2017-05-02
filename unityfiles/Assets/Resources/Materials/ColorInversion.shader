@@ -1,11 +1,9 @@
 ﻿Shader "Custom/ColorInversion" {
 	Properties{
 		[HideInInspector]
-	_MainTex("Base (RGB) Trans (A)", 2D) = "white" {}
-	_Rule("Rule", 2D) = "white" {}
-	_Cutoff("Cutoff", Range(0,1)) = 0.5
-		_Blackout("Blackout", Range(0,0.99)) = 0
-		_Whiteout("Whiteout", Range(0,0.99)) = 0
+		_MainTex("Base (RGB) Trans (A)", 2D) = "white" {}
+		_Rule("Rule", 2D) = "white" {}
+		_Value("Value", Range(0,1)) = 0.5
 	}
 		SubShader{
 		Tags{ "RenderType" = "Opaque" }
@@ -35,7 +33,7 @@
 	float _Clip;
 	float4 _SrcCol;
 	float4 _DstCol;
-	float _Cutoff;
+	float _Value;
 	float _Blackout;
 	float _Whiteout;
 
