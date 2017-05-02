@@ -42,14 +42,14 @@ public class CtbFaceObj : MonoBehaviour
     private void GenerateObj(BaseCharacter bc)
     {
         // 顔グラオブジェクトの生成
-        faceObj = Utility.MyInstantiate(
+        faceObj = Utility._Object.MyInstantiate(
             BCV.FACE_IMAGE_PREFAB,
             bc.battleCanvas,
             bc.cs.faceGraphicPath,
             new Vector2(BCV.FACE_SIZE, BCV.FACE_SIZE));
 
         // 魔力テキストの生成
-        magText = Utility.MyInstantiate(
+        magText = Utility._Object.MyInstantiate(
             BCV.MAG_TEXT_PREFAB,
             faceObj);
         magText.GetComponent<RectTransform>().localPosition -=
@@ -57,8 +57,8 @@ public class CtbFaceObj : MonoBehaviour
         magText.GetComponent<Text>().text = "" + bc.cs.mag;
 
         // 属性エレメントの生成
-        string iconFilePath = "Images/Icon/icon" + 0;
-        elementObj = Utility.MyInstantiate(
+        string iconFilePath = "Images/Icon/icon" + bc.cs.element;
+        elementObj = Utility._Object.MyInstantiate(
             BCV.FACE_IMAGE_PREFAB,
             faceObj,
             iconFilePath,

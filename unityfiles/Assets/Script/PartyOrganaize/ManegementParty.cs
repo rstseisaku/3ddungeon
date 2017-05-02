@@ -4,28 +4,32 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-enum EDIT_PARTY_STATUS
+public enum EDIT_PARTY_STATUS
 {
     _PARTY_SELECT,
     _CHANGE_CHARACTER,
     _JOIN_CHARACTER,
-    _DECIDED_JOIN_CHARACTER
+    _DECIDED_JOIN_CHARACTER,
+    _END
 }
 
 /*
  * パーティー情報を管理するクラス
  * ( 全てのシーンで利用 )
  */
- public class ManegementParty : MonoBehaviour
+class ManegementParty : MonoBehaviour
 {
     public int mainPartyId;
-    public Party[] partyList;
-    public ObtainChara obtainChara;
+    public Party editParty;
 
+    /* 状態管理 */
     EDIT_PARTY_STATUS editPartyStatus;
-    public int editPartyId;
-    public int changeCharaPartyId;
-    public int joinCharaId;
+    private int editPartyId = -1;
+    private int changeCharaPartyId = -1;
+    private int joinCharaId = -1;
+
+    /* パーティのセーブデータ */
+    private mSaveData saveData;
 
     GameObject canvas;
 
@@ -44,34 +48,44 @@ enum EDIT_PARTY_STATUS
     IEnumerator MainLoop()
     {
         /* 初期化処理 */
-        Init();
+        yield return Init(); // セーブデータの読み込みにウェイトを挟む
 
         /* メインループ */
         editPartyStatus = EDIT_PARTY_STATUS._CHANGE_CHARACTER;
-        editPartyId = mainPartyId;
+        editPartyStatus = EDIT_PARTY_STATUS._PARTY_SELECT;
         changeCharaPartyId = -1;
         while (true)
         {
             switch (editPartyStatus)
             {
+                // 編集するパーティの選択
+                case EDIT_PARTY_STATUS._PARTY_SELECT:
+                    yield return DecideEditParty.Loop(saveData.GetSaveParty());
+                    editPartyId = DecideEditParty.editPartyId;
+                    editPartyStatus = DecideEditParty.editPartyStatus;
+                    break;
                 // 編成対象となるキャラクターの選択            
                 case EDIT_PARTY_STATUS._CHANGE_CHARACTER:
-                    yield return DecideChangeCharacter.Loop(partyList[editPartyId]);
+                    SetEditParty(); // editPartyId に応じて、パーティ情報を格納
+                    yield return DecideChangeCharacter.Loop(editParty);
                     changeCharaPartyId = DecideChangeCharacter.changeCharaPartyId;
                     editPartyStatus = DecideChangeCharacter.editPartyStatus;
                     break;
                 // 誰を加入させるか選択
                 case EDIT_PARTY_STATUS._JOIN_CHARACTER:
-                    yield return DecideJoinCharacter.Loop(obtainChara);
+                    yield return DecideJoinCharacter.Loop(saveData.GetObtainChara());
                     joinCharaId = DecideJoinCharacter.joinCharaId;
                     editPartyStatus = DecideJoinCharacter.editPartyStatus;
                     break;
-                // 誰を加入させるか選択
+                // 実際の入れ替え処理
                 case EDIT_PARTY_STATUS._DECIDED_JOIN_CHARACTER:
                     ChangeMember();
+                    SaveParty();
                     editPartyStatus = EDIT_PARTY_STATUS._CHANGE_CHARACTER;
                     break;
-                    // 【未定義】
+                case EDIT_PARTY_STATUS._END:
+                    yield return Utility._Scene.MoveScene("Base", "Images\\Background\\Black",90);
+                    break;
                 default:
                     break;
             }
@@ -83,33 +97,42 @@ enum EDIT_PARTY_STATUS
     }
 
     /* 初期化 */
-    public void Init()
+    IEnumerator Init()
     {
         /* オブジェクト読み込み */
         canvas = GameObject.Find("PartyCanvas");
 
-
         /* セーブデータが存在すれば読み込む */
-
-
-        /* 初期化 */
-        InitAllParty();
-        obtainChara = gameObject.AddComponent<ObtainChara>();
-        obtainChara.Init(); // 初期化
+        saveData = GameObject.Find(Variables.Save.Name).GetComponent<mSaveData>();
+        yield return saveData.WaitLoad();
     }
 
-    /* 全パーティー初期化 */
-    public void InitAllParty()
+    /* セーブの反映 */
+    public void SaveParty()
     {
-        mainPartyId = 0;
-        partyList = new Party[6];
-        for (int i = 0; i < partyList.Length; i++)
+        saveData.EditSaveParty(editParty, editPartyId);
+        saveData.MakeSaveData();
+    }
+
+    /* パーティのロード */
+    public void SetEditParty()
+    {
+        // 例外処理
+        if (editPartyId < 0)
         {
-            // パーティーを1つ生成
-            partyList[i] = gameObject.AddComponent<Party>();
-            // パーティーの中身を初期化(1キャラ+ 4つの空白)
-            partyList[i].Init( "パーティー " + i);
+            Debug.LogError("editPartyId が初期化されてないです(´･ω･｀)");
+            return;
         }
+
+        editParty = gameObject.AddComponent<Party>();
+        editParty.NewVariables();
+
+        editParty.partyName = saveData.GetSaveParty().partyName[editPartyId];
+        for( int i=0; i<Variables.Party.CharaNumPerParty; i++)
+        {
+            editParty.partyCharacterId[i] = saveData.GetSaveParty().partyCharacterId[editPartyId,i];
+        }
+        editParty.LoadFromPartyCharacterId();
     }
 
     /* 全パーティーを表示 */
@@ -121,11 +144,16 @@ enum EDIT_PARTY_STATUS
     // 編成ID・交換キャラパーティID・参加キャラIDの3パラメタ利用
     public void ChangeMember()
     {
+        // パーティから外す場合の処理
+        if (joinCharaId < 0 ) joinCharaId = -1;
+
         // キャラデータのロード
-        partyList[editPartyId].partyId[changeCharaPartyId] = joinCharaId;
-        partyList[editPartyId].partyCharacter[changeCharaPartyId].Init(joinCharaId);
+        editParty.partyCharacterId[changeCharaPartyId] = joinCharaId;
+        editParty.partyCharacter[changeCharaPartyId].Init(joinCharaId);
+        if (joinCharaId < 0) return;
+
         // ステータス割振値を取得
-        partyList[editPartyId].partyCharacter[changeCharaPartyId].atkAdd = ObtainChara.atkAdd[joinCharaId];
-        partyList[editPartyId].partyCharacter[changeCharaPartyId].maxHpAdd = ObtainChara.maxHpAdd[joinCharaId];
+        editParty.partyCharacter[changeCharaPartyId].atkAdd = saveData.GetObtainChara().atkAdd[joinCharaId];
+        editParty.partyCharacter[changeCharaPartyId].maxHpAdd = saveData.GetObtainChara().maxHpAdd[joinCharaId];
     }
 }

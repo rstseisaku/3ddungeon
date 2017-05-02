@@ -8,7 +8,7 @@ public class Buttons : MonoBehaviour {
     // 探索処理開始
 	public void Adventure()
     {
-        StartCoroutine("MoveScene", "TES");
+        StartCoroutine("StartAdventure");
     }
 
     // パーティー編成
@@ -20,7 +20,7 @@ public class Buttons : MonoBehaviour {
     // ガチャ
     public void Gacha()
     {
-
+        StartCoroutine("MoveScene", "Gacha");
     }
 
     public void Compose()
@@ -36,10 +36,30 @@ public class Buttons : MonoBehaviour {
 
 
 
+    /* 探索開始 */
+    private IEnumerator StartAdventure()
+    {
+        GameObject obj = GameObject.Find(Variables.Save.Name); ; // パーティーオブジェクトを探す
+        mSaveData saveData = obj.GetComponent<mSaveData>();
+        yield return saveData.WaitLoad();        
 
+        // パーティ選択
+        yield return DecideEditParty.Loop(saveData.GetSaveParty());
+        int id = DecideEditParty.editPartyId;
+        if( id >= 0)
+        {
+            saveData.GetSaveParty().mainParty = id;
+        }
+        else
+        {
+            yield break;
+        }
+
+        yield return MoveScene("TES");
+    }
 
     private IEnumerator MoveScene(string ScenePath)
     {
-        yield return Utility.MoveScene(ScenePath, "Images\\Background\\Black",90);
+        yield return Utility._Scene.MoveScene(ScenePath, "Images\\Background\\Black",90);
     }
 }

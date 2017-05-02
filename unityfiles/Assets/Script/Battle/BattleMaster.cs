@@ -27,6 +27,7 @@ using UnityEngine.UI;
 //　 定数・グローバル変数の管理方法
 // ★リザルト画面
 // ★死体を殴れる修正
+// TODO: それぞれのオブジェクトに，スクリプトをアタッチ
 
 
 enum Command { Attack, Unison, Magic }
@@ -95,9 +96,18 @@ public class BattleMaster : MonoBehaviour
     // パーティー情報の設定
     private void LoadPartyInfo()
     {
-        GameObject pObj = GameObject.Find("Party"); ; // パーティーオブジェクトを探す
-        party = pObj.GetComponent<Party>();
-        cd = new PlayerCharacter[party.partyNum]; // キャラクターDBの領域確保
+        GameObject obj = GameObject.Find(Variables.Save.Name); ; // パーティーオブジェクトを探す
+        mSaveData saveData = obj.GetComponent<mSaveData>();
+
+        party = gameObject.AddComponent<Party>();
+        party.NewVariables();
+        for (int i = 0; i < Variables.Party.CharaNumPerParty; i++)
+        {
+            party.partyCharacterId[i] = saveData.GetSaveParty().partyCharacterId[saveData.GetSaveParty().mainParty, i];
+        }
+        party.LoadFromPartyCharacterId();
+
+        cd = new PlayerCharacter[Variables.Party.CharaNumPerParty]; // キャラクターDBの領域確保
     } // --- LoadPartyInfo()
     // パーティー情報をもとにキャラクターデータを読み込む
     private void LoadPlayerChara()
@@ -149,7 +159,7 @@ public class BattleMaster : MonoBehaviour
         yield return BattleInit(); 
 
         /* キー入力を待つ(戦闘開始前に) */
-        yield return Utility.WaitKey();
+        yield return Utility._Wait.WaitKey();
 
         int battleResult;
         while (true) {
@@ -166,7 +176,7 @@ public class BattleMaster : MonoBehaviour
         }
 
         /* 勝敗表示 */
-        yield return Utility.Wait(60);
+        yield return Utility._Wait.WaitFrame(60);
         if ( battleResult == 1) { yield return BattleResult.ResultWinScene(cd, canvas); }
         else { yield return BattleResult.ResultLoseScene(cd, canvas); }
         yield return BattleResult.ResultFadeout(canvas);
@@ -221,7 +231,7 @@ public class BattleMaster : MonoBehaviour
     IEnumerator AfterAction()
     {
         // ウェイトを挟む
-        yield return Utility.Wait(30);
+        yield return Utility._Wait.WaitFrame(30);
 
         // 戦闘不能判定
         OpeCharaList.KnockoutEffect(cd);
@@ -489,7 +499,7 @@ public class BattleMaster : MonoBehaviour
         GameObject cursorObj = (GameObject)Instantiate(Resources.Load(FilePath),
                             new Vector3(0, 0, 0),
                             Quaternion.identity);
-        Texture2D cursorTex = Utility.MyGetTexture("Images\\System\\cursor");
+        Texture2D cursorTex = Utility._Image.MyGetTexture("Images\\System\\cursor");
         cursorObj.GetComponent<Image>().sprite =
             Sprite.Create(cursorTex,
             new Rect(0, 0, cursorTex.width, cursorTex.height),

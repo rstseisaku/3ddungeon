@@ -33,5 +33,6 @@ https://boccilog.wordpress.com/2015/10/18/ugui%E3%81%AEimage%E3%81%AE%E7%A7%BB%E
 描画順
 http://qiita.com/T_2/items/69c22e649441055d2329
 
-
+インスペクタ隠ぺい
+http://lightgive.hatenadiary.jp/entry/2015/05/25/000422
 

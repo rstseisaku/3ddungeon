@@ -216,8 +216,7 @@ public class GameMaster : MonoBehaviour {
         encount += (int)( Random.Range( 0f, 1.0f ) * randomencount );
         if ( encount > 100 )
         {
-            yield return Utility.MoveScene("BattleScene");
-            Debug.Log("met");
+            yield return Utility._Scene.MoveScene("BattleScene");
             encount = 0;
         }
     }

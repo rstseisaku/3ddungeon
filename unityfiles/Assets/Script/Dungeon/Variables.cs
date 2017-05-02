@@ -5,8 +5,8 @@ using UnityEngine;
 namespace Variables
 {
     //何度か使う可能性がある変数はこっちに記入
-    
-    public class Map 
+
+    public class Map
     {
 
         //マップ生成関連
@@ -67,9 +67,25 @@ namespace Variables
     public class Unit
     {
         // キャラクターの情報
-        public static int Num = 3; // キャラクター数
+        public static int Num = 15; // キャラクター種類
         public static string PlayerDataFilePath = "Assets\\Resources\\CharacterData\\data.csv";
-
     }
 
+    public class Party
+    {
+        public static int Num = 6; // パーティ数
+        public static int CharaNumPerParty = 5; // パーティの人数(固定)
+        public static int[] DecEditPartyPosX = { -550, -550, -550, 50, 50, 50};
+        public static int[] DecEditPartyPosY = { 100,  -50, -200, 100, -50, -200 };
+    }
+
+    public class Save
+    {
+        public static string Name = "SingletonSaveObject"; // 1 つしか存在しないオブジェクト名
+    }
+
+    public class Gacha
+    {
+        public static string BackgroundPath = "Images\\Background\\Background1";
+    }
 }
