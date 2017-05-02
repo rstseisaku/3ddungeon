@@ -24,15 +24,19 @@ public class PartyCharacter : MonoBehaviour
     public int maxHpAdd; // 魔力値割振
 
 
-    public void Init()
+    /* IDを受け取りキャラの初期化を行う */
+    public void Init( int id )
     {
+        // キャラクターのIDを受け取る
+        characterId = id;
+        if (id == -1) return;
+
         // キャラクターステータス情報のコンポーネント生成
         cs = gameObject.AddComponent<CharacterStatus>();
         bcs = gameObject.AddComponent<CharacterStatus>();
 
         // .csvから、キャラクターのステータス情報を読み込む(仮)
-        string FilePath = "Assets\\Resources\\CharacterData\\data.csv";
-        characterId = Random.Range(1, 9);
+        string FilePath = Variables.Unit.PlayerDataFilePath;
         cs.LoadCharacterData(FilePath, characterId);
     }
 

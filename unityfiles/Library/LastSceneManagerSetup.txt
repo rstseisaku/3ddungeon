@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/TES.unity
+- path: Assets/PartyOrganaize.unity
   isLoaded: 1
   isActive: 1

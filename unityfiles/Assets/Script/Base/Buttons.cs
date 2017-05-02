@@ -5,16 +5,19 @@ using UnityEngine.SceneManagement;
 
 public class Buttons : MonoBehaviour {
 
+    // 探索処理開始
 	public void Adventure()
     {
-        SceneManager.LoadScene("TES");
+        StartCoroutine("MoveScene", "TES");
     }
 
+    // パーティー編成
     public void Organaize()
     {
-
+        StartCoroutine("MoveScene", "PartyOrganaize");
     }
 
+    // ガチャ
     public void Gacha()
     {
 
@@ -25,9 +28,18 @@ public class Buttons : MonoBehaviour {
 
     }
 
+    // ショップ
     public void Shop()
     {
 
     }
 
+
+
+
+
+    private IEnumerator MoveScene(string ScenePath)
+    {
+        yield return Utility.MoveScene(ScenePath, "Images\\Background\\Black",90);
+    }
 }
