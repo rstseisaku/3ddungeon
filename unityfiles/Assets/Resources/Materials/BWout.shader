@@ -3,7 +3,7 @@
 		[HideInInspector] 
 		_MainTex("Base (RGB) Trans (A)", 2D) = "white" {}
 		_Rule("Rule", 2D) = "white" {}
-		_Cutoff("Cutoff", Range(0,1)) = 0.5
+		_Value("Value", Range(0,1)) = 0.5
 		_Blackout("Blackout", Range(0,0.99)) = 0
 		_Whiteout("Whiteout", Range(0,0.99)) = 0
 	}
@@ -35,7 +35,7 @@
 		float _Clip;
 		float4 _SrcCol;
 		float4 _DstCol;
-		float _Cutoff;
+		float _Value;
 		float _Blackout;
 		float _Whiteout;
 
@@ -50,16 +50,14 @@
 		fixed4 frag(v2f i) : SV_Target
 		{
 			float4 main = tex2D(_MainTex, i.uv); // 表示したい画像
-			float4 rule = tex2D(_Rule, i.uv); // トラジション画像
-			//float4 col = lerp(mask, bg, _Blend); // 画像合成( A ⇒ B に移ろう)
-			//return col;
+			float4 rule = tex2D(_Rule, i.uv); // ルール画像
 
 			/* ルール画像のRGB値をもとにしたい
 			 * ┗ルール画像をグレースケールのやつだけに限定できないかしら…？
 			 * 最悪R値だけをもとにしても良いのかも
 			 */
 			// if ( (( rule.r + rule.g + rule.b)/3) < _Cutoff)
-			if ( rule.r < _Cutoff)
+			if ( rule.r < _Value)
 
 			// 元のやつ
 			// if (rule.a < _Cutoff)

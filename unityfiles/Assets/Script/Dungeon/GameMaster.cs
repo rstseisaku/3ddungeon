@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using Variables;
 
 public class GameMaster : MonoBehaviour {
+    
 
     //現在のマップ
     public  string mapname;
@@ -15,7 +16,7 @@ public class GameMaster : MonoBehaviour {
 
     //エンカウント管理
     private int encount;
-    int randomencount = 999999;
+    int randomencount = 0;
     
     private static bool firsttime = true;
 

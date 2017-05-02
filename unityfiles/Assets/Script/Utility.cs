@@ -91,9 +91,10 @@ public class Utility : MonoBehaviour
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1280, 720);
 
-        Canvas c = canvas.AddComponent<Canvas>();
-        c.renderMode = RenderMode.ScreenSpaceOverlay;
-
+       // Canvas c = canvas.AddComponent<Canvas>();
+        //c.renderMode = RenderMode.ScreenSpaceOverlay;
+        
+        canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
 
         GameObject obj = MyInstantiate( FadeObjPath , canvas);
         obj.GetComponent<FadeoutScript>().addNum = (1.0f / frame);
