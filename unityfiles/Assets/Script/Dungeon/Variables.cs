@@ -75,8 +75,8 @@ namespace Variables
     {
         public static int Num = 6; // パーティ数
         public static int CharaNumPerParty = 5; // パーティの人数(固定)
-        public static int[] DecEditPartyPosX = { -550, -550, -550, 50, 50, 50};
-        public static int[] DecEditPartyPosY = { 100,  -50, -200, 100, -50, -200 };
+        public static int[] DecEditPartyPosX = { -550, -550, -550, 50, 50, 50 };
+        public static int[] DecEditPartyPosY = { 100, -50, -200, 100, -50, -200 };
     }
 
     public class Save
@@ -87,5 +87,11 @@ namespace Variables
     public class Gacha
     {
         public static string BackgroundPath = "Images\\Background\\Background1";
+    }
+
+    public class Enemy
+    {
+        public static string EnemyGroupObjectName = "SingltonEnemyGroup"; // 1 つしか存在しないオブジェクト名
+        public static string EnemyDataFilePath = "Assets\\Resources\\CharacterData\\enemyData.csv";
     }
 }

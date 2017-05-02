@@ -46,7 +46,9 @@ public class Buttons : MonoBehaviour {
         // パーティ選択
         yield return DecideEditParty.Loop(saveData.GetSaveParty());
         int id = DecideEditParty.editPartyId;
-        if( id >= 0)
+
+
+        if ( id >= 0)
         {
             saveData.GetSaveParty().mainParty = id;
         }
@@ -55,7 +57,8 @@ public class Buttons : MonoBehaviour {
             yield break;
         }
 
-        yield return MoveScene("TES");
+        // yield return MoveScene("TES");
+        yield return Utility._Encount.Encount(0);
     }
 
     private IEnumerator MoveScene(string ScenePath)

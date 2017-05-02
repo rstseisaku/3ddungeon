@@ -51,6 +51,17 @@ namespace Utility
             return MyInstantiate(FilePath, null);
         }
 
+        // オブジェクト名からオブジェクトを返す
+        public static GameObject MyFind( string ObjectName)
+        {
+            GameObject obj = GameObject.Find(ObjectName);            
+            if (obj == null)
+            {
+                _Error.ObjectNotFound(ObjectName);
+            }
+            return obj;
+        }
+
         // ファイル名からオブジェクトを返す(Canvasセット付)
         public static GameObject MyInstantiate(string FilePath, GameObject c)
         {
@@ -134,9 +145,6 @@ namespace Utility
 
     public class _Scene : MonoBehaviour
     {
-        /*
-         * ここら辺の処理は、書き直す
-         */
         public static IEnumerator MoveScene(
             string sceneName,
             string FadeImagePath,
@@ -154,9 +162,9 @@ namespace Utility
                 canvas,
                 FadeImagePath,
                 new Vector2(1280, 960));
-            obj.GetComponent<Transition>().rule = _Image.MyGetTexture("Images\\Transition\\transition_1");
-            obj.GetComponent<Transition>().mode = Transition.TRANSITION_MODE._FADEIN;
-            obj.GetComponent<Transition>().time = (frame / 60);
+            obj.GetComponent<fuck.Transition>().rule = _Image.MyGetTexture("Images\\Transition\\transition_1");
+            obj.GetComponent<fuck.Transition>().mode = fuck.Transition.TRANSITION_MODE._FADEIN;
+            obj.GetComponent<fuck.Transition>().time = (frame / 60);
             obj.name = "Fade";
             yield return _Wait.WaitFrame((int)frame + 10);
 
@@ -173,5 +181,27 @@ namespace Utility
             yield return MoveScene(sceneName, "Images\\Background\\Background1", 60);
         }
     }
+
+    public class _Encount : MonoBehaviour
+    {
+        public static IEnumerator Encount( int enemyGroupId )
+        {
+            /* エンカウントオブジェクトの取得 */
+            GameObject obj = _Object.MyFind(Variables.Enemy.EnemyGroupObjectName);
+            EnemyGroup eg = obj.GetComponent<EnemyGroup>();
+            eg.enemyGroupId = enemyGroupId;
+            eg.LoadCharacterIdFromGroupId();
+
+            yield return _Scene.MoveScene("battleScene");
+        }
+    }
+
+    public class _Error : MonoBehaviour
+    {
+        public static void ObjectNotFound(string str)
+        {
+            Debug.LogError("オブジェクト名: " + str +" は見つかりませんでした。");
+        }
+    }
+
 }
- 

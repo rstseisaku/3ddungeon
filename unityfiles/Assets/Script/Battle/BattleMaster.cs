@@ -125,16 +125,19 @@ public class BattleMaster : MonoBehaviour
     // 敵の情報を読み込む
     private void LoadEnemyChara()
     {
-        ConstantValue.enemyNum = 3; // どっかから取ってくる
-        enemyCd = new EnemyCharacterData[ConstantValue.enemyNum]; // キャラクター DB 確保
-        for (int i = 0; i <ConstantValue.enemyNum; i++)
+        GameObject obj = Utility._Object.MyFind(Variables.Enemy.EnemyGroupObjectName);
+        EnemyGroup eg = obj.GetComponent<EnemyGroup>();
+
+        BGV.enemyNum = eg.enemyNum; // どっかから取ってくる
+        enemyCd = new EnemyCharacterData[BGV.enemyNum]; // キャラクター DB 確保
+        for (int i = 0; i < BGV.enemyNum; i++)
         {
             // キャラクターデータの領域確保( new は使わない )
             enemyCd[i] = gameObject.AddComponent<EnemyCharacterData>(); // キャラクターデータの領域確保
             enemyCd[i].Init(canvas);
 
             // キャラクターデータをロード                                              
-            enemyCd[i].LoadCharacterData(5, i);
+            enemyCd[i].LoadCharacterData(eg.enemyCharacterId[i], i);
         }
     } // --- LoadEnemyChara()
     // コンボ初期化処理

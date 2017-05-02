@@ -97,6 +97,7 @@
     <Compile Include="Assets\Script\Battle\CtbFaceObj.cs" />
     <Compile Include="Assets\Script\Battle\CtbManager.cs" />
     <Compile Include="Assets\Script\Battle\EnemyCharacterData.cs" />
+    <Compile Include="Assets\Script\Battle\EnemyGroup.cs" />
     <Compile Include="Assets\Script\Battle\LeaderSelect.cs" />
     <Compile Include="Assets\Script\Battle\OpeCharaList.cs" />
     <Compile Include="Assets\Script\Battle\PlayerCharacter.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="Assets\Script\Dungeon\Variables.cs" />
     <Compile Include="Assets\Script\Dungeon\mHPcolor.cs" />
     <Compile Include="Assets\Script\Dungeon\miniMap.cs" />
+    <Compile Include="Assets\Script\EventManagement.cs" />
     <Compile Include="Assets\Script\FadeoutScript.cs" />
     <Compile Include="Assets\Script\Gacha\Gacha.cs" />
     <Compile Include="Assets\Script\PartyOrganaize\CharacterStatus.cs" />
@@ -133,7 +135,9 @@
   <ItemGroup>
     <None Include="Assets\Resources\Materials\BWout.shader" />
     <None Include="Assets\Resources\Materials\ColorInversion.shader" />
+    <None Include="Assets\Resources\Materials\FadeOut.shader" />
     <None Include="Assets\Resources\Materials\Fadein.shader" />
+    <None Include="Assets\Resources\Materials\Grayscale.shader" />
     <None Include="Assets\Resources\Materials\Mask.shader" />
     <None Include="Assets\Resources\Materials\UiTrans.shader" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
@@ -144,7 +148,6 @@
     <None Include="Assets\TextFile1.txt" />
     <None Include="Assets\何かないと同期しないっぽい.txt" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>

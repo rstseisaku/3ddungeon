@@ -42,5 +42,8 @@ public class BGV
 {
     // TODO: ステータスオブジェクトの表示方法
     public static int statusObjPosY;
+
+
+    public static int enemyNum;
 }
 

@@ -14,7 +14,7 @@ public class EnemyCharacterData : BaseCharacter
         partyId = pId;
 
         // キャラクターデータの読込処理
-        string FilePath = "Assets\\Resources\\CharacterData\\enemyData.csv";
+        string FilePath = Variables.Enemy.EnemyDataFilePath;
         cs = gameObject.AddComponent<CharacterStatus>();
         cs.LoadCharacterData(FilePath, characterId);
 
