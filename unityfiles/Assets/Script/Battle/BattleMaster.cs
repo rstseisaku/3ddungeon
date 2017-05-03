@@ -128,9 +128,8 @@ public class BattleMaster : MonoBehaviour
         GameObject obj = Utility._Object.MyFind(Variables.Enemy.EnemyGroupObjectName);
         EnemyGroup eg = obj.GetComponent<EnemyGroup>();
 
-        BGV.enemyNum = eg.enemyNum; // どっかから取ってくる
-        enemyCd = new EnemyCharacterData[BGV.enemyNum]; // キャラクター DB 確保
-        for (int i = 0; i < BGV.enemyNum; i++)
+        enemyCd = new EnemyCharacterData[eg.enemyNum]; // キャラクター DB 確保
+        for (int i = 0; i < eg.enemyNum; i++)
         {
             // キャラクターデータの領域確保( new は使わない )
             enemyCd[i] = gameObject.AddComponent<EnemyCharacterData>(); // キャラクターデータの領域確保

@@ -27,12 +27,39 @@ public class EnemyGroup : MonoBehaviour
     public void LoadCharacterIdFromGroupId()
     {
         // .csv ファイルなどから読み込む
-        //** デバッグ
-        enemyCharacterId = new int[7];
-        for( int i=0; i<enemyCharacterId.Length; i++)
+        if (enemyGroupId == 0)
         {
-            enemyCharacterId[i] = i+1;
+            Debug.LogError("敵グループの値に0が設定されました。(1として扱います(´･ω･｀))");
+            enemyGroupId = 1;
         }
-        enemyNum = enemyCharacterId.Length;
+
+        // 設定ファイルを読込
+        string[] buffer;
+        buffer = System.IO.File.ReadAllLines(Variables.Enemy.EnemyGroupFilePath);
+
+        // linebuffer にキャラクターの情報( characterId 番目の )を格納
+        string[] linebuffer;
+        linebuffer = buffer[enemyGroupId].Split(',');
+        string[] str = linebuffer;
+
+        int[] getIntDataFromStr = new int[str.Length];
+        enemyNum = 0;
+        for ( int i=0; i < getIntDataFromStr.Length; i++)
+        {
+            if (str[i] != "")
+            {
+                getIntDataFromStr[i] = int.Parse(str[i]);
+                enemyNum++;
+            }
+            else
+            {
+                getIntDataFromStr[i] = -1;
+            }
+        }
+        enemyCharacterId = new int[enemyNum];
+        for( int i = 0; i < enemyNum; i++)
+        {
+            enemyCharacterId[i] = getIntDataFromStr[i];
+        }
     }
 }

@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Event.cs" />
+    <Compile Include="Assets\FPS.cs" />
     <Compile Include="Assets\Script\Base\Buttons.cs" />
     <Compile Include="Assets\Script\Battle\BCV.cs" />
     <Compile Include="Assets\Script\Battle\BaseCharacter.cs" />
@@ -104,9 +105,10 @@
     <Compile Include="Assets\Script\Battle\PredictObject.cs" />
     <Compile Include="Assets\Script\Battle\SelectAction.cs" />
     <Compile Include="Assets\Script\Battle\SelectTarget.cs" />
+    <Compile Include="Assets\Script\DebugRoom\DebugRoom.cs" />
     <Compile Include="Assets\Script\Dungeon\GameMaster.cs" />
     <Compile Include="Assets\Script\Dungeon\Map1.cs" />
-    <Compile Include="Assets\Script\Dungeon\Variables.cs" />
+    <Compile Include="Assets\Script\Variables.cs" />
     <Compile Include="Assets\Script\Dungeon\mHPcolor.cs" />
     <Compile Include="Assets\Script\Dungeon\miniMap.cs" />
     <Compile Include="Assets\Script\EventManagement.cs" />

@@ -5,19 +5,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-
-/* 属性 */
-enum Element { Fire, Water, Thunder, Light, Dark }
-
-
 /*
  * 戦闘中に利用するキャラクターの情報を管理する基底クラス
  */
  // TODO: それぞれのオブジェクトに，スクリプトをアタッチ
 public class BaseCharacter : MonoBehaviour
 {
-    GameObject dObj; // AddComponent を使うためのダミーオブジェクト
-
     // 敵・味方のフラグを立てておく
     protected bool isPlayerCharacter = false;
 
@@ -72,7 +65,6 @@ public class BaseCharacter : MonoBehaviour
     // ダミーオブジェクトの登録
     public void Init(GameObject canvas)
     {
-        dObj = GameObject.Find("Dummy");
         battleCanvas = canvas;
     }
 

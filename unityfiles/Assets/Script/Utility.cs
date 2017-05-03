@@ -196,6 +196,14 @@ namespace Utility
         }
     }
 
+    public class _FPS : MonoBehaviour
+    {
+        public static float GetFPS()
+        {
+            return (1.0f / Time.deltaTime);
+        }
+    }
+
     public class _Error : MonoBehaviour
     {
         public static void ObjectNotFound(string str)

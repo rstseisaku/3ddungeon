@@ -28,14 +28,16 @@ public class CtbFaceObj : MonoBehaviour
     public void SetPosY( bool isPChara, int pId)
     {
         int baseY = BCV.CTB_ENEMY_UPPER;
+        int abs = BCV.CTB_FACE_ENEMY_VY;
         int vy = -1;
         if (isPChara)
         {
             baseY = BCV.CTB_PLAYER_BOTTOM;
+            abs = BCV.CTB_FACE_VY;
             vy = 1;
         }
         faceObj.transform.localPosition = new Vector3(
-            0, vy * pId * ConstantValue.BATTLE_FACE_VY + baseY, 0);
+            0, vy * pId * abs + baseY, 0);
     }
 
     /* 3つのオブジェクトを生成する */
