@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.6.0f3</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -85,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Event.cs" />
+    <Compile Include="Assets\FPS.cs" />
     <Compile Include="Assets\Script\Base\Buttons.cs" />
     <Compile Include="Assets\Script\Battle\BCV.cs" />
     <Compile Include="Assets\Script\Battle\BaseCharacter.cs" />
@@ -95,27 +98,36 @@
     <Compile Include="Assets\Script\Battle\CtbFaceObj.cs" />
     <Compile Include="Assets\Script\Battle\CtbManager.cs" />
     <Compile Include="Assets\Script\Battle\EnemyCharacterData.cs" />
+    <Compile Include="Assets\Script\Battle\EnemyGroup.cs" />
     <Compile Include="Assets\Script\Battle\LeaderSelect.cs" />
     <Compile Include="Assets\Script\Battle\OpeCharaList.cs" />
     <Compile Include="Assets\Script\Battle\PlayerCharacter.cs" />
     <Compile Include="Assets\Script\Battle\PredictObject.cs" />
     <Compile Include="Assets\Script\Battle\SelectAction.cs" />
     <Compile Include="Assets\Script\Battle\SelectTarget.cs" />
+    <Compile Include="Assets\Script\DebugRoom\DebugRoom.cs" />
     <Compile Include="Assets\Script\Dungeon\GameMaster.cs" />
     <Compile Include="Assets\Script\Dungeon\Map1.cs" />
-    <Compile Include="Assets\Script\Dungeon\Variables.cs" />
+    <Compile Include="Assets\Script\Variables.cs" />
     <Compile Include="Assets\Script\Dungeon\mHPcolor.cs" />
     <Compile Include="Assets\Script\Dungeon\miniMap.cs" />
+    <Compile Include="Assets\Script\EventManagement.cs" />
     <Compile Include="Assets\Script\FadeoutScript.cs" />
+    <Compile Include="Assets\Script\Gacha\Gacha.cs" />
     <Compile Include="Assets\Script\PartyOrganaize\CharacterStatus.cs" />
     <Compile Include="Assets\Script\PartyOrganaize\DecideChangeCharacter.cs" />
+    <Compile Include="Assets\Script\PartyOrganaize\DecideEditParty.cs" />
     <Compile Include="Assets\Script\PartyOrganaize\DecideJoinCharacter.cs" />
     <Compile Include="Assets\Script\PartyOrganaize\HaveChara.cs" />
     <Compile Include="Assets\Script\PartyOrganaize\ManegementParty.cs" />
     <Compile Include="Assets\Script\PartyOrganaize\ObtainChara.cs" />
     <Compile Include="Assets\Script\PartyOrganaize\Party.cs" />
     <Compile Include="Assets\Script\PartyOrganaize\PartyCharacter.cs" />
+    <Compile Include="Assets\Script\PartyOrganaize\mDecPartyObj.cs" />
     <Compile Include="Assets\Script\PartyOrganaize\mPartyObject.cs" />
+    <Compile Include="Assets\Script\SaveData\SaveObject.cs" />
+    <Compile Include="Assets\Script\SaveData\SaveParty.cs" />
+    <Compile Include="Assets\Script\SaveData\mSaveData.cs" />
     <Compile Include="Assets\Script\Transition.cs" />
     <Compile Include="Assets\Script\Utility.cs" />
     <Compile Include="Assets\Script\mInput.cs" />
@@ -125,7 +137,9 @@
   <ItemGroup>
     <None Include="Assets\Resources\Materials\BWout.shader" />
     <None Include="Assets\Resources\Materials\ColorInversion.shader" />
+    <None Include="Assets\Resources\Materials\FadeOut.shader" />
     <None Include="Assets\Resources\Materials\Fadein.shader" />
+    <None Include="Assets\Resources\Materials\Grayscale.shader" />
     <None Include="Assets\Resources\Materials\Mask.shader" />
     <None Include="Assets\Resources\Materials\UiTrans.shader" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />

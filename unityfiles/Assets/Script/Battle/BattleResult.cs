@@ -22,7 +22,7 @@ public class BattleResult : MonoBehaviour
         resultFaceObj = new GameObject[BCV.PLAYER_MAX];
 
         // リザルトオブジェクトの表示
-        resultObj = Utility.MyInstantiate(
+        resultObj = Utility._Object.MyInstantiate(
             BCV.RESULT_PREFAB,
             c);
         // 顔グラフィックオブジェクトの子供を取得する
@@ -44,7 +44,7 @@ public class BattleResult : MonoBehaviour
             resultFaceObj[i].SetActive(false);
         }
 
-        yield return Utility.WaitKey();
+        yield return Utility._Wait.WaitKey();
 
         // オブジェクト消去
         Destroy(resultObj);
@@ -56,11 +56,11 @@ public class BattleResult : MonoBehaviour
     public static IEnumerator ResultLoseScene(BaseCharacter[] bc, GameObject c)
     {
         // リザルトオブジェクトの表示
-        resultObj = Utility.MyInstantiate(
+        resultObj = Utility._Object.MyInstantiate(
             BCV.RESULT_LOSE_PREFAB,
             c);
 
-        yield return Utility.WaitKey();
+        yield return Utility._Wait.WaitKey();
 
         // オブジェクト消去
         Destroy(resultObj);
@@ -72,7 +72,7 @@ public class BattleResult : MonoBehaviour
     public static IEnumerator ResultFadeout(GameObject c)
     {
         int frame = 30;
-        GameObject fade = Utility.MyInstantiate(
+        GameObject fade = Utility._Object.MyInstantiate(
             BCV.FACE_IMAGE_PREFAB,
             c,
             "Images\\Background\\Black",

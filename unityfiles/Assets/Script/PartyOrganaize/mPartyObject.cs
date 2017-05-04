@@ -11,6 +11,7 @@ public class mPartyObject : MonoBehaviour
     GameObject[] partyCharaFrameObj;
     Image[] standImage;
     Text[] hpText;
+    Text partyNameText;
     public int touchId = -1;
 
     /* 初期化 */
@@ -23,6 +24,7 @@ public class mPartyObject : MonoBehaviour
         partyCharaFrameObj = new GameObject[5];
         hpText = new Text[5];
         standImage = new Image[5];
+        partyNameText = transform.FindChild("Text").gameObject.GetComponent<Text>();
         GameObject obj = transform.FindChild("Character").gameObject;
         for (int i = 0; i < partyCharacterObj.Length; i++)
         {
@@ -38,6 +40,13 @@ public class mPartyObject : MonoBehaviour
     // クリックされた際のイベント
     public void onClick( GameObject obj)
     {
+        // 戻るボタン
+        if( obj.name == "Return")
+        {
+            touchId = -2;
+            return;
+        }
+
         // クリックされたキャラのIDを取得
         string objName = obj.name;
         objName = objName.Replace("Chara", "");
@@ -46,10 +55,11 @@ public class mPartyObject : MonoBehaviour
 
 
     // パーティ編成画面用のオブジェクトへアクセスするインタフェースを提供
+    public void SetPartyName( string name) { partyNameText.text = name; }
     public void SetHpText(int partyId, int hp) { hpText[partyId].text = "HP  " + hp;  }
     public void SetStandImage(int partyId, string standGraFilePath) 
     {
-        standImage[partyId].sprite = Utility.MyGetSprite(standGraFilePath);
+        standImage[partyId].sprite = Utility._Image.MyGetSprite(standGraFilePath);
     }
     public void CharacterSetActive(int partyId, bool isActive) { partyCharacterObj[partyId].SetActive(isActive); }
     public void FrameSetActive(int partyId, bool isActive) { partyCharaFrameObj[partyId].SetActive(isActive); }

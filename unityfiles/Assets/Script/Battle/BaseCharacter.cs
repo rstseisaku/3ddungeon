@@ -5,18 +5,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-
-/* 属性 */
-enum Element { Fire, Water, Thunder, Light, Dark }
-
-
 /*
  * 戦闘中に利用するキャラクターの情報を管理する基底クラス
  */
+ // TODO: それぞれのオブジェクトに，スクリプトをアタッチ
 public class BaseCharacter : MonoBehaviour
 {
-    GameObject dObj; // AddComponent を使うためのダミーオブジェクト
-
     // 敵・味方のフラグを立てておく
     protected bool isPlayerCharacter = false;
 
@@ -71,7 +65,6 @@ public class BaseCharacter : MonoBehaviour
     // ダミーオブジェクトの登録
     public void Init(GameObject canvas)
     {
-        dObj = GameObject.Find("Dummy");
         battleCanvas = canvas;
     }
 
@@ -124,6 +117,7 @@ public class BaseCharacter : MonoBehaviour
     public void MakeCharacterGraphic()
     {
         // CTB 顔グラオブジェの追加
+        // ctbFaceObj = new CtbFaceObj();
         ctbFaceObj = gameObject.AddComponent<CtbFaceObj>();
         ctbFaceObj.Init(this); // 初期化(3オブジェクトインスタンス化)
         ctbFaceObj.SetPosY( isPlayerCharacter, partyId); // Y座標セット
@@ -144,7 +138,7 @@ public class BaseCharacter : MonoBehaviour
     public void MakeStatusObj(int Y)
     {
         // Image オブジェクト生成
-        StatusObj = Utility.MyInstantiate(
+        StatusObj = Utility._Object.MyInstantiate(
             BCV.STATUSOBJ_PREFAB,
             battleCanvas);
         // 座標指定
@@ -174,20 +168,20 @@ public class BaseCharacter : MonoBehaviour
     {
         // 攻撃者の画像を貼り付ける
         GameObject atkObj = Attacker();
-        yield return Utility.Wait(60);
+        yield return Utility._Wait.WaitFrame(30);
         Destroy(atkObj);
 
         // 対象表示
         GameObject targetObj = TargetGraphicDraw(cd);
-        yield return Utility.Wait(10);
+        yield return Utility._Wait.WaitFrame(10);
         // 戦闘アニメーション
         GameObject effObj = AttackEffect(cd);
-        yield return Utility.Wait(60);
+        yield return Utility._Wait.WaitFrame(45);
 
         // ダメージ表示 
         GameObject dmgObj = DrawDamage( CalDamage(cm) );
         GameObject cmbObj = DrawCombo(cm);
-        yield return Utility.Wait(45);
+        yield return Utility._Wait.WaitFrame(45);
 
         Destroy(cmbObj);
         Destroy(dmgObj);
@@ -202,7 +196,7 @@ public class BaseCharacter : MonoBehaviour
         string FilePath = "Prefabs\\Battle\\ImageBase";
         // 顔グラオブジェクトの生成
         GameObject atkChara = 
-            Utility.MyInstantiate(FilePath, battleCanvas, cs.faceGraphicPath);
+            Utility._Object.MyInstantiate(FilePath, battleCanvas, cs.faceGraphicPath);
         // サイズ設定
         atkChara.transform.localScale =
             new Vector2(ConstantValue.BATTLE_ATTACKFACE_SIZE, ConstantValue.BATTLE_ATTACKFACE_SIZE);

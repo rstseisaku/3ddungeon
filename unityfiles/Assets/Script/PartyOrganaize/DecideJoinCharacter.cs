@@ -33,7 +33,10 @@ class DecideJoinCharacter : MonoBehaviour
 
         /* 次状態算出 */
         if (joinCharaId == -2) editPartyStatus = EDIT_PARTY_STATUS._CHANGE_CHARACTER;
+        if (joinCharaId == -3) editPartyStatus = EDIT_PARTY_STATUS._DECIDED_JOIN_CHARACTER;
         if (joinCharaId >= 0) editPartyStatus = EDIT_PARTY_STATUS._DECIDED_JOIN_CHARACTER;
+
+        /*  */
 
         /* 削除 */
         Destroy(partyObj);
@@ -47,7 +50,7 @@ class DecideJoinCharacter : MonoBehaviour
         GameObject canvas = GameObject.Find("PartyCanvas");
 
         string FilePath = "Prefabs\\Party\\HaveChara";
-        partyObj = Utility.MyInstantiate(FilePath, canvas);
+        partyObj = Utility._Object.MyInstantiate(FilePath, canvas);
         haveCharaScript = partyObj.GetComponent<HaveChara>();
         haveCharaScript.GenerateObject( obtainChara.isObtainChara );
     }

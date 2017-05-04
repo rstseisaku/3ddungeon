@@ -28,28 +28,30 @@ public class CtbFaceObj : MonoBehaviour
     public void SetPosY( bool isPChara, int pId)
     {
         int baseY = BCV.CTB_ENEMY_UPPER;
+        int abs = BCV.CTB_FACE_ENEMY_VY;
         int vy = -1;
         if (isPChara)
         {
             baseY = BCV.CTB_PLAYER_BOTTOM;
+            abs = BCV.CTB_FACE_VY;
             vy = 1;
         }
         faceObj.transform.localPosition = new Vector3(
-            0, vy * pId * ConstantValue.BATTLE_FACE_VY + baseY, 0);
+            0, vy * pId * abs + baseY, 0);
     }
 
     /* 3つのオブジェクトを生成する */
     private void GenerateObj(BaseCharacter bc)
     {
         // 顔グラオブジェクトの生成
-        faceObj = Utility.MyInstantiate(
+        faceObj = Utility._Object.MyInstantiate(
             BCV.FACE_IMAGE_PREFAB,
             bc.battleCanvas,
             bc.cs.faceGraphicPath,
             new Vector2(BCV.FACE_SIZE, BCV.FACE_SIZE));
 
         // 魔力テキストの生成
-        magText = Utility.MyInstantiate(
+        magText = Utility._Object.MyInstantiate(
             BCV.MAG_TEXT_PREFAB,
             faceObj);
         magText.GetComponent<RectTransform>().localPosition -=
@@ -57,8 +59,8 @@ public class CtbFaceObj : MonoBehaviour
         magText.GetComponent<Text>().text = "" + bc.cs.mag;
 
         // 属性エレメントの生成
-        string iconFilePath = "Images/Icon/icon" + 0;
-        elementObj = Utility.MyInstantiate(
+        string iconFilePath = "Images/Icon/icon" + bc.cs.element;
+        elementObj = Utility._Object.MyInstantiate(
             BCV.FACE_IMAGE_PREFAB,
             faceObj,
             iconFilePath,

@@ -46,11 +46,17 @@ class DecideChangeCharacter : MonoBehaviour
     {
         // インスタンス化
         GameObject canvas = GameObject.Find("PartyCanvas");
+        if ( canvas == null)
+        {
+            canvas = Utility._Object.GenerateCanvas(5);
+            canvas.name = "PartyCanvas";
+        }
 
         string FilePath = "Prefabs\\Party\\Party";
-        partyObj = Utility.MyInstantiate(FilePath, canvas);
+        partyObj = Utility._Object.MyInstantiate(FilePath, canvas);
         mPartyScript = partyObj.GetComponent<mPartyObject>();
         mPartyScript.FindObjectAddress();
+        mPartyScript.SetPartyName(party.partyName);
 
         // キャラクタの情報をセットしていく
         for (int i = 0; i < party.partyCharacter.Length; i++)
