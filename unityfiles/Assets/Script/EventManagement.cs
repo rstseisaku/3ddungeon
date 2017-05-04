@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Variables;
+using Utility;
 
 
 public class EventManagement : MonoBehaviour {
@@ -19,10 +20,10 @@ public class EventManagement : MonoBehaviour {
         if (activeevent.type == (int)Event.TYPE.TRANSITION)
         {
             if(activeevent.thisobject == false)
-            Utility.mTransition(activeevent);
+            _Transition.mTransition(activeevent);
 
             if (activeevent.thisobject == true)
-                Utility.mTransition(activeevent, activeevent.transobject);
+                _Transition.mTransition(activeevent, activeevent.transobject);
          }
     }
 

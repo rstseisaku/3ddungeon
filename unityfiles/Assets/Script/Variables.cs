@@ -98,4 +98,23 @@ namespace Variables
         public static string EnemyDataFilePath = "Assets\\Resources\\CharacterData\\enemyData.csv";
         public static string EnemyGroupFilePath = "Assets\\Resources\\CharacterData\\enemyGroupData.csv";
     }
+    
+    [System.Serializable]
+    public class Handler
+    {
+        public int type;
+
+        public string text;
+
+        public Texture2D rule;
+        public float time;
+        public TRANSITION.Transition.TRANSITION_MODE mode;
+        public Texture2D mask;
+        public float blackout;
+        public float whiteout;
+        public bool thisobject;
+        public GameObject transobject;
+
+
+    }
 }
