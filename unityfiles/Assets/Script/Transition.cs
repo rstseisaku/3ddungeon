@@ -3,75 +3,56 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Variables;
+
 #if UNITY_EDITOR
 using UnityEditor;      //!< デプロイ時にEditorスクリプトが入るとエラーになるので UNITY_EDITOR で括ってね！
 #endif
 
-namespace fuck { 
+namespace TRANSITION { 
 
 [System.Serializable]
 public class Transition : MonoBehaviour {
 
-    public bool enableonplay = true;
+        public enum TRANSITION_MODE
+        {
+            //ここに作ったものを列記
+            _MASK = 0, // このシェーダー何してるやつ？
+            _BLACKOUT = 1,
+            _WHITEOUT = 2,
+            _COLOR_INVERSION = 3,
+            _FADEIN = 4,
+            _FADEOUT = 5,
+            _GRAYSCALE = 6
+        }
+
+        //現状使ってない
+        public bool enableonplay = true;
+    //実行時間
     public float time = 1.0f; // 秒単位
+    //変数
     private float rate;
-    public float fill = 0;
+    private float fill = 0;
+    private Image image;
 
-    [SerializeField]
+        //ルール画像
+        [SerializeField]
     public Texture2D rule;
-    Image image;
-
+        //マスク画像
     public Texture2D mask;
+        //ブラックアウト
     [SerializeField, Range(0, 0.99f)]
     public float blackout;
+        //ホワイトアウト
     [SerializeField, Range(0, 0.99f)]
     public float whiteout;
-
-    public enum TRANSITION_MODE
-    {
-        //ここに作ったものを列記
-        _MASK = 0, // このシェーダー何してるやつ？
-        _BLACKOUT = 1,
-        _WHITEOUT = 2,
-        _COLOR_INVERSION = 3,
-        _FADEIN = 4,
-        _FADEOUT = 5,
-        _GRAYSCALE = 6
-    }
+    //モード
     [SerializeField]
     public TRANSITION_MODE mode;
 
     // Use this for initialization
     void Start() {
-        image = GetComponent<Image>();
-        rate = 1.0f / (time * 60);
-        switch (mode)
-        {
-            //モードの内容を記入
-            case TRANSITION_MODE._MASK:
-                MASK();
-                break;
-            case TRANSITION_MODE._WHITEOUT:
-                WHITEOUT();
-                break;
-            case TRANSITION_MODE._BLACKOUT:
-                BLACKOUT();
-                break;
-            case TRANSITION_MODE._COLOR_INVERSION:
-                COLOR_INVERSION();
-                break;
-            case TRANSITION_MODE._FADEIN:
-                FADEIN();
-                break;
-            case TRANSITION_MODE._FADEOUT:
-                FADEOUT();
-                break;
-            case TRANSITION_MODE._GRAYSCALE:
-                GRAYSCALE();
-                break;
-            default:
-                break;
-        }
+            Enable();
     }
 
     // Update is called once per frame
@@ -85,6 +66,52 @@ public class Transition : MonoBehaviour {
         }
         
     }
+
+    public void SetParameter(Handler transition)
+    {
+            time = transition.time;
+            rule = transition.rule;
+            mask = transition.mask;
+            blackout = transition.blackout;
+            whiteout = transition.whiteout;
+            mode = transition.mode;
+    }
+
+        public void Enable()
+        {
+            image = GetComponent<Image>();
+            rate = 1.0f / (time * 60);
+            switch (mode)
+            {
+                //モードの内容を記入
+                case TRANSITION_MODE._MASK:
+                    MASK();
+                    break;
+                case TRANSITION_MODE._WHITEOUT:
+                    WHITEOUT();
+                    break;
+                case TRANSITION_MODE._BLACKOUT:
+                    BLACKOUT();
+                    break;
+                case TRANSITION_MODE._COLOR_INVERSION:
+                    COLOR_INVERSION();
+                    break;
+                case TRANSITION_MODE._FADEIN:
+                    FADEIN();
+                    break;
+                case TRANSITION_MODE._FADEOUT:
+                    FADEOUT();
+                    break;
+                case TRANSITION_MODE._GRAYSCALE:
+                    GRAYSCALE();
+                    break;
+                default:
+                    Debug.Log("モードが設定されていません");
+                    break;
+            }
+
+        }
+
 
     // アルファカット，マスク画像が設定されている場合
     void MASK()

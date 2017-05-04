@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+using Variables;
+using TRANSITION;
+
 public class Utility : MonoBehaviour
 {
     public static IEnumerator Wait( int frame )
@@ -119,11 +122,12 @@ public class Utility : MonoBehaviour
             canvas,
             FadeImagePath, 
             new Vector2(1280, 960));
+        /*
         obj.GetComponent<Transition>().rule = MyGetTexture("Images\\Transition\\transition_1");
         obj.GetComponent<Transition>().mode = Transition.TRANSITION_MODE._FADEIN;
         obj.GetComponent<Transition>().time = ( frame / 60 );
         obj.name = "Fade";
-        yield return Wait( (int)frame + 10 );
+        */yield return Wait( (int)frame + 10 );
 
         // 移動
         SceneManager.LoadScene(sceneName);
@@ -136,6 +140,28 @@ public class Utility : MonoBehaviour
     public static IEnumerator MoveScene( string sceneName )
     {
         yield return MoveScene(sceneName, "Images\\Background\\Background1", 60);
+    }
+
+
+    //画面全体に対するトランジション
+    public static void mTransition(Handler transition)
+    {
+        GameObject fadecanvas = GenerateCanvas();
+        GameObject fade = (GameObject)Instantiate(Resources.Load("Prefabs/Fade/Fade"), 
+                                 new Vector3(0, 0, 0),
+                                 Quaternion.identity);
+        fade.transform.SetParent(fadecanvas.transform);
+        fade.gameObject.AddComponent<Transition>();
+        fade.gameObject.GetComponent<Transition>().SetParameter(transition);
+        fade.gameObject.GetComponent<Transition>().Enable();
+        fade.transform.localPosition = new Vector2(0,0);
+    }
+    //個々に対するトランジション
+    public static void mTransition(Handler transition, GameObject transobject)
+    {
+        transobject.gameObject.AddComponent<Transition>();
+        transobject.gameObject.GetComponent<Transition>().SetParameter(transition);
+        transobject.gameObject.GetComponent<Transition>().Enable();
     }
 
 }

@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
+using TRANSITION;
 
 namespace Variables
 {
     //何度か使う可能性がある変数はこっちに記入
-    
-    public class Map 
+
+    public class Map
     {
 
         //マップ生成関連
@@ -72,4 +75,22 @@ namespace Variables
 
     }
 
+
+    [System.Serializable]
+    public class Handler
+    {
+
+        public int type;
+
+        public string text;
+        
+        public Texture2D rule;
+        public float time;
+        public Transition.TRANSITION_MODE mode;
+        public Texture2D mask;
+        public float whiteout;
+        public float blackout;
+        public bool thisobject;
+        public GameObject transobject;
+    }
 }

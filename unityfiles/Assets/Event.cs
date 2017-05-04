@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Variables;
+using TRANSITION;
+
 #if UNITY_EDITOR
 using UnityEditor;      //!< デプロイ時にEditorスクリプトが入るとエラーになるので UNITY_EDITOR で括ってね！
 #endif
 
-using fuck;
 
 public class Event : MonoBehaviour {
-    
+
     [SerializeField]
-    public List<Handler> handler = new List<Handler>();
+    public List<Handler> eventlist = new List<Handler>();
+
+    public Handler test = new Handler();
+
     public enum TYPE
     {
         WORD = 0,
@@ -21,22 +26,19 @@ public class Event : MonoBehaviour {
     }
     public TYPE mode;
 
-    int i = 0;
-    public Transition test;
+    private int i = 0;
 
-    void OnTriggerEnter(Collider collision)
+    public void OnTriggerEnter(Collider collision)
     {
         if(collision.transform.tag == "MainCamera")
         {
-            Debug.Log("collision");
             //ActivateEvent();
         }
     }
 
-    void ActivateEvent(int i)
+    private void ActivateEvent(int i)
     {
-        Debug.Log(i);
-         GameObject.Find("GameMaster").GetComponent<EventManagement>().Execute(handler[i]);
+         GameObject.Find("GameMaster").GetComponent<EventManagement>().Execute(eventlist[i]);
  
     }
 
@@ -46,21 +48,14 @@ public class Event : MonoBehaviour {
         
         if (Input.GetKeyUp(KeyCode.Z))
         {
-            if (i < handler.Count)
+            if (i < eventlist.Count)
                 ActivateEvent(i);
             i++;
         }
     }
 }
 
-[System.Serializable]
-public class Handler
-{
-    public int type;
-    public string text;
-    public Transition transition = new Transition();
 
-}
 
 /* ---- ここから拡張コード ---- */
 #if UNITY_EDITOR
@@ -78,11 +73,8 @@ public class CustomEvent : Editor
     {
         Event custom = target as Event;
 
-        serializedObject.Update();
-
         //新しく追加するイベントの種類に応じて設定
-        //custom.mode = (Event.TYPE)EditorGUILayout.EnumPopup("種類", custom.mode);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("mode"), new GUIContent("Event Type"));
+        custom.mode = (Event.TYPE)EditorGUILayout.EnumPopup("種類", custom.mode);
 
         if (custom.mode == Event.TYPE.WORD)
         {
@@ -90,9 +82,44 @@ public class CustomEvent : Editor
         }
         if (custom.mode == Event.TYPE.TRANSITION)
         {
-            handler.transition.rule = EditorGUILayout.ObjectField("ルール画像", handler.transition.rule, typeof(Texture2D), true) as Texture2D;
-            handler.transition.time = EditorGUILayout.FloatField("時間(s)", handler.transition.time);
-            handler.transition.mode = (Transition.TRANSITION_MODE)EditorGUILayout.EnumPopup("種類", handler.transition.mode);
+            handler.rule = EditorGUILayout.ObjectField("ルール画像", handler.rule, typeof(Texture2D), true) as Texture2D;
+            handler.time = EditorGUILayout.FloatField("時間(s)", handler.time);
+            handler.mode = (Transition.TRANSITION_MODE)EditorGUILayout.EnumPopup("種類", handler.mode);
+
+            if (handler.mode == Transition.TRANSITION_MODE._MASK)
+            {
+                handler.mask = EditorGUILayout.ObjectField("マスク画像", handler.mask, typeof(Texture2D), true) as Texture2D;
+            }
+            if (handler.mode == Transition.TRANSITION_MODE._WHITEOUT)
+            {
+                handler.whiteout = EditorGUILayout.Slider("whiteout", handler.whiteout, 0, 1);
+            }
+            if (handler.mode == Transition.TRANSITION_MODE._BLACKOUT)
+            {
+                handler.blackout = EditorGUILayout.Slider("blackout", handler.blackout, 0, 1);
+            }
+            if (handler.mode == Transition.TRANSITION_MODE._COLOR_INVERSION)
+            {
+
+            }
+            if (handler.mode == Transition.TRANSITION_MODE._FADEIN)
+            {
+
+            }
+            if (handler.mode == Transition.TRANSITION_MODE._FADEOUT)
+            {
+
+            }
+            if (handler.mode == Transition.TRANSITION_MODE._GRAYSCALE)
+            {
+
+            }
+
+            handler.thisobject = EditorGUILayout.Toggle("this object", handler.thisobject);
+            if (handler.thisobject == true)
+            {
+                handler.transobject = custom.gameObject;
+            }
 
         }
         if (custom.mode == Event.TYPE.ENCOUNT)
@@ -100,34 +127,34 @@ public class CustomEvent : Editor
 
         }
 
-
-
+        
         if (GUILayout.Button("追加"))
         { 
             handler.type = (int)custom.mode;
             
-            custom.handler.Add(handler);
+            //list.Add(handler);
+            //handler = new Handler();
+
+            custom.eventlist.Add(handler);
             handler = new Handler();
         }
 
         if (GUILayout.Button("削除"))
         {
-            custom.handler.Clear();
+            custom.eventlist.Clear();
         }
         //表示はするけど編集不可
         EditorGUI.BeginDisabledGroup(true);
-        for (int i = 0; i < custom.handler.Count; i++)
+        for (int i = 0; i < custom.eventlist.Count; i++)
         {
-            custom.handler[i].type = EditorGUILayout.IntField("タイプ", custom.handler[i].type);
-            if(custom.handler[i].type == 0)
-            custom.handler[i].text = EditorGUILayout.TextField("文章", custom.handler[i].text);
-            //if (custom.handler[i].type == 1)
-            //custom.handler[i].transition.mode = (Transition.TRANSITION_MODE)EditorGUILayout.EnumPopup("",custom.handler[i].transition.mode);
+            custom.eventlist[i].type = EditorGUILayout.IntField("タイプ", custom.eventlist[i].type);
+            if(custom.eventlist[i].type == 0)
+                custom.eventlist[i].text = EditorGUILayout.TextField("文章", custom.eventlist[i].text);
+            if (custom.eventlist[i].type == 1)
+                custom.eventlist[i].mode = (Transition.TRANSITION_MODE)EditorGUILayout.EnumPopup("", custom.eventlist[i].mode);
         }
         EditorGUI.EndDisabledGroup();
-
-
-        serializedObject.ApplyModifiedProperties();
+        
 
         EditorUtility.SetDirty(target);
     }
