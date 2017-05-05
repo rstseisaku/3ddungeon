@@ -14,43 +14,75 @@ public class Event : MonoBehaviour {
 
     [SerializeField]
     public List<Handler> eventlist = new List<Handler>();
-
-    public Handler test = new Handler();
+    public enum EVENTTYPE
+    {
+        自動 = 0,
+        接触 = 1,
+        調べる = 2
+    }
 
     public enum TYPE
     {
         WORD = 0,
         TRANSITION = 1,
-        ENCOUNT = 2
+        ENCOUNT = 2,
+        MOVESCENE = 3
 
     }
+    public EVENTTYPE activateonwhat;
+
     public TYPE mode;
 
+    private bool eventisactive = false;
     private int i = 0;
 
-    public void OnTriggerEnter(Collider collision)
+    //自動実行
+    public void Start()
     {
-        if(collision.transform.tag == "MainCamera")
+        if(activateonwhat == EVENTTYPE.自動)
         {
-            //ActivateEvent();
+            eventisactive = true;
+            NextEvent(i);
+            i++;
         }
     }
 
-    private void ActivateEvent(int i)
+    //接触イベント起動
+    public void OnTriggerEnter(Collider collision)
     {
-         GameObject.Find("GameMaster").GetComponent<EventManagement>().Execute(eventlist[i]);
+        if (activateonwhat == EVENTTYPE.接触)
+        {
+            if (collision.transform.tag == "MainCamera")
+            {
+                ActivateEvent();
+                NextEvent(i);
+                i++;
+            }
+        }
+    }
+
+    private void ActivateEvent()
+    {
+        eventisactive = true;
  
     }
 
+    //イベント送り
+    private void NextEvent(int i)
+    {
+        GameObject.Find("GameMaster").GetComponent<EventManagement>().Execute(eventlist[i]);
+    }
     
-
-    public void Update() {
-        
-        if (Input.GetKeyUp(KeyCode.Z))
+    public void Update()
+    {
+        if (eventisactive == true)
         {
-            if (i < eventlist.Count)
-                ActivateEvent(i);
-            i++;
+            if (Input.GetKeyUp(KeyCode.Z))
+            {
+                if (i < eventlist.Count)
+                    NextEvent(i);
+                i++;
+            }
         }
     }
 }
@@ -72,6 +104,9 @@ public class CustomEvent : Editor
     public override void OnInspectorGUI()
     {
         Event custom = target as Event;
+
+        //イベントの起動条件
+        custom.activateonwhat = (Event.EVENTTYPE)EditorGUILayout.EnumPopup("この時実行", custom.activateonwhat);
 
         //新しく追加するイベントの種類に応じて設定
         custom.mode = (Event.TYPE)EditorGUILayout.EnumPopup("種類", custom.mode);
@@ -126,8 +161,12 @@ public class CustomEvent : Editor
         {
 
         }
+        if (custom.mode == Event.TYPE.MOVESCENE)
+        {
+            handler.moveto = EditorGUILayout.TextField("移動シーン", handler.moveto);
+        }
 
-        
+
         if (GUILayout.Button("追加"))
         { 
             handler.type = (int)custom.mode;
@@ -152,6 +191,9 @@ public class CustomEvent : Editor
                 custom.eventlist[i].text = EditorGUILayout.TextField("文章", custom.eventlist[i].text);
             if (custom.eventlist[i].type == 1)
                 custom.eventlist[i].mode = (Transition.TRANSITION_MODE)EditorGUILayout.EnumPopup("", custom.eventlist[i].mode);
+
+            if (custom.eventlist[i].type == 3)
+                custom.eventlist[i].moveto = EditorGUILayout.TextField("文章", custom.eventlist[i].moveto);
         }
         EditorGUI.EndDisabledGroup();
         

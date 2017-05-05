@@ -27,5 +27,13 @@ public class EventManagement : MonoBehaviour {
             if (activeevent.thisobject == true)
                 _Transition.mTransition(activeevent, activeevent.transobject);
          }
+        if (activeevent.type == (int)Event.TYPE.ENCOUNT)
+        {
+        }
+        if (activeevent.type == (int)Event.TYPE.MOVESCENE)
+        {
+            Debug.Log("fuck");
+            StartCoroutine(_Scene.MoveScene(activeevent.moveto));
+        }
     }
 }

@@ -115,6 +115,7 @@ namespace Variables
         public bool thisobject;
         public GameObject transobject;
 
+        public string moveto;
 
     }
 }

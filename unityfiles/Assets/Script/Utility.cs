@@ -199,6 +199,7 @@ namespace Utility
         // ここら辺の処理は、書き直す
         public static IEnumerator MoveScene(string sceneName)
         {
+            Debug.Log("fuckfuck");
             yield return MoveScene(sceneName, "Images\\Background\\Background1", 60);
         }
     }
