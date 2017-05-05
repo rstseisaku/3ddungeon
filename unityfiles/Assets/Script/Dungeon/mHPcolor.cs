@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//HPの表示
 public class mHPcolor : MonoBehaviour {
     
     //残りHP(現在HP)後々どっかから取ってくる
@@ -13,11 +14,6 @@ public class mHPcolor : MonoBehaviour {
     private string HP;
     //色
     private Color HPcolor;
-
-	// Use this for initialization
-	void Start () {
-		
-	}
 	
 	// Update is called once per frame
 	void Update () {

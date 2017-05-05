@@ -20,7 +20,7 @@ namespace Variables
 
         //フィールドマップの親オブジェクト
         public static GameObject map;
-        public static Map1 map1;
+        public static MapMake mapobject;
         //ミニマップの親オブジェクト
         public static GameObject minimapcanvas;
         public static miniMap minimap;
@@ -28,7 +28,7 @@ namespace Variables
         public static void GetGameObject()
         {
             map = GameObject.Find("Map");
-            map1 = map.GetComponent<Map1>();
+            mapobject = map.GetComponent<MapMake>();
             minimapcanvas = GameObject.Find("MiniMap");
             minimap = minimapcanvas.GetComponent<miniMap>();
             playerobject = GameObject.FindWithTag("MainCamera");
@@ -115,6 +115,7 @@ namespace Variables
         public bool thisobject;
         public GameObject transobject;
 
+        public string moveto;
 
     }
 }
