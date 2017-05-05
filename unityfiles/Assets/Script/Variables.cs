@@ -56,7 +56,8 @@ namespace Variables
 
 
         //その他
-
+        public static bool usethisvalue = false;
+        public static Vector2 movehere;
     }
 
     public class Player
@@ -115,7 +116,10 @@ namespace Variables
         public bool thisobject;
         public GameObject transobject;
 
-        public string moveto;
+        public string movetothisscene;
+        public bool movehere; 
+        public int moveX;
+        public int moveY;
 
     }
 }

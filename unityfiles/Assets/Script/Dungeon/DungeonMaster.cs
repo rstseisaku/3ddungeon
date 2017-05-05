@@ -35,7 +35,6 @@ public class DungeonMaster : MonoBehaviour {
     private MapMake map;
     private miniMap minimap;
 
-
     // Use this for initialization
     void Start () {
 
@@ -222,11 +221,15 @@ public class DungeonMaster : MonoBehaviour {
         //staticで残っている値を使用
         else
         {
-            SetPlayer( (int)Map.playerpos.x, (int)Map.playerpos.y );
+            SetPlayer( (int)Map.playerpos.x, (int)Map.playerpos.y);
         }
 
-        //ミニマップに現在位置を使用するのでここで一度現在位置を取得
-        Map.GetPlayerPos();
+        //
+        if (Map.usethisvalue == true)
+        {
+            SetPlayer((int)Map.movehere.x, (int)Map.movehere.y);
+            Map.usethisvalue = false;
+        }
 
         return;
     } 
