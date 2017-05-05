@@ -9,51 +9,64 @@ using Variables;
 using UnityEditor;      //!< デプロイ時にEditorスクリプトが入るとエラーになるので UNITY_EDITOR で括ってね！
 #endif
 
+//トランジションを行うスクリプト
+//このスクリプトを張り付けるかEventスクリプトを張り付けて実行するのが望ましい
 namespace TRANSITION { 
-
-[System.Serializable]
-public class Transition : MonoBehaviour {
-
+    //これ付けないといけない感じ?
+    [System.Serializable]
+    public class Transition : MonoBehaviour {
+        //モードの指定
         public enum TRANSITION_MODE
         {
             //ここに作ったものを列記
-            _MASK = 0, // このシェーダー何してるやつ？
-            _BLACKOUT = 1,
-            _WHITEOUT = 2,
-            _COLOR_INVERSION = 3,
-            _FADEIN = 4,
-            _FADEOUT = 5,
-            _GRAYSCALE = 6
+            _MASK = 0,                  //指定した画像に変更
+            _BLACKOUT = 1,              //ブラックアウト
+            _WHITEOUT = 2,              //ホワイトアウト
+            _COLOR_INVERSION = 3,       //色彩逆転?
+            _FADEIN = 4,                //フェードイン
+            _FADEOUT = 5,               //フェードアウト
+            _GRAYSCALE = 6              //グレースケール変換
         }
+
+        //インスペクタ―上で設定すべき値
+        //time:時間(s)かけてトランジションを行う
+        //rule:ルール画像
+        //mode:トランジションを行うモード
+        //mask:(MASKモードのみ)この画像に上書きする
+        //blackout:ブラックアウト係数:0でそのまま、1で真っ黒
+        //whiteout:ホワイトアウト係数:0でそのまま、1で真っ白
 
         //現状使ってない
         public bool enableonplay = true;
-    //実行時間
-    public float time = 1.0f; // 秒単位
-    //変数
-    private float rate;
-    private float fill = 0;
-    private Image image;
+        //実行時間
+        public float time = 1.0f; // 秒単位
 
         //ルール画像
         [SerializeField]
-    public Texture2D rule;
+        public Texture2D rule;
         //マスク画像
-    public Texture2D mask;
+        [SerializeField]
+        public Texture2D mask;
         //ブラックアウト
-    [SerializeField, Range(0, 0.99f)]
-    public float blackout;
+        [SerializeField, Range(0, 0.99f)]
+        public float blackout;
         //ホワイトアウト
-    [SerializeField, Range(0, 0.99f)]
-    public float whiteout;
-    //モード
-    [SerializeField]
-    public TRANSITION_MODE mode;
+        [SerializeField, Range(0, 0.99f)]
+        public float whiteout;
+        //モード
+        [SerializeField]
+        public TRANSITION_MODE mode;
 
-    // Use this for initialization
-    void Start() {
+        //変数
+        private float rate;
+        private float fill = 0;
+        private Image image;
+
+        // Use this for initialization
+        void Start() {
+            //有効にする
             Enable();
-    }
+        }
 
     // Update is called once per frame
     void Update()
@@ -67,6 +80,8 @@ public class Transition : MonoBehaviour {
         
     }
 
+    //パラメータのセット
+    //Eventスクリプトで実行した時のみ実行
     public void SetParameter(Handler transition)
     {
             time = transition.time;
@@ -77,10 +92,16 @@ public class Transition : MonoBehaviour {
             mode = transition.mode;
     }
 
-        public void Enable()
-        {
+    public void Enable()
+    {
+            //対象のイメージを取得
+            //現在は3Dオブジェクトに対して行う物ではない
             image = GetComponent<Image>();
+
+            //秒あたりの加算値
             rate = 1.0f / (time * 60);
+
+            //モードに応じた初期化処理
             switch (mode)
             {
                 //モードの内容を記入
@@ -113,7 +134,7 @@ public class Transition : MonoBehaviour {
         }
 
 
-    // アルファカット，マスク画像が設定されている場合
+    // マスク画像が設定されている場合
     void MASK()
     {
         image.material = new Material(Shader.Find("Custom/Mask"));
@@ -165,6 +186,8 @@ public class Transition : MonoBehaviour {
         image.material.SetTexture("_Rule", rule);
     }
 }
+
+
 
 /* ---- ここから拡張コード ---- */
 #if UNITY_EDITOR

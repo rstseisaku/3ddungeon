@@ -54,6 +54,34 @@ namespace Utility
         {
             return MyInstantiate(FilePath, null);
         }
+        
+        // ファイル名からオブジェクトを返す(Canvasセット付)
+        public static GameObject MyInstantiate(string FilePath, GameObject c)
+        {
+            GameObject obj;
+            obj = (GameObject)Instantiate(Resources.Load(FilePath),
+                                new Vector3(0, 0, 0),
+                                Quaternion.identity);
+            if (c != null) { obj.transform.SetParent(c.transform, false); }
+            return obj;
+        }
+
+        // 指定した位置にオブジェクトを作成
+        public static GameObject MyInstantiate(string FilePath, Vector3 vec)
+        {
+            return MyInstantiate(FilePath, vec, null);
+        }
+
+        // ファイル名から指定された位置にオブジェクトを作成(Canvasセット付)
+        public static GameObject MyInstantiate(string FilePath, Vector3 vec, GameObject c)
+        {
+            GameObject obj;
+            obj = (GameObject)Instantiate(Resources.Load(FilePath),
+                                vec,
+                                Quaternion.identity);
+            if (c != null) { obj.transform.SetParent(c.transform, false); }
+            return obj;
+        }
 
         // オブジェクト名からオブジェクトを返す
         public static GameObject MyFind(string ObjectName)
@@ -63,17 +91,6 @@ namespace Utility
             {
                 _Error.ObjectNotFound(ObjectName);
             }
-            return obj;
-        }
-
-        // ファイル名からオブジェクトを返す(Canvasセット付)
-        public static GameObject MyInstantiate(string FilePath, GameObject c)
-        {
-            GameObject obj;
-            obj = (GameObject)Instantiate(Resources.Load(FilePath),
-                                new Vector3(0, 0, 0),
-                                Quaternion.identity);
-            if (c != null) { obj.transform.SetParent(c.transform, false); }
             return obj;
         }
 
