@@ -88,10 +88,10 @@ public class CtbFaceObj : MonoBehaviour
     {
         // 変更した後の色を指定
         Color c;
-        if (bc.isMagic) c = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        if (bc.isknockout) c = new Color(0.6f, 0.2f, 0.2f, 1.0f);
+        else if (bc.isMagic) c = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         else if (bc.isStun) c = new Color(0.3f, 0.3f, 0.3f, 1.0f);
         else if (bc.isWaitUnison) c = new Color(0.5f, 0.5f, 1.0f, 1.0f);
-        else if (bc.isknockout) c = new Color(0.6f, 0.2f, 0.2f, 1.0f);
         else c = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 
         // 色をセット

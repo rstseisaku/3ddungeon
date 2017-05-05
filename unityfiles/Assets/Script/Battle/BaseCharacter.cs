@@ -112,8 +112,6 @@ public class BaseCharacter : MonoBehaviour
      * ===========================================================
      */
     // 顔グラ(CTB)のオブジェクトをインスタンス化する
-    // TODO: StatusObj は BaseCharacter で扱わない
-    // TODO: もっと細かく分ける
     public void MakeCharacterGraphic()
     {
         // CTB 顔グラオブジェの追加
@@ -129,21 +127,23 @@ public class BaseCharacter : MonoBehaviour
         predictObj = gameObject.AddComponent<PredictObject>();
         predictObj.Init(this);
         // ステータスオブジェクトの生成(CTB 顔グラオブジェ生成後)
-        int statusObjY = BCV.STATUS_ENEMY_Y;
-        if (isPlayerCharacter) statusObjY = BCV.STATUS_PLAYER_Y;
-        MakeStatusObj(statusObjY);
+        MakeStatusObj();
     } // --- MakeCharacterGraphic()
 
     // HP‣顔グラフィックの表示
-    public void MakeStatusObj(int Y)
+    public void MakeStatusObj()
     {
+        // 表示さきのY座標を決定
+        int ShiftY = BCV.STATUS_VY * (partyId / BCV.STATUS_X_ITEM_NUM);
+        int Y = BCV.STATUS_ENEMY_Y + ShiftY;
+        if (isPlayerCharacter) { Y = BCV.STATUS_PLAYER_Y - ShiftY; }
+        int X = ( partyId % BCV.STATUS_X_ITEM_NUM) * BCV.STATUS_VX + BCV.STATUS_LEFT_END;
         // Image オブジェクト生成
         StatusObj = Utility._Object.MyInstantiate(
             BCV.STATUSOBJ_PREFAB,
             battleCanvas);
         // 座標指定
-        StatusObj.transform.localPosition = new Vector3(
-            partyId * BCV.STATUS_VX + BCV.STATUS_LEFT_END, Y, 0);
+        StatusObj.transform.localPosition = new Vector3(X, Y, 0);
         // 画像を貼る(画像のアドレス)
         GameObject img = StatusObj.transform.FindChild("FaceGra").gameObject;
         img.GetComponent<Image>().sprite =

@@ -26,7 +26,7 @@ public class SelectTarget : MonoBehaviour {
             buttonObj[i] = (GameObject)Instantiate(buttonObj[0]);
             buttonObj[i].transform.SetParent(this.transform, false);
             buttonObj[i].GetComponent<RectTransform>().localPosition +=
-               new Vector3(0, -i * 88, 0);
+               new Vector3(0, -i * 40, 0);
             buttonObj[i].name = "" + i;
             buttonObj[i].transform.FindChild("Text").GetComponent<Text>().text =
                 ecd[i].cs.charaName;

@@ -74,16 +74,19 @@ class Gacha : MonoBehaviour
             getCharaResultId, _ST._standGraphicPath);
 
         /* リザルトオブジェクト */
+        // 必要であれば▼に背景画像を追加
+        // キャラ画像
+        charaObj = Utility._Object.MyGenerateImage(
+            charaStand,
+            canvas,
+            new Vector2(360, 720));
+        // 透明のボタン
         resultObj = Utility._Object.MyGenerateImage(
             Variables.Gacha.BackgroundPath,
             canvas,
             new Vector2(1280, 960));
         resultObj.name = "ResultEnd";
         resultObj.GetComponent<Image>().color = new Color(0,0,0,0);
-        charaObj = Utility._Object.MyGenerateImage(
-            charaStand,
-            canvas,
-            new Vector2(360, 720));
 
         // ボタン取り付け
         Button bt = resultObj.AddComponent<Button>();

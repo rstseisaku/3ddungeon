@@ -193,7 +193,6 @@ public class BattleMaster : MonoBehaviour
     {
         Vector2 tmp = OpeCharaList.CountActionableCharacter( cd, enemyCd);
         int isActionableChara = (int)tmp.x + (int)tmp.y;
-        Debug.Log(tmp);
         while ( isActionableChara == 0 )
         {
             // CTBメータを 1 つ進める
@@ -471,7 +470,7 @@ public class BattleMaster : MonoBehaviour
             mouseOver = tObj.GetComponent<SelectTarget>().mouseOverId;
             if( _mouseOver != mouseOver)
             {
-                SetCursorObj(mouseOver, cursorObj); // カーソルオブジェクト登録
+                SetCursorObj(mouseOver, cursorObj); // カーソルオブジェクトの座標移動
 
                 PredictObject.SetInactiveAllPredictObj( null , enemyCd);
                 enemyCd[mouseOver].predictObj.SetFromCharacterStatus(enemyCd[mouseOver], sumKnockback);
@@ -494,6 +493,7 @@ public class BattleMaster : MonoBehaviour
     }
 
     // カーソルオブジェクトの操作(ターゲット選択時利用)
+    // TODO: 操作性用改良
     private GameObject MakeCursorObj()
     {
         // カーソルオブジェクトの表示
@@ -516,7 +516,7 @@ public class BattleMaster : MonoBehaviour
     private void SetCursorObj(int nowSelect, GameObject cursorObj)
     {
         int posY = BCV.CTB_ENEMY_UPPER;
-        posY += -1 * nowSelect * BCV.CTB_FACE_VY;
+        posY += -1 * nowSelect * BCV.CTB_FACE_ENEMY_VY;
         cursorObj.transform.localPosition = new Vector3(
             0,
             posY,
@@ -715,6 +715,7 @@ public class BattleMaster : MonoBehaviour
                 if (!cd[i].isWaitUnison && (cd[i].stunCount == 0) && (cd[i].hp != 0))
                 {
                     cd[i].ctbFaceObj.faceObj.transform.localPosition += movePos;
+                    // cd[i].ctbFaceObj.faceObj.transform;
                 }
                 if (cd[i].stunCount != 0)
                 {
@@ -731,12 +732,11 @@ public class BattleMaster : MonoBehaviour
                 {
                     enemyCd[i].MovePredictTowardX(movePos.x);
                 }
-                yield return 0;
             }
+            yield return 0;
         }
         // 移動後に再描画
         DrawCharacterData();
-        yield return 0;
     }// --- CtbMove()
 
     // キャラクター情報の描画を更新

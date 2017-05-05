@@ -47,6 +47,12 @@ public class mDecPartyObj : MonoBehaviour {
         }
     }
 
+    public void SetReturnString(string str)
+    {
+        GameObject child = transform.FindChild("Return").gameObject.transform.FindChild("Text").gameObject;
+        child.GetComponent<Text>().text = str;
+    }
+
     public void onClick(GameObject obj)
     {
         if( obj.name == "Return")

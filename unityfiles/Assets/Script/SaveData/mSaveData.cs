@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-
+using System;
 
 class mSaveData : MonoBehaviour
 {
@@ -46,6 +46,11 @@ class mSaveData : MonoBehaviour
             DebugView();
         }
         isEnable = true;
+    }
+
+    internal SaveParty GetSaveParty(string v)
+    {
+        throw new NotImplementedException();
     }
 
     /* ロードが終わるまで待機(なうろーでぃんぐ) */

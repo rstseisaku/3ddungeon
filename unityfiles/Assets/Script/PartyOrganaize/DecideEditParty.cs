@@ -13,8 +13,14 @@ public class DecideEditParty : MonoBehaviour {
     /* 編集パーティを選ぶ */
     public static IEnumerator Loop(SaveParty saveParty)
     {
+        yield return Loop(saveParty,"【編成終了】");
+    }
+
+    public static IEnumerator Loop(SaveParty saveParty, string returnString)
+    {
         /* パーティーを表示 */
         DrawParty(saveParty);
+        SetReturnString(returnString);        
 
         /* 制御部分 */
         while (true)
@@ -28,13 +34,14 @@ public class DecideEditParty : MonoBehaviour {
         }
 
         /* 次状態へ遷移 */
-        if( editPartyId >= 0 ) editPartyStatus = EDIT_PARTY_STATUS._CHANGE_CHARACTER;
-        if( editPartyId == -2) editPartyStatus = EDIT_PARTY_STATUS._END;
+        if (editPartyId >= 0) editPartyStatus = EDIT_PARTY_STATUS._CHANGE_CHARACTER;
+        if (editPartyId == -2) editPartyStatus = EDIT_PARTY_STATUS._END;
 
         /* 削除 */
         Destroy(decEditPartyObj);
         decPartyObjScript = null;
     }
+
 
     private static void DrawParty(SaveParty saveParty)
     {
@@ -50,5 +57,10 @@ public class DecideEditParty : MonoBehaviour {
         decEditPartyObj = Utility._Object.MyInstantiate(FilePath, canvas);
         decPartyObjScript = decEditPartyObj.GetComponent<mDecPartyObj>();
         decPartyObjScript.GenerateObject(saveParty);
+    }
+
+    public static void SetReturnString( string str )
+    {
+        decPartyObjScript.SetReturnString(str);
     }
 }
