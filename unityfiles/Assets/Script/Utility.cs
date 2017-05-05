@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+using Variables;
+using TRANSITION;
+
 namespace Utility
 {
     public class _Wait : MonoBehaviour
@@ -25,7 +28,8 @@ namespace Utility
         }
     }
 
-    public class _Image : MonoBehaviour {
+    public class _Image : MonoBehaviour
+    {
         // ファイル名からテクスチャを返す
         public static Texture2D MyGetTexture(string FilePath)
         {
@@ -52,9 +56,9 @@ namespace Utility
         }
 
         // オブジェクト名からオブジェクトを返す
-        public static GameObject MyFind( string ObjectName)
+        public static GameObject MyFind(string ObjectName)
         {
-            GameObject obj = GameObject.Find(ObjectName);            
+            GameObject obj = GameObject.Find(ObjectName);
             if (obj == null)
             {
                 _Error.ObjectNotFound(ObjectName);
@@ -116,7 +120,7 @@ namespace Utility
             return canvas;
         }
         // キャンパスの生成
-        public static GameObject GenerateCanvas( int orderInLayer)
+        public static GameObject GenerateCanvas(int orderInLayer)
         {
             GameObject canvas = GenerateCanvas();
             canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceCamera;
@@ -162,9 +166,9 @@ namespace Utility
                 canvas,
                 FadeImagePath,
                 new Vector2(1280, 960));
-            obj.GetComponent<fuck.Transition>().rule = _Image.MyGetTexture("Images\\Transition\\transition_1");
-            obj.GetComponent<fuck.Transition>().mode = fuck.Transition.TRANSITION_MODE._FADEIN;
-            obj.GetComponent<fuck.Transition>().time = (frame / 60);
+            obj.GetComponent<Transition>().rule = _Image.MyGetTexture("Images\\Transition\\transition_1");
+            obj.GetComponent<Transition>().mode = Transition.TRANSITION_MODE._FADEIN;
+            obj.GetComponent<Transition>().time = (frame / 60);
             obj.name = "Fade";
             yield return _Wait.WaitFrame((int)frame + 10);
 
@@ -184,7 +188,7 @@ namespace Utility
 
     public class _Encount : MonoBehaviour
     {
-        public static IEnumerator Encount( int enemyGroupId )
+        public static IEnumerator Encount(int enemyGroupId)
         {
             /* エンカウントオブジェクトの取得 */
             GameObject obj = _Object.MyFind(Variables.Enemy.EnemyGroupObjectName);
@@ -208,8 +212,32 @@ namespace Utility
     {
         public static void ObjectNotFound(string str)
         {
-            Debug.LogError("オブジェクト名: " + str +" は見つかりませんでした。");
+            Debug.LogError("オブジェクト名: " + str + " は見つかりませんでした。");
         }
     }
 
+
+    public class _Transition : MonoBehaviour
+    {
+        //画面全体に対するトランジション
+        public static void mTransition(Handler transition)
+        {
+            GameObject fadecanvas = _Object.GenerateCanvas();
+            GameObject fade = (GameObject)Instantiate(Resources.Load("Prefabs/Fade/Fade"),
+                                     new Vector3(0, 0, 0),
+                                     Quaternion.identity);
+            fade.transform.SetParent(fadecanvas.transform);
+            fade.gameObject.AddComponent<Transition>();
+            fade.gameObject.GetComponent<Transition>().SetParameter(transition);
+            fade.gameObject.GetComponent<Transition>().Enable();
+            fade.transform.localPosition = new Vector2(0, 0);
+        }
+        //個々に対するトランジション
+        public static void mTransition(Handler transition, GameObject transobject)
+        {
+            transobject.gameObject.AddComponent<Transition>();
+            transobject.gameObject.GetComponent<Transition>().SetParameter(transition);
+            transobject.gameObject.GetComponent<Transition>().Enable();
+        }
+    }
 }
