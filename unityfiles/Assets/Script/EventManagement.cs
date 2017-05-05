@@ -32,8 +32,14 @@ public class EventManagement : MonoBehaviour {
         }
         if (activeevent.type == (int)Event.TYPE.MOVESCENE)
         {
-            Debug.Log("fuck");
-            StartCoroutine(_Scene.MoveScene(activeevent.moveto));
+            if (activeevent.movehere == false)
+                StartCoroutine(_Scene.MoveScene(activeevent.movetothisscene));
+            if (activeevent.movehere == true)
+            {
+                Map.usethisvalue = true;
+                Map.movehere = new Vector2(activeevent.moveX, activeevent.moveY);
+                StartCoroutine(_Scene.MoveScene(activeevent.movetothisscene));
+            }
         }
     }
 }

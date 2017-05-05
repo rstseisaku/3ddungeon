@@ -43,7 +43,6 @@ public class Event : MonoBehaviour {
         {
             eventisactive = true;
             NextEvent(i);
-            i++;
         }
     }
 
@@ -56,7 +55,6 @@ public class Event : MonoBehaviour {
             {
                 ActivateEvent();
                 NextEvent(i);
-                i++;
             }
         }
     }
@@ -70,6 +68,7 @@ public class Event : MonoBehaviour {
     //イベント送り
     private void NextEvent(int i)
     {
+        Debug.Log(i);
         GameObject.Find("GameMaster").GetComponent<EventManagement>().Execute(eventlist[i]);
     }
     
@@ -79,9 +78,9 @@ public class Event : MonoBehaviour {
         {
             if (Input.GetKeyUp(KeyCode.Z))
             {
+                i++;
                 if (i < eventlist.Count)
                     NextEvent(i);
-                i++;
             }
         }
     }
@@ -163,7 +162,12 @@ public class CustomEvent : Editor
         }
         if (custom.mode == Event.TYPE.MOVESCENE)
         {
-            handler.moveto = EditorGUILayout.TextField("移動シーン", handler.moveto);
+            handler.movetothisscene = EditorGUILayout.TextField("移動シーン", handler.movetothisscene);
+            handler.movehere = EditorGUILayout.Toggle("指定した場所に移動?", handler.movehere);
+            EditorGUILayout.BeginHorizontal();
+            handler.moveX = EditorGUILayout.IntField("移動先X", handler.moveX);
+            handler.moveY = EditorGUILayout.IntField("移動先Y", handler.moveY);
+            EditorGUILayout.EndHorizontal();
         }
 
 
@@ -193,7 +197,7 @@ public class CustomEvent : Editor
                 custom.eventlist[i].mode = (Transition.TRANSITION_MODE)EditorGUILayout.EnumPopup("", custom.eventlist[i].mode);
 
             if (custom.eventlist[i].type == 3)
-                custom.eventlist[i].moveto = EditorGUILayout.TextField("文章", custom.eventlist[i].moveto);
+                custom.eventlist[i].movetothisscene = EditorGUILayout.TextField("文章", custom.eventlist[i].movetothisscene);
         }
         EditorGUI.EndDisabledGroup();
         
