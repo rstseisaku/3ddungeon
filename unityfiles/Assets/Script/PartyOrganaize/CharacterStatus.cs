@@ -69,9 +69,12 @@ public class CharacterStatus : MonoBehaviour
         element = int.Parse(linebuffer[(int)_ST._element]); ; // 属性
     }
 
-    // 指定されたパラメータの取得
+    // 指定されたパラメータの取得    
     public static string LoadPlayerCharacterStringStatus(int charaId, _ST st)
     {
+        Debug.Log("LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です");
+        Debug.Log("I/Oが絡むため極めて重たいです");
+
         string FilePath = Variables.Unit.PlayerDataFilePath;
         // 設定ファイルを読込
         string[] buffer;

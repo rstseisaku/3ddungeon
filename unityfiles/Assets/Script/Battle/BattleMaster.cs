@@ -96,17 +96,8 @@ public class BattleMaster : MonoBehaviour
     // パーティー情報の設定
     private void LoadPartyInfo()
     {
-        GameObject obj = GameObject.Find(Variables.Save.Name); ; // パーティーオブジェクトを探す
-        mSaveData saveData = obj.GetComponent<mSaveData>();
-
-        party = gameObject.AddComponent<Party>();
-        party.NewVariables();
-        for (int i = 0; i < Variables.Party.CharaNumPerParty; i++)
-        {
-            party.partyCharacterId[i] = saveData.GetSaveParty().partyCharacterId[saveData.GetSaveParty().mainParty, i];
-        }
-        party.LoadFromPartyCharacterId();
-
+        GameObject obj = GameObject.Find(Variables.Party.SingletonObjectName); ; // パーティーオブジェクトを探す
+        party = obj.GetComponent<Party>();
         cd = new PlayerCharacter[Variables.Party.CharaNumPerParty]; // キャラクターDBの領域確保
     } // --- LoadPartyInfo()
     // パーティー情報をもとにキャラクターデータを読み込む

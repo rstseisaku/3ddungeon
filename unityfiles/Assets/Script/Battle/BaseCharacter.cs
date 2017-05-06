@@ -235,23 +235,23 @@ public class BaseCharacter : MonoBehaviour
     {
         // カーソルオブジェクトの表示
         string FilePath = "Prefabs\\Battle\\AttackText";
-        GameObject damageObj = (GameObject)Instantiate(Resources.Load(FilePath),
-                            new Vector3(0, 0, 0),
-                            Quaternion.identity);
-        damageObj.transform.SetParent(battleCanvas.transform, false);
+        GameObject damageObj = Utility._Object.MyInstantiate(
+            FilePath,
+            battleCanvas);
+        damageObj.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
         damageObj.GetComponent<Text>().text = "" + damage;
+        damageObj.GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
         return damageObj;
     }
     protected GameObject DrawCombo(ComboManager cm)
     {
         // カーソルオブジェクトの表示
         string FilePath = "Prefabs\\Battle\\AttackText";
-        GameObject cmbObj = (GameObject)Instantiate(Resources.Load(FilePath),
-                            new Vector3(0, 0, 0),
-                            Quaternion.identity);
-        cmbObj.transform.SetParent(battleCanvas.transform, false);
-        cmbObj.transform.GetComponent<RectTransform>().localPosition =
-            new Vector3(-400, 280, 0);
+        GameObject cmbObj = Utility._Object.MyInstantiate(
+            FilePath,
+            battleCanvas);
+        cmbObj.GetComponent<RectTransform>().localPosition += new Vector3(40, 260, 0);
+        cmbObj.GetComponent<Text>().fontSize = 68;
         cmbObj.GetComponent<Text>().text = cm.comboString;
         return cmbObj;
     }
@@ -260,6 +260,7 @@ public class BaseCharacter : MonoBehaviour
     private int CalDamage( ComboManager cm )
     {
         int damage = cs.atk;
+        if (isMagic) damage *= 2;
         damage = (damage * cm.magnificationDamage) / 100;
         return damage;
     }

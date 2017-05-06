@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 /*
  * パーティ１つが保持する情報を管理するオブジェクト
+ * ( パーティ編成画面・ダンジョン画面・戦闘(読み込み時)に利用 )
  */
 public class Party : MonoBehaviour
 {
@@ -14,7 +15,6 @@ public class Party : MonoBehaviour
     /* 所属しているキャラクター */
     public PartyCharacter[] partyCharacter; // パーティーにいるキャラクタ
     public int[] partyCharacterId;
-
 
     /* 領域確保だけ行う */
     public void NewVariables()
@@ -29,36 +29,32 @@ public class Party : MonoBehaviour
         for (int i = 0; i < Variables.Party.CharaNumPerParty; i++)
         {
             partyCharacter[i] = gameObject.AddComponent<PartyCharacter>();
-            partyCharacter[i].Init(partyCharacterId[i]);
+            partyCharacter[i].LoadCharacterData(partyCharacterId[i]);
+        }
+    }
+    public void LoadFromPartyCharacterId(ObtainChara oc)
+    {
+        for (int i = 0; i < Variables.Party.CharaNumPerParty; i++)
+        {
+            partyCharacter[i] = gameObject.AddComponent<PartyCharacter>();
+            partyCharacter[i].LoadCharacterData(partyCharacterId[i],oc);
         }
     }
 
-    public void Init(string _name)
+    /* 外部提供用インタフェース */
+    // パーティーキャラクターのオブジェクトをそのままを返す
+    public PartyCharacter GetPartyCharacter(int partyId)
     {
-        // 旧
-
-        /*
-        // 名前受け取り
-        partyName = _name;
-
-        // デバッグ
-        partyCharacter = new PartyCharacter[Variables.Party.CharaNumPerParty];
-        partyCharacterId = new int[Variables.Party.CharaNumPerParty];
-        for (int i = 0; i < partyCharacter.Length; i++)
-        {
-            partyCharacter[i] = gameObject.AddComponent<PartyCharacter>();
-            if (i <= 2)
-            {
-                partyCharacter[i].Init(i+1);
-                partyCharacterId[i] = 1;
-            }
-            else
-            {
-                partyCharacter[i].Init(-1);
-                partyCharacterId[i] = -1;
-            }
-        }
-        */
+        return partyCharacter[partyId];
+    }
+    // 振分値を反映した値を返す
+    public CharacterStatus GetPartyCharacterBattleStatus(int partyId)
+    {
+        return partyCharacter[partyId].bcs;
+    }
+    public int GetNowHp(int partyId)
+    {
+        return partyCharacter[partyId].hp;
     }
 }
 

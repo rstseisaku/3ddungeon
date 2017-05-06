@@ -87,6 +87,8 @@ namespace Variables
 
     public class Party
     {
+        public static string SingletonObjectName = "SingletonPartyObject";
+
         public static int Num = 6; // パーティ数
         public static int CharaNumPerParty = 5; // パーティの人数(固定)
         public static int[] DecEditPartyPosX = { -550, -550, -550, 50, 50, 50 };

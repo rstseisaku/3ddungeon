@@ -30,7 +30,9 @@ public class ComboManager
         playerCombo++;
         enemyCombo = 0;
         magnificationDamage = CalMagnification(playerCombo);
-        comboString = playerCombo + "COMBO!";
+        comboString = playerCombo + "COMBO!  +";
+        comboString += (magnificationDamage - 100) + "%";
+        if (magnificationDamage == 100) comboString = "";
     }
     // 敵サイドのコンボ処理
     public void AddEnemyCombo()
@@ -38,7 +40,9 @@ public class ComboManager
         playerCombo = 0;
         enemyCombo++;
         magnificationDamage = CalMagnification(enemyCombo);
-        comboString = enemyCombo + "COMBO!";
+        comboString = enemyCombo + "COMBO!   +";
+        comboString += ( magnificationDamage - 100 ) + "%";
+        if (magnificationDamage == 100) comboString = "";
     }
 
     // 倍率算出
