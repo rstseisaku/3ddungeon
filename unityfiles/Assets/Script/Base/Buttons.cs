@@ -63,6 +63,7 @@ public class Buttons : MonoBehaviour {
         // セーブデータオブジェクトを破棄して
         // パーティオブジェクトを生成
         saveData.StartAdventure();
+        SoundManager.PlaySe(Variables.SE.SeName.system_dec2);
 
         yield return MoveScene("TES");
     }

@@ -117,20 +117,27 @@ namespace Variables
     {
         public static string soundObjName = "SingletonSoundObj";
         public enum SeName {
-        dokan = 0,
-        unison_dokan2 = 1,
-        kin = 2,
+        system_dec2 = 0,
+        battle_damage = 1,
+        battle_eff1 = 2,
         battle_unison_chari = 3,
         system_cursor = 4,
-        system_dec = 5
+        system_dec = 5,
+        battle_unison_damage = 6,
+        battle_unison_effect = 7,
+        battle_result = 8
         };
         public static string[] SeFolderPath ={
-            "SE\\hit64",
-            "SE\\hit54",
-            "SE\\freeze10",
-            "SE\\chari14_a",
-            "SE\\cursor18",
-            "SE\\cursor33"};
+            "SE\\cursor10",
+            "SE\\hit54", // 通常ダメージ音
+            "SE\\mecha31", // エフェクト効果音(将来的にもっと増える)
+            "SE\\chari14_a", // ユニゾンの個人エフェクト音
+            "SE\\cursor18", // カーソル音
+            "SE\\cursor33", // 決定音
+            "SE\\bom31_b", // ダメージ音(ユニゾン)
+            "SE\\mizu04", // エフェクト音(ユニゾン)
+            "SE\\bell03" // リザルト
+        };
     }
     public class BGM
     {

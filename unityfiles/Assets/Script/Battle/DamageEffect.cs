@@ -25,6 +25,8 @@ public class DamageEffect : MonoBehaviour
     // ダメージの表示
     public static GameObject DrawDamage(int damage)
     {
+        // 音を鳴らす
+        SoundManager.PlaySe(Variables.SE.SeName.battle_damage);
         // カーソルオブジェクトの表示
         GameObject battleCanvas = GameObject.Find("Canvas");
         string FilePath = "Prefabs\\Battle\\AttackText";
@@ -89,6 +91,7 @@ public class DamageEffect : MonoBehaviour
     public static GameObject AttackEffect( int effectId )
     {
         // カーソルオブジェクトの表示
+        SoundManager.PlaySe(Variables.SE.SeName.battle_eff1);
         string FilePath = "Prefabs\\Effect\\Effect" + effectId;
         effObj = (GameObject)Instantiate(Resources.Load(FilePath));
         effObj.GetComponent<ParticleSystem>().Play();
