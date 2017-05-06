@@ -83,8 +83,9 @@ namespace Variables
     {
         // キャラクターの情報
         public static int Num = 15; // キャラクター種類
-        public static string PlayerDataFilePath = "Assets\\Resources\\CharacterData\\data.csv";
+        public static string PlayerDataFilePath = "Assets\\Resources\\MapData\\data.csv";
     }
+    
 
     public class Party
     {

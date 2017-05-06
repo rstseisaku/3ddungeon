@@ -19,7 +19,7 @@ public class mHPcolor : MonoBehaviour {
 	void Update () {
 
         //文字列に変更
-        HP = remainingHP.ToString() + " / \n " + maxHP.ToString();
+        HP = "\n" + remainingHP.ToString() + " / \n " + maxHP.ToString();
         
         //HPの割合に応じて色を変更
         //50~100%：緑

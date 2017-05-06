@@ -96,7 +96,8 @@ class Gacha : MonoBehaviour
             "Prefabs\\Gacha\\GachaText",
             resultObj,
             new Vector2(0,-200));
-        textObj.GetComponent<Text>().text = description;
+        
+        textObj.GetComponent<Text>().text = description.ToString();
 
         /* 実際の入手処理 */
         saveData.GetObtainChara().isObtainChara[getCharaResultId] = true;

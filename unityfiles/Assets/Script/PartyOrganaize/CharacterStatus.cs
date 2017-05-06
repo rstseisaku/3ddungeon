@@ -51,7 +51,9 @@ public class CharacterStatus : MonoBehaviour
 
         // 設定ファイルを読込
         string[] buffer;
+
         buffer = System.IO.File.ReadAllLines(FilePath, System.Text.Encoding.GetEncoding("shift_jis"));
+
 
         // linebuffer にキャラクターの情報( characterId 番目の )を格納
         string[] linebuffer;
@@ -77,10 +79,12 @@ public class CharacterStatus : MonoBehaviour
     {
         Debug.LogWarning("LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)");
 
+
         string FilePath = Variables.Unit.PlayerDataFilePath;
         // 設定ファイルを読込
         string[] buffer;
-        buffer = System.IO.File.ReadAllLines(FilePath, System.Text.Encoding.GetEncoding("shift_jis"));
+        buffer = System.IO.File.ReadAllLines(FilePath);//, System.Text.Encoding.GetEncoding("shift_jis"));
+        
 
         // linebuffer にキャラクターの情報( characterId 番目の )を格納
         string[] linebuffer;

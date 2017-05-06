@@ -26,49 +26,49 @@ desktop: 1366x768 60Hz; virtual: 1366x768 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
 <RI> Initialized touch support.
-UnloadTime: 1.311561 ms
-Setting up 4 worker threads for Enlighten.
-  Thread -> id: 58c8 -> priority: 1 
-  Thread -> id: 5ad0 -> priority: 1 
-  Thread -> id: 3d40 -> priority: 1 
-  Thread -> id: 5c60 -> priority: 1 
-Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 4.804925 ms
-
-Unloading 61 unused Assets to reduce memory usage. Loaded Objects now: 446.
-Total: 0.510170 ms (FindLiveObjects: 0.024375 ms CreateObjectMapping: 0.018816 ms MarkObjects: 0.286516 ms  DeleteObjects: 0.180035 ms)
-
-Null
+UnloadTime: 1.311129 ms
+セーブデータはあった。
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Setting up 4 worker threads for Enlighten.
+  Thread -> id: 30a0 -> priority: 1 
+  Thread -> id: 31c4 -> priority: 1 
+  Thread -> id: 1ad0 -> priority: 1 
+  Thread -> id: 308c -> priority: 1 
+何か吐き出した
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 7 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 5.242809 ms
+
+Unloading 20 unused Assets to reduce memory usage. Loaded Objects now: 421.
+Total: 0.293357 ms (FindLiveObjects: 0.022237 ms CreateObjectMapping: 0.016677 ms MarkObjects: 0.200988 ms  DeleteObjects: 0.053026 ms)
 
 セーブデータはあった。
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
 Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 0.493065 ms
+UnloadTime: 0.439609 ms
 
-Unloading 78 unused Assets to reduce memory usage. Loaded Objects now: 526.
-Total: 0.425070 ms (FindLiveObjects: 0.026941 ms CreateObjectMapping: 0.029079 ms MarkObjects: 0.283523 ms  DeleteObjects: 0.085099 ms)
+Unloading 20 unused Assets to reduce memory usage. Loaded Objects now: 354.
+Total: 0.284377 ms (FindLiveObjects: 0.039342 ms CreateObjectMapping: 0.016677 ms MarkObjects: 0.140692 ms  DeleteObjects: 0.086809 ms)
 
-ArgumentOutOfRangeException: Argument is out of range.
-Parameter name: index
-  at System.Collections.Generic.List`1[Variables.Handler].get_Item (Int32 index) [0x00000] in <filename unknown>:0 
-  at EventManagement+<NextEvent>c__Iterator1.MoveNext () [0x00000] in <filename unknown>:0 
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+ArgumentException: Encoding name 'shift_jis' not supported
+Parameter name: name
+  at System.Text.Encoding.GetEncoding (System.String name) [0x00000] in <filename unknown>:0 
+  at CharacterStatus.LoadCharacterData (System.String FilePath, Int32 characterId) [0x00000] in <filename unknown>:0 
+  at PartyCharacter.LoadCharacterData (Int32 id) [0x00000] in <filename unknown>:0 
+  at Party.LoadFromPartyCharacterId () [0x00000] in <filename unknown>:0 
+  at ManegementParty.SetEditParty () [0x00000] in <filename unknown>:0 
+  at ManegementParty+<MainLoop>c__Iterator0.MoveNext () [0x00000] in <filename unknown>:0 
   at UnityEngine.SetupCoroutine.InvokeMoveNext (IEnumerator enumerator, IntPtr returnValueAddress) [0x00000] in <filename unknown>:0 
  
 (Filename:  Line: -1)
-
-Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 9.015862 ms
-
-Unloading 40 unused Assets to reduce memory usage. Loaded Objects now: 519.
-Total: 0.632046 ms (FindLiveObjects: 0.049178 ms CreateObjectMapping: 0.034638 ms MarkObjects: 0.439182 ms  DeleteObjects: 0.108192 ms)
-
-Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 0.886918 ms
-
-Unloading 60 unused Assets to reduce memory usage. Loaded Objects now: 399.
-Total: 0.514874 ms (FindLiveObjects: 0.030362 ms CreateObjectMapping: 0.029079 ms MarkObjects: 0.238621 ms  DeleteObjects: 0.216384 ms)
 
