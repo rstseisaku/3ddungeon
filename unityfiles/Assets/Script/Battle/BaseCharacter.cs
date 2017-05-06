@@ -162,124 +162,54 @@ public class BaseCharacter : MonoBehaviour
 
     /*
      * 攻撃演出処理
-     * ( この関数群を DrawBattleGraphic で利用する )
      */
     protected IEnumerator DrawBattleGraphic(BaseCharacter[] cd, ComboManager cm)
     {
         // 攻撃者の画像を貼り付ける
-        GameObject atkObj = Attacker();
+        GameObject atkObj = DamageEffect.DrawAttackChara(this);
         yield return Utility._Wait.WaitFrame(30);
         Destroy(atkObj);
 
         // 対象表示
-        GameObject targetObj = TargetGraphicDraw(cd);
+        GameObject targetObj = DamageEffect.TargetGraphicDraw(cd[targetId]);
         yield return Utility._Wait.WaitFrame(10);
         // 戦闘アニメーション
-        GameObject effObj = AttackEffect(cd);
+        GameObject effObj = DamageEffect.AttackEffect(1);
         yield return Utility._Wait.WaitFrame(45);
 
         // ダメージ表示 
-        GameObject dmgObj = DrawDamage( CalDamage(cm) );
-        GameObject cmbObj = DrawCombo(cm);
+        DamageEffect.DrawDamage(DamageEffect.CalDamage(this,cm) );
+        DamageEffect.DrawCombo(cm);
         yield return Utility._Wait.WaitFrame(45);
 
-        Destroy(cmbObj);
-        Destroy(dmgObj);
-        Destroy(effObj);
-        Destroy(targetObj);
+        // 消去
+        DamageEffect.DestroyAllObject();
 
         yield return 0;
     }
-    private GameObject Attacker()
-    {
-        // Image オブジェクト生成
-        string FilePath = "Prefabs\\Battle\\ImageBase";
-        // 顔グラオブジェクトの生成
-        GameObject atkChara = 
-            Utility._Object.MyInstantiate(FilePath, battleCanvas, cs.faceGraphicPath);
-        // サイズ設定
-        atkChara.transform.localScale =
-            new Vector2(ConstantValue.BATTLE_ATTACKFACE_SIZE, ConstantValue.BATTLE_ATTACKFACE_SIZE);
 
-        return atkChara;
-    }
-    private GameObject TargetGraphicDraw(BaseCharacter[] cd)
-    {
-        // Image オブジェクト生成
-        string FilePath = "Prefabs\\Battle\\ImageBase";
-        // 顔グラオブジェクトの生成
-        GameObject chara = (GameObject)Instantiate(Resources.Load(FilePath),
-                            new Vector3(0, 0, 0),
-                            Quaternion.identity);
-        // 作成した Image オブジェクトにテクスチャを貼り付ける
-        chara.GetComponent<Image>().sprite =
-            cd[targetId].ctbFaceObj.faceObj.GetComponent<Image>().sprite;
-        // Canvas を親オブジェクトに設定
-        chara.transform.SetParent(battleCanvas.transform, false);
-        // サイズ設定
-        chara.GetComponent<Image>().transform.localScale =
-            new Vector2(ConstantValue.BATTLE_ATTACKFACE_SIZE, ConstantValue.BATTLE_ATTACKFACE_SIZE);
-
-        return chara;
-    }
-    protected GameObject AttackEffect(BaseCharacter[] cd)
-    {
-        // カーソルオブジェクトの表示
-        string FilePath = "Prefabs\\Effect\\Effect" + UnityEngine.Random.Range(1,4);
-        // Canvas サイズに合わせてプレハブ化してあるのでそのまま利用
-        GameObject effObj = (GameObject)Instantiate(Resources.Load(FilePath));
-        effObj.GetComponent<ParticleSystem>().Play();
-        return effObj;
-    }
-    protected GameObject DrawDamage(int damage)
-    {
-        // カーソルオブジェクトの表示
-        string FilePath = "Prefabs\\Battle\\AttackText";
-        GameObject damageObj = Utility._Object.MyInstantiate(
-            FilePath,
-            battleCanvas);
-        damageObj.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
-        damageObj.GetComponent<Text>().text = "" + damage;
-        damageObj.GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
-        return damageObj;
-    }
-    protected GameObject DrawCombo(ComboManager cm)
-    {
-        // カーソルオブジェクトの表示
-        string FilePath = "Prefabs\\Battle\\AttackText";
-        GameObject cmbObj = Utility._Object.MyInstantiate(
-            FilePath,
-            battleCanvas);
-        cmbObj.GetComponent<RectTransform>().localPosition += new Vector3(40, 260, 0);
-        cmbObj.GetComponent<Text>().fontSize = 68;
-        cmbObj.GetComponent<Text>().text = cm.comboString;
-        return cmbObj;
-    }
-
-    // ダメージ算出
-    private int CalDamage( ComboManager cm )
-    {
-        int damage = cs.atk;
-        if (isMagic) damage *= 2;
-        damage = (damage * cm.magnificationDamage) / 100;
-        return damage;
-    }
-
-    // 攻撃用の処理
+    /*
+     * 攻撃用の処理 
+     */
     protected IEnumerator Attack(BaseCharacter[] cd, ComboManager cm)
     {
         // HPを削る
-        cd[targetId].hp -= CalDamage(cm);
+        cd[targetId].hp -= DamageEffect.CalDamage(this, cm);
         if (cd[targetId].hp < 0) cd[targetId].hp = 0;
 
+        /*
         // 吹き飛ばし
+        // ★全員分のアクション終了後に再計算するため個別処理は行わない
         int blow = cs.knockback - cd[targetId].cs.resistKnockback;
-        if (blow < 0) blow = 0;
+        if (blow <= 0) blow = 1;
         cd[targetId].ctbNum += blow;
+        */
 
         // ユニゾン・詠唱の解除
         EndUnison(cd[targetId]);
         EndMagic(cd[targetId]);
+        EndUnison(this);
+        EndMagic(this);
 
         yield return 0;
     }
@@ -299,6 +229,24 @@ public class BaseCharacter : MonoBehaviour
             SetFaceObjColorFromStatus(this);
         }
     }
+
+    // 行動終了後の処理
+    // ( BattleMasterから呼ぶ )
+    public void SetCtbNumFromWaitAction()
+    {
+        // CTB値を設定する
+        if (ctbNum == 0 && !isWaitUnison)
+        {
+            ctbNum = waitAction;
+            EndUnison();
+            EndMagic();
+
+            // ウェイト時間に乱数補正をかける
+            SetWaitTime();
+        }
+    }
+
+
 
     /* ==================================
      * ユニゾン関連の処理 
@@ -387,19 +335,6 @@ public class BaseCharacter : MonoBehaviour
         SetPredictInactive();
     }
 
-    // 行動終了後の処理
-    // ( 各キャラクタのプレイアクションで呼ばれてる )
-    protected void AfterAction()
-    {
-        // 個々のキャラクターでできる終了処理
-        ctbNum = waitAction;
-        EndUnison();
-        EndMagic();
-
-        // ウェイト時間に乱数補正をかける
-        SetWaitTime();
-    }
-
 
     /* ==================================================
      * CTB 顔グラオブジェへのインタフェース 
@@ -415,8 +350,8 @@ public class BaseCharacter : MonoBehaviour
      * 予測オブジェクトを表示するインタフェースを提供 
      * ================================================== */
     // 行動終了後の予測位置を表示
-    public void SetPredictFromWaitAction() {
-        predictObj.SetFromNum( this, waitAction );  }
+    public void SetPredictFromWaitAction(){
+        predictObj.SetFromNum(this, waitAction);}
     // 行動終了後の予測位置を表示(詠唱)
     public void SetPredictFromMagWait() {
         predictObj.SetFromNum(this, magWait); }

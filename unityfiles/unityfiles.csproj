@@ -97,6 +97,7 @@
     <Compile Include="Assets\Script\Battle\ConstantValue.cs" />
     <Compile Include="Assets\Script\Battle\CtbFaceObj.cs" />
     <Compile Include="Assets\Script\Battle\CtbManager.cs" />
+    <Compile Include="Assets\Script\Battle\DamageEffect.cs" />
     <Compile Include="Assets\Script\Battle\EnemyCharacterData.cs" />
     <Compile Include="Assets\Script\Battle\EnemyGroup.cs" />
     <Compile Include="Assets\Script\Battle\LeaderSelect.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="Assets\Script\Battle\PredictObject.cs" />
     <Compile Include="Assets\Script\Battle\SelectAction.cs" />
     <Compile Include="Assets\Script\Battle\SelectTarget.cs" />
+    <Compile Include="Assets\Script\Battle\Unison.cs" />
     <Compile Include="Assets\Script\DebugRoom\DebugRoom.cs" />
     <Compile Include="Assets\Script\Dungeon\DungeonMaster.cs" />
     <Compile Include="Assets\Script\Dungeon\MapMake.cs" />

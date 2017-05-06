@@ -30,8 +30,6 @@ public class ObtainChara
         for (int i = 0; i < isObtainChara.Length; i++)
         {
             isObtainChara[i] = false;
-            atkAdd[i] = i * 50;
-            maxHpAdd[i] = i * 50;
         }
         isObtainChara[1] = true;
         isObtainChara[2] = true;

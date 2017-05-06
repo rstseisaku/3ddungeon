@@ -8,11 +8,6 @@ using UnityEngine.UI;
 /*
  * 攻撃時の予測表示を管理するクラス
  */
-// ★やる
-//  状態を投げ込み、表示するかどうかはこちらで判断する
-//   状態⇒
-//　　　スタン
-//　 　攻撃対象状態
 public class PredictObject : MonoBehaviour
 {
     // オブジェクト本体
@@ -43,14 +38,26 @@ public class PredictObject : MonoBehaviour
         obj.GetComponent<Transform>().gameObject.SetActive(false);
     }
 
-    /* 行動キャラ・対象キャラをもとに吹っ飛び量を計算し、表示 */
+    /* 行動キャラ・吹っ飛び量をもとに、吹っ飛び量を表示 */
     public void SetFromCharacterStatus(BaseCharacter targetChara, int sumKnockback)
     {
-        // 吹き飛び量を計算
-        int blowFrame = sumKnockback - targetChara.cs.resistKnockback;
-        if (blowFrame < 0) blowFrame = 0;
+        // 相手が1キャラなので、吹っ飛び減算も1回反映
+        SetFromCharacterStatus(targetChara, sumKnockback, 1);
+    }
+    public void SetFromCharacterStatus(BaseCharacter targetChara, int sumKnockback, int resistKnockbackTimes)
+    {
         // 求めた吹飛び量をもとに予測オブジェクトを表示
+        int blowFrame = CalcBlowNum(targetChara, sumKnockback, resistKnockbackTimes);
         SetFromNum(targetChara, blowFrame);
+    }
+
+    /* 吹っ飛び量の計算 */
+    public static int CalcBlowNum(BaseCharacter targetChara,int sumKnockback, int resistKnockbackTimes )
+    {
+        // 吹き飛び量を計算
+        int blowFrame = sumKnockback - targetChara.cs.resistKnockback * resistKnockbackTimes;
+        if (blowFrame < 1) blowFrame = 1;
+        return blowFrame;
     }
 
     /* 行動できるまでのフレームを元に移動 */

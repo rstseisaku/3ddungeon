@@ -32,8 +32,5 @@ public class PlayerCharacter : BaseCharacter
 
         // 攻撃処理(計算)
         yield return Attack(enemyCd, cm);
-
-        // 行動終了処理
-        AfterAction();
     }
 }

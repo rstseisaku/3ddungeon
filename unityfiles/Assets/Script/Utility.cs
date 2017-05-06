@@ -39,7 +39,7 @@ namespace Utility
         public static Sprite MyGetSprite(string FilePath)
         {
             Texture2D t = MyGetTexture(FilePath);
-            if (t == null) { Debug.LogError("ファイル " + FilePath + "は見つかりません"); return null; }
+            if (t == null) { Debug.LogError("ファイル 「" + FilePath + "」は見つかりません"); return null; }
             Sprite sp = Sprite.Create(t,
                     new Rect(0, 0, t.width, t.height),
                     Vector2.zero);
@@ -119,6 +119,14 @@ namespace Utility
             if (rect != null) rect.sizeDelta = vec;
             return obj;
         }
+        // ファイル名からオブジェクトを返す(座標指定あり)
+        public static GameObject MyInstantiate(string FilePath, GameObject parent, Vector2 pos)
+        {
+            GameObject obj = MyInstantiate(FilePath, parent);
+            RectTransform rect = obj.GetComponent<RectTransform>();
+            if (rect != null) rect.localPosition = pos;
+            return obj;
+        }
 
         // キャンパスの生成
         public static GameObject GenerateCanvas()
@@ -149,7 +157,7 @@ namespace Utility
         public static GameObject MyGenerateImage(
             string Path,
             GameObject parent,
-            Vector2 vec)
+            Vector2 size)
         {
             GameObject obj = new GameObject("OBJECT");
             Image img = obj.AddComponent<Image>();
@@ -158,7 +166,7 @@ namespace Utility
             /* オブジェクトの加工 */
             obj.transform.SetParent(parent.transform, false);
             img.sprite = _Image.MyGetSprite(Path);
-            rt.sizeDelta = vec;
+            rt.sizeDelta = size;
 
             return obj;
         }
