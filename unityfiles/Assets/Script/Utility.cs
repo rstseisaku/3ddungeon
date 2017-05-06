@@ -216,7 +216,11 @@ namespace Utility
         public static IEnumerator Encount(int enemyGroupId)
         {
             /* エンカウントオブジェクトの取得 */
-            GameObject obj = _Object.MyFind(Variables.Enemy.EnemyGroupObjectName);
+            GameObject objjj = new GameObject();
+            objjj.AddComponent<EnemyGroup>();
+            yield return _Wait.WaitFrame(2);
+
+            GameObject obj = _Object.MyFind(Enemy.EnemyGroupObjectName);
             EnemyGroup eg = obj.GetComponent<EnemyGroup>();
             eg.enemyGroupId = enemyGroupId;
             eg.LoadCharacterIdFromGroupId();
