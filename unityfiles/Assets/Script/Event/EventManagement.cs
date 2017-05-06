@@ -60,7 +60,7 @@ public class EventManagement : MonoBehaviour {
                                          Mathf.Cos(Map.playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360));
             Map.movehere -= offset;
             Map.direction = activeevent.direction;
-            Map.SetPlayer((int)Map.movehere.x, (int)Map.movehere.y);
+            Map.SetPlayer((int)Map.movehere.x, (int)Map.movehere.y, Map.direction);
         }
     }
 

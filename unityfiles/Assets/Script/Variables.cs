@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Variables
 {
+    
     //何度か使う可能性がある変数はこっちに記入
     public class __Debug
     {
@@ -33,7 +34,6 @@ namespace Variables
             minimapcanvas = GameObject.Find("MiniMap");
             minimap = minimapcanvas.GetComponent<miniMap>();
             playerobject = GameObject.FindWithTag("MainCamera");
-            direction = playerobject.transform.localEulerAngles.y;
         }
 
         //プレイヤーオブジェクト
@@ -48,17 +48,17 @@ namespace Variables
         }    
         
         // プレイヤの配置
-        public static void SetPlayer(int StartX, int StartY)
+        public static void SetPlayer(int StartX, int StartY, float localdirection)
         {
             //カメラの移動
             playerobject.transform.localPosition = new Vector3(StartX, 0.5f, StartY);
             //カメラの向きを最後に向いていた方向へ向ける
-            playerobject.transform.localEulerAngles = new Vector3(0, direction, 0);
+            playerobject.transform.localEulerAngles = new Vector3(0, localdirection, 0);
 
         }
 
         //ミニマップのオフセット
-        public const int OFFSET_X = -100;
+        public const int OFFSET_X = -350;
         public const int OFFSET_Y = 0;
         public static Vector3 OFFSET = new Vector3(OFFSET_X, OFFSET_Y, 0);
 
