@@ -8,7 +8,13 @@ public class SaveEvent : MonoBehaviour {
 
     string scenename;
 
-    string[] eventlist;
+    public struct enabledevent
+    {
+        public string eventname;
+        public bool called;
+    }
+
+    public enabledevent[] eventlist;
 
 	// Use this for initialization
 	void Start () {
@@ -16,18 +22,19 @@ public class SaveEvent : MonoBehaviour {
 
         if (System.IO.File.Exists(scenename + ".txt"))
         {
-            eventlist = System.IO.File.ReadAllLines(scenename + ".txt");
+            //eventlist = System.IO.File.ReadAllLines(scenename + ".txt");
         }
         else
         {
             int num = this.gameObject.transform.childCount;
-            eventlist = new string[num];
+            eventlist = new enabledevent[num];
             int i = 0;
             foreach (Transform child in this.gameObject.transform)
             {
-                eventlist[i] = child.name;
+                eventlist[i].eventname = child.name;
+                eventlist[i].called = false;
+                Debug.Log(eventlist[i].eventname + "   " + eventlist[i].called);
             }
-            Debug.Log(num);
         }
 		
 	}
