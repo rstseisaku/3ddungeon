@@ -7,7 +7,8 @@ namespace Variables
     //何度か使う可能性がある変数はこっちに記入
     public class __Debug
     {
-        public static bool isDrawFPS = false;
+        public static bool isDrawFPS = true;
+        public static bool isPlayerCheat = true;
     }
 
     public class Map

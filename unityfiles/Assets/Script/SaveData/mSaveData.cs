@@ -8,7 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System;
 
-class mSaveData : MonoBehaviour
+public class mSaveData : MonoBehaviour
 {
     public SaveObject saveObject;
     private bool isEnable;
@@ -121,6 +121,16 @@ class mSaveData : MonoBehaviour
         Debug.Log("何か吐き出した");
 
         return true; // セーブ成功
+    }
+
+    public void DeleteSaveData()
+    {
+        /* データを初期化 */
+        saveObject = new SaveObject();
+        saveObject.NewVariables();
+        saveObject.InitSavedata();
+
+        MakeSaveData();
     }
 
 

@@ -5,7 +5,7 @@ using System.Text;
 
 
 [System.Serializable()]
-class SaveObject
+public class SaveObject
 {
     /* 所持する値 */
     public SaveParty saveParty;

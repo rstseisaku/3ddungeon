@@ -302,7 +302,7 @@ public class DungeonMaster : MonoBehaviour
         {
             //戦闘シーンへ移行
             //出来ればここで出現する敵を決定したい
-            yield return Utility._Scene.MoveScene("BattleScene");
+            yield return _Encount.Encount((int)(Random.Range(1f, 4.0f)));
             encount = 0;
         }
         yield break;
