@@ -76,6 +76,12 @@
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
+    <Reference Include="I18N.CJK">
+      <HintPath>Assets\I18N.CJK.dll</HintPath>
+    </Reference>
+    <Reference Include="I18N">
+      <HintPath>Assets\I18N.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="unityfiles.Plugins.csproj">
@@ -84,7 +90,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Event.cs" />
     <Compile Include="Assets\FPS.cs" />
     <Compile Include="Assets\Script\Base\Buttons.cs" />
     <Compile Include="Assets\Script\Battle\BCV.cs" />
@@ -109,8 +114,10 @@
     <Compile Include="Assets\Script\Dungeon\DungeonMaster.cs" />
     <Compile Include="Assets\Script\Dungeon\MapMake.cs" />
     <Compile Include="Assets\Script\Dungeon\mHPcolor.cs" />
+    <Compile Include="Assets\Script\Dungeon\mParty.cs" />
     <Compile Include="Assets\Script\Dungeon\miniMap.cs" />
-    <Compile Include="Assets\Script\EventManagement.cs" />
+    <Compile Include="Assets\Script\Event\Event.cs" />
+    <Compile Include="Assets\Script\Event\EventManagement.cs" />
     <Compile Include="Assets\Script\FadeoutScript.cs" />
     <Compile Include="Assets\Script\Gacha\Gacha.cs" />
     <Compile Include="Assets\Script\PartyOrganaize\CharacterStatus.cs" />
@@ -127,12 +134,13 @@
     <Compile Include="Assets\Script\SaveData\SaveObject.cs" />
     <Compile Include="Assets\Script\SaveData\SaveParty.cs" />
     <Compile Include="Assets\Script\SaveData\mSaveData.cs" />
+    <Compile Include="Assets\Script\Sound.cs" />
+    <Compile Include="Assets\Script\Title\StartMenu.cs" />
     <Compile Include="Assets\Script\Transition.cs" />
     <Compile Include="Assets\Script\Utility.cs" />
     <Compile Include="Assets\Script\Variables.cs" />
     <Compile Include="Assets\Script\mInput.cs" />
     <Compile Include="Assets\Test.cs" />
-    <Compile Include="Assets\fuck.cs" />
     <Compile Include="Assets\movescene.cs" />
   </ItemGroup>
   <ItemGroup>

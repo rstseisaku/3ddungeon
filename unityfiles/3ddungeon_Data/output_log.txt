@@ -1,74 +1,418 @@
 Initialize engine version: 5.6.0f3 (497a0f351392)
 GfxDevice: creating device client; threaded=1
 Direct3D:
-    Version:  Direct3D 11.0 [level 11.0]
-    Renderer: Intel(R) HD Graphics 4000 (ID=0x166)
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: Intel(R) HD Graphics (ID=0x1606)
     Vendor:   Intel
-    VRAM:     848 MB
-    Driver:   9.17.10.2875
+    VRAM:     1130 MB
+    Driver:   10.18.15.4256
 Begin MonoManager ReloadAssembly
-Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.dll (this message is harmless)
-Loading C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.dll into Unity Child Domain
-Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\Assembly-CSharp-firstpass.dll (this message is harmless)
-Loading C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\Assembly-CSharp-firstpass.dll into Unity Child Domain
-Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\Assembly-CSharp.dll (this message is harmless)
-Loading C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
-Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.UI.dll (this message is harmless)
-Loading C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
-Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
-Loading C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
-Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
-Loading C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
-- Completed reload, in  0.021 seconds
-Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\System.Core.dll (this message is harmless)
-Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\System.dll (this message is harmless)
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\I18N.dll (this message is harmless)
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\I18N.CJK.dll (this message is harmless)
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\Assembly-CSharp-firstpass.dll (this message is harmless)
+Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\Assembly-CSharp-firstpass.dll into Unity Child Domain
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
+Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\I18N.CJK.dll (this message is harmless)
+Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\I18N.CJK.dll into Unity Child Domain
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\I18N.dll (this message is harmless)
+Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\I18N.dll into Unity Child Domain
+- Completed reload, in  0.485 seconds
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\System.dll (this message is harmless)
 desktop: 1366x768 60Hz; virtual: 1366x768 at 0,0
 <RI> Initializing input.
+XInput1_3.dll not found. Trying XInput9_1_0.dll instead...
 <RI> Input initialized.
 <RI> Initialized touch support.
-UnloadTime: 1.311129 ms
+UnloadTime: 4.017940 ms
 セーブデータはあった。
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
-Setting up 4 worker threads for Enlighten.
-  Thread -> id: 30a0 -> priority: 1 
-  Thread -> id: 31c4 -> priority: 1 
-  Thread -> id: 1ad0 -> priority: 1 
-  Thread -> id: 308c -> priority: 1 
+Setting up 1 worker threads for Enlighten.
 何か吐き出した
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
+  Thread -> id: 2f1c -> priority: 1 
 Unloading 7 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 5.242809 ms
+UnloadTime: 8.754946 ms
 
 Unloading 20 unused Assets to reduce memory usage. Loaded Objects now: 421.
-Total: 0.293357 ms (FindLiveObjects: 0.022237 ms CreateObjectMapping: 0.016677 ms MarkObjects: 0.200988 ms  DeleteObjects: 0.053026 ms)
+Total: 0.692498 ms (FindLiveObjects: 0.045884 ms CreateObjectMapping: 0.039847 ms MarkObjects: 0.508959 ms  DeleteObjects: 0.096599 ms)
 
 セーブデータはあった。
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
 Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 0.439609 ms
+UnloadTime: 0.930978 ms
 
 Unloading 20 unused Assets to reduce memory usage. Loaded Objects now: 354.
-Total: 0.284377 ms (FindLiveObjects: 0.039342 ms CreateObjectMapping: 0.016677 ms MarkObjects: 0.140692 ms  DeleteObjects: 0.086809 ms)
+Total: 0.420812 ms (FindLiveObjects: 0.030791 ms CreateObjectMapping: 0.028376 ms MarkObjects: 0.271686 ms  DeleteObjects: 0.087543 ms)
 
 LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
-ArgumentException: Encoding name 'shift_jis' not supported
-Parameter name: name
-  at System.Text.Encoding.GetEncoding (System.String name) [0x00000] in <filename unknown>:0 
-  at CharacterStatus.LoadCharacterData (System.String FilePath, Int32 characterId) [0x00000] in <filename unknown>:0 
-  at PartyCharacter.LoadCharacterData (Int32 id) [0x00000] in <filename unknown>:0 
-  at Party.LoadFromPartyCharacterId () [0x00000] in <filename unknown>:0 
-  at ManegementParty.SetEditParty () [0x00000] in <filename unknown>:0 
-  at ManegementParty+<MainLoop>c__Iterator0.MoveNext () [0x00000] in <filename unknown>:0 
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.463074 ms
+
+Unloading 69 unused Assets to reduce memory usage. Loaded Objects now: 424.
+Total: 0.589861 ms (FindLiveObjects: 0.039243 ms CreateObjectMapping: 0.038036 ms MarkObjects: 0.405718 ms  DeleteObjects: 0.105655 ms)
+
+セーブデータはあった。
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.575975 ms
+
+Unloading 20 unused Assets to reduce memory usage. Loaded Objects now: 375.
+Total: 0.505940 ms (FindLiveObjects: 0.030791 ms CreateObjectMapping: 0.027772 ms MarkObjects: 0.350777 ms  DeleteObjects: 0.094788 ms)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.662311 ms
+
+Unloading 78 unused Assets to reduce memory usage. Loaded Objects now: 424.
+Total: 0.670763 ms (FindLiveObjects: 0.045884 ms CreateObjectMapping: 0.030187 ms MarkObjects: 0.408737 ms  DeleteObjects: 0.184746 ms)
+
+セーブデータはあった。
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.726912 ms
+
+Unloading 67 unused Assets to reduce memory usage. Loaded Objects now: 476.
+Total: 0.652047 ms (FindLiveObjects: 0.044677 ms CreateObjectMapping: 0.030791 ms MarkObjects: 0.464885 ms  DeleteObjects: 0.111089 ms)
+
+ArgumentOutOfRangeException: Argument is out of range.
+Parameter name: index
+  at System.Collections.Generic.List`1[Variables.Handler].get_Item (Int32 index) [0x00000] in <filename unknown>:0 
+  at EventManagement+<NextEvent>c__Iterator1.MoveNext () [0x00000] in <filename unknown>:0 
   at UnityEngine.SetupCoroutine.InvokeMoveNext (IEnumerator enumerator, IntPtr returnValueAddress) [0x00000] in <filename unknown>:0 
  
 (Filename:  Line: -1)
+
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 4.668177 ms
+
+Unloading 59 unused Assets to reduce memory usage. Loaded Objects now: 460.
+Total: 0.927960 ms (FindLiveObjects: 0.056148 ms CreateObjectMapping: 0.031998 ms MarkObjects: 0.581409 ms  DeleteObjects: 0.257196 ms)
+
+セーブデータはあった。
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.743817 ms
+
+Unloading 20 unused Assets to reduce memory usage. Loaded Objects now: 393.
+Total: 0.591672 ms (FindLiveObjects: 0.035621 ms CreateObjectMapping: 0.028376 ms MarkObjects: 0.434698 ms  DeleteObjects: 0.092373 ms)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.450999 ms
+
+Unloading 69 unused Assets to reduce memory usage. Loaded Objects now: 463.
+Total: 1.060784 ms (FindLiveObjects: 0.048903 ms CreateObjectMapping: 0.031394 ms MarkObjects: 0.830756 ms  DeleteObjects: 0.148521 ms)
+
+セーブデータはあった。
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.685857 ms
+
+Unloading 20 unused Assets to reduce memory usage. Loaded Objects now: 393.
+Total: 0.554240 ms (FindLiveObjects: 0.033809 ms CreateObjectMapping: 0.028376 ms MarkObjects: 0.403907 ms  DeleteObjects: 0.087543 ms)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+何か吐き出した
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+何か吐き出した
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.500506 ms
+
+Unloading 244 unused Assets to reduce memory usage. Loaded Objects now: 463.
+Total: 0.834983 ms (FindLiveObjects: 0.051318 ms CreateObjectMapping: 0.050714 ms MarkObjects: 0.505336 ms  DeleteObjects: 0.227009 ms)
+
+セーブデータはあった。
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.651443 ms
+
+Unloading 74 unused Assets to reduce memory usage. Loaded Objects now: 519.
+Total: 0.758307 ms (FindLiveObjects: 0.053733 ms CreateObjectMapping: 0.043469 ms MarkObjects: 0.528279 ms  DeleteObjects: 0.132220 ms)
 

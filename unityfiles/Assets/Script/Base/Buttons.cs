@@ -20,12 +20,14 @@ public class Buttons : MonoBehaviour {
     // ガチャ
     public void Gacha()
     {
+        Sound sound = GameObject.Find("audio").GetComponent<Sound>();
+        sound.PlaySe();
+
         StartCoroutine("MoveScene", "Gacha");
     }
 
     public void Compose()
     {
-
     }
 
     // ショップ
