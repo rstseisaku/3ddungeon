@@ -56,6 +56,7 @@ class DebugRoom : MonoBehaviour
             _saveData.GetSaveParty().partyCharacterId[0, i] = _partyCharacterId[i];
         }
 
+        _saveData.StartAdventure();
         yield return Utility._Encount.Encount(_encountGroupId);
     }
 }

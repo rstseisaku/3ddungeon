@@ -138,7 +138,7 @@ class mSaveData : MonoBehaviour
     /* ダンジョン・バトルで利用するパーティオブジェクトを生成 */
     private void MakeDungenBattleParty()
     {
-        GameObject obj = new GameObject("Party");
+        GameObject obj = new GameObject(Variables.Party.SingletonObjectName);
         DontDestroyOnLoad(obj);
 
         Party p = obj.AddComponent<Party>();
