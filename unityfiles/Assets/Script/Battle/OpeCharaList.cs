@@ -37,7 +37,20 @@ public class OpeCharaList : MonoBehaviour
     }
 
     // 行動可能人数をカウント
-    //  ┗ 第一引数: ユニゾンで待機しているキャラを無視
+    // ( CTBが0以下のキャラをすべてカウント )
+    public static int CountActionableCharacter(BaseCharacter[] bc)
+    {
+        int count = 0;
+        for (int i = 0; i < bc.Length; i++)
+        {
+            if (bc[i].isWaitUnison) continue;
+            if (bc[i].ctbNum <= 0) count++;
+        }
+        return count;
+    }
+
+    // 行動可能人数をカウント
+    // ( ユニゾンで待機しているキャラを無視 )
     public static Vector2 CountActionableCharacter(
          PlayerCharacter[] cd,
          EnemyCharacterData[] ecd)
@@ -160,6 +173,24 @@ public class OpeCharaList : MonoBehaviour
         if (co != 0) aveMagWait /= co;
         else aveMagWait = -1;
         return aveMagWait;
+    }
+
+    // 攻撃力の平均を求める
+    public static int GetAverageAtk(BaseCharacter[] cb)
+    {
+        int aveAtk = 0;
+        int co = 0;
+        for (int j = 0; j < cb.Length; j++)
+        {
+            if (cb[j].ctbNum <= 0 && !cb[j].isWaitUnison)
+            {
+                aveAtk += cb[j].cs.atk;
+                co++;
+            }
+        }
+        if (co != 0) aveAtk /= co;
+        else aveAtk = -1;
+        return aveAtk;
     }
 
     // HP の和を求める

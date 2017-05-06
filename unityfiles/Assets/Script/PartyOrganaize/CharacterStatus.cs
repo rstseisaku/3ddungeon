@@ -17,7 +17,8 @@ public enum _ST
     _resistKnockback = 7,
     _waitActionBase = 8,
     _magWaitBase = 9,
-    _element = 10
+    _element = 10,
+    _description = 11,
 };
 
 /* =======================================================
@@ -38,6 +39,7 @@ public class CharacterStatus : MonoBehaviour
     public int element; // キャラクターの属性
     public string faceGraphicPath; // 顔グラのファイルパス
     public string standGraphicPath; // 立ち絵へのファイルパス
+    public string description; // 説明文
 
     public void LoadCharacterData(string FilePath, int characterId)
     {
@@ -49,7 +51,7 @@ public class CharacterStatus : MonoBehaviour
 
         // 設定ファイルを読込
         string[] buffer;
-        buffer = System.IO.File.ReadAllLines(FilePath);
+        buffer = System.IO.File.ReadAllLines(FilePath, System.Text.Encoding.GetEncoding("shift_jis"));
 
         // linebuffer にキャラクターの情報( characterId 番目の )を格納
         string[] linebuffer;
@@ -67,18 +69,18 @@ public class CharacterStatus : MonoBehaviour
         waitActionBase = int.Parse(linebuffer[(int)_ST._waitActionBase]); ; // 行動後の待機時間
         magWaitBase = int.Parse(linebuffer[(int)_ST._magWaitBase]); ; // 詠唱後の待機時間
         element = int.Parse(linebuffer[(int)_ST._element]); ; // 属性
+        description = linebuffer[(int)_ST._description]; // 説明文
     }
 
     // 指定されたパラメータの取得    
     public static string LoadPlayerCharacterStringStatus(int charaId, _ST st)
     {
-        Debug.Log("LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です");
-        Debug.Log("I/Oが絡むため極めて重たいです");
+        Debug.LogWarning("LoadPlayerCharacterStringStatus()はデバッグ関数で非推奨です(I/Oが絡むため極めて重たいです)");
 
         string FilePath = Variables.Unit.PlayerDataFilePath;
         // 設定ファイルを読込
         string[] buffer;
-        buffer = System.IO.File.ReadAllLines(FilePath);
+        buffer = System.IO.File.ReadAllLines(FilePath, System.Text.Encoding.GetEncoding("shift_jis"));
 
         // linebuffer にキャラクターの情報( characterId 番目の )を格納
         string[] linebuffer;
@@ -91,6 +93,7 @@ public class CharacterStatus : MonoBehaviour
     {
         charaName = cs.charaName;
         faceGraphicPath = cs.faceGraphicPath;
+        standGraphicPath = cs.standGraphicPath;
         maxHp = cs.maxHp;
         atk = cs.atk;
         mag = cs.mag;
@@ -99,6 +102,7 @@ public class CharacterStatus : MonoBehaviour
         waitActionBase = cs.waitActionBase;
         magWaitBase = cs.magWaitBase;
         element = cs.element;
+        description = cs.description;
     }
 }
 

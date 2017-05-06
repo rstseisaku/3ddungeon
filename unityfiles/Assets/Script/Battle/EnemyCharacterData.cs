@@ -27,9 +27,6 @@ public class EnemyCharacterData : BaseCharacter
         // ユニゾンの場合は、ターゲットが既に決まっている
         targetId = target;
 
-        // 行動終了処理
-        AfterAction();
-
         // 演出処理
         yield return DrawBattleGraphic(cd,cm);
 

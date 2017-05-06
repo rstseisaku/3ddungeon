@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 
 
-// ----------------------------------------
+/* ----------------------------------------
 //  : 残タスク
 // ----------------------------------------
 // ★戻る処理
@@ -26,8 +26,8 @@ using UnityEngine.UI;
 //    　　読み込みこれから
 //　 定数・グローバル変数の管理方法
 // ★リザルト画面
-// ★死体を殴れる修正
-// TODO: それぞれのオブジェクトに，スクリプトをアタッチ
+// ★死体を殴れるのを修正
+ */
 
 
 enum Command { Attack, Unison, Magic }
@@ -175,7 +175,6 @@ public class BattleMaster : MonoBehaviour
         yield return BattleResult.ResultFadeout(canvas);
 
         /* 戦闘が終わったので元のマップに返す */
-        // TODO: Utility.MoveSceneを使った処理に書き直す
         SceneManager.LoadScene("TES");
     }
 
@@ -225,6 +224,13 @@ public class BattleMaster : MonoBehaviour
         // ウェイトを挟む
         yield return Utility._Wait.WaitFrame(30);
 
+        // CTBが0のキャラかつユニゾンでないキャラにウェイトをセット
+        // ( 詠唱の場合は、ここに来る前に値がセットされているので必要ない )
+        for (int i = 0; i < cd.Length; i++)
+            cd[i].SetCtbNumFromWaitAction();
+        for (int i = 0; i < enemyCd.Length; i++)
+            enemyCd[i].SetCtbNumFromWaitAction();
+
         // 戦闘不能判定
         OpeCharaList.KnockoutEffect(cd);
         OpeCharaList.KnockoutEffect(enemyCd);
@@ -265,10 +271,8 @@ public class BattleMaster : MonoBehaviour
         selectedLeader = -1;
         selectedTarget = -1;
 
-        // TODO: どこのコマンドを選択中かの制御をもうちょい工夫
         while (true)
         {
-            // Debug.Log(selectedCommand + "," + selectedLeader + "," + selectedTarget);
             if ( selectedCommand == -1) {
                 // コマンド選択を行う( 攻撃・待機・詠唱など )
                 yield return SelectCommand(countActionCharacterInfo);
@@ -286,15 +290,16 @@ public class BattleMaster : MonoBehaviour
             if ( selectedTarget == -1) {
                 // ターゲットキャラクターの選択
                 yield return SelectTarget(countActionCharacterInfo);
-                if (selectedTarget == -1)
+                if (selectedTarget == -1) // ターゲット選択でキャンセル
                 {
                     selectedLeader = -1;
                     if (countActionCharacterInfo.x == 1 ||
                         countActionCharacterInfo.y == 1 ||
                         selectedCommand == (int)Command.Magic)
                     {
-                        selectedCommand = 0; // リーダー選択が存在しないならば 2 ステップ戻す
-                        yield break;
+                        // リーダー選択が存在しないならば 2 ステップ戻す
+                        // ( 単体攻撃・詠唱の場合 )
+                        selectedCommand = -1;
                     }
                 }
                 continue;
@@ -320,9 +325,11 @@ public class BattleMaster : MonoBehaviour
 
         // 勝敗判定
         int isPlayerWin = JudgeRamble(enemyCd[enemyLeader].cs.element);
+        if ( isPlayerWin == 1) mCombo.AddPlayerCombo();
+        else if (isPlayerWin == -1) mCombo.AddEnemyCombo();
 
         // 少ない方にスタン処理＆ダメージ。
-        int stunCtbNum = 7; // 仮置
+        int stunCtbNum = 7;
         if (isPlayerWin == 1) OpeCharaList.CallStun(enemyCd, stunCtbNum);
         else if (isPlayerWin == -1) OpeCharaList.CallStun(cd, stunCtbNum);
 
@@ -340,6 +347,7 @@ public class BattleMaster : MonoBehaviour
 
     // コマンド内容をもとに
     // 動けるキャラクターすべての行動(攻撃・ユニゾン・詠唱)を行う
+    // ( 吹き飛び処理もこの中で処理する )
     // 　┗ 呼出元: PlayActionNoRamble
     // 　┗ 条件: selectedCommand selectedLeader selectedTarget が決定済
     IEnumerator CallCharacterAction()
@@ -347,6 +355,9 @@ public class BattleMaster : MonoBehaviour
         // 詠唱中キャラの平均待機値を求めておく
         int avePlayerMagWait = OpeCharaList.GetAverageMagWait(cd);
         int aveEnemyMagWait = OpeCharaList.GetAverageMagWait(enemyCd);
+        int actionCharacterNum = 0;
+        bool isPlayerTurn = true;
+        BaseCharacter targetChara = null;
 
         for (int i = 0; i < cd.Length; i++)
         {
@@ -356,6 +367,9 @@ public class BattleMaster : MonoBehaviour
                 // コマンドに応じた行動を行う
                 if (selectedCommand == (int)Command.Attack)
                 {
+                    targetChara = enemyCd[selectedTarget];
+                    actionCharacterNum++;
+                    isPlayerTurn = true;
 
                     mCombo.AddPlayerCombo();
                     yield return cd[i].PlayAction(
@@ -364,13 +378,9 @@ public class BattleMaster : MonoBehaviour
                         mCombo);
                 }
                 else if (selectedCommand == (int)Command.Unison)
-                {
                     cd[i].StartUnison();
-                }
                 else if (selectedCommand == (int)Command.Magic)
-                {
                     cd[i].StartMagic(avePlayerMagWait);
-                }
             }
         }
         for (int i = 0; i < enemyCd.Length; i++)
@@ -380,6 +390,10 @@ public class BattleMaster : MonoBehaviour
             {
                 if (selectedCommand == (int)Command.Attack)
                 {
+                    targetChara =cd[selectedTarget];
+                    actionCharacterNum++;
+                    isPlayerTurn = false;
+
                     mCombo.AddEnemyCombo();
                     yield return enemyCd[i].PlayAction(
                         selectedTarget,
@@ -387,14 +401,34 @@ public class BattleMaster : MonoBehaviour
                         mCombo);
                 }
                 else if (selectedCommand == (int)Command.Unison)
-                {
                     enemyCd[i].StartUnison();
-                }
                 else if (selectedCommand == (int)Command.Magic)
-                {
                     enemyCd[i].StartMagic(aveEnemyMagWait);
-                }
             }
+        }
+
+        // 複数人が攻撃に参加している場合はユニゾンの追撃処理を行う
+        if ( actionCharacterNum >= 2)
+        {
+            // あらかじめコンボの値を増やしておく
+            // ( どちらが攻撃したかをUnison内で知る術はないので )
+            if (isPlayerTurn) mCombo.AddPlayerCombo();
+            else mCombo.AddEnemyCombo();
+            // ユニゾンの処理を呼び出す
+            if ( isPlayerTurn )
+                yield return Unison.DoUnison(cd, enemyCd[selectedTarget], mCombo);
+            else
+                yield return Unison.DoUnison(enemyCd, cd[selectedTarget], mCombo);
+        }
+
+        // 対象キャラを吹き飛ばす
+        if (targetChara != null) // 対象キャラがいない(≒詠唱・ユニゾン)なら無視
+        {
+            int sumKnockback;
+            if (isPlayerTurn) sumKnockback = OpeCharaList.GetSumKnockback(cd);
+            else  sumKnockback = OpeCharaList.GetSumKnockback(enemyCd);
+            int knockback = PredictObject.CalcBlowNum(targetChara, sumKnockback, actionCharacterNum);
+            targetChara.ctbNum += knockback;
         }
     }
 
@@ -439,7 +473,6 @@ public class BattleMaster : MonoBehaviour
     {
         // カーソルオブジェクトを作成
         GameObject cursorObj = MakeCursorObj();
-        // GameObject predictObj = MakePredictObj(enemyCd);
 
         string FilePath = "Prefabs\\Battle\\SelectTarget";
         GameObject tObj = (GameObject)Instantiate(Resources.Load(FilePath),
@@ -451,6 +484,7 @@ public class BattleMaster : MonoBehaviour
 
         // プレイヤの予測オブジェクトを表示
         OpeCharaList.SetPredictActionableCharacter(cd);
+        int charaNum = OpeCharaList.CountActionableCharacter(cd);
 
         // コマンドを選ぶまでループ
         int _mouseOver = -1;
@@ -463,8 +497,8 @@ public class BattleMaster : MonoBehaviour
             {
                 SetCursorObj(mouseOver, cursorObj); // カーソルオブジェクトの座標移動
 
-                PredictObject.SetInactiveAllPredictObj( null , enemyCd);
-                enemyCd[mouseOver].predictObj.SetFromCharacterStatus(enemyCd[mouseOver], sumKnockback);
+                PredictObject.SetInactiveAllPredictObj(null , enemyCd);
+                enemyCd[mouseOver].predictObj.SetFromCharacterStatus(enemyCd[mouseOver], sumKnockback, charaNum);
                 _mouseOver = mouseOver;
             }
 
@@ -484,7 +518,6 @@ public class BattleMaster : MonoBehaviour
     }
 
     // カーソルオブジェクトの操作(ターゲット選択時利用)
-    // TODO: 操作性用改良
     private GameObject MakeCursorObj()
     {
         // カーソルオブジェクトの表示

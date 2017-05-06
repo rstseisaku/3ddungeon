@@ -34,8 +34,11 @@ public class BCV
     public const int STATUS_VX = 210;
     public const int STATUS_VY = 50;
     public const int STATUS_X_ITEM_NUM = 6;
-}
 
+    // ユニゾン追撃のイメージ定数
+    // ( 攻撃者のATKの平均 * ダメージ定数 * コンボ倍率 )
+    public static int[] UNISON_DAMAGE_COEFFICIENT = {0, 0, 150 ,200, 400, 700 , 1000, 1200, 1500, 2000};
+}
 
 /*
  * Battle Global Value Class
