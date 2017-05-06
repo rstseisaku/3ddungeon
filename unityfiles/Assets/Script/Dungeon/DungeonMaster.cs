@@ -41,12 +41,29 @@ public class DungeonMaster : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        Debug.Log(firsttime);
         flag = false;
+
         //マップチップとミニマップを紐づけるオブジェクトを取得
         //必ず最初にこれを行わないとエラー吐く
         Map.GetGameObject();
 
+        // プレイヤーの位置設定
+        //初回
+        if (firsttime)
+        {
+            Map.SetPlayer(firstX, firstY, Map.direction);
+        }
+        //２回目以降
+        //staticで残っている値を使用
+        else
+        {
+            Map.SetPlayer((int)Map.playerpos.x, (int)Map.playerpos.y, Map.direction);
+        }
+
+        GameObject temp = _Object.MyInstantiate("Prefabs\\Map\\PartyIcons", GameObject.Find("characterviewcamera"));
+        temp.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceCamera;
+        temp.GetComponent<Canvas>().worldCamera = GameObject.Find("characterviewcamera").GetComponent<Camera>();
 
         //マップの作成
         //マップチップの配置
@@ -260,20 +277,6 @@ public class DungeonMaster : MonoBehaviour
 
         //csvファイルに従ってマップを生成
         map.MakeMap(MapName);
-
-        // プレイヤーの位置設定
-        //初回
-        if (firsttime)
-        {
-            Map.SetPlayer(firstX, firstY);
-        }
-        //２回目以降
-        //staticで残っている値を使用
-        else
-        {
-            Map.SetPlayer((int)Map.playerpos.x, (int)Map.playerpos.y);
-        }
-
 
         return;
     }

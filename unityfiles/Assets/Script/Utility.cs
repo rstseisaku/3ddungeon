@@ -209,6 +209,13 @@ namespace Utility
         {
             yield return MoveScene(sceneName, "Images\\Background\\Background1", 60);
         }
+
+        /*
+        public static IEnumerator DeleteScene(string scenename)
+        {
+            SceneManager.UnloadScene(scenename);
+            yield return 0;
+        }*/
     }
 
     public class _Encount : MonoBehaviour

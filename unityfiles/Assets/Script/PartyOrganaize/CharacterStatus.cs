@@ -52,11 +52,12 @@ public class CharacterStatus : MonoBehaviour
 
         // 設定ファイルを読込
         string[] buffer;
-        buffer = System.IO.File.ReadAllLines(FilePath, System.Text.Encoding.GetEncoding("shift_jis"));
+        buffer = System.IO.File.ReadAllLines(FilePath);//, System.Text.Encoding.GetEncoding("shift_jis"));
 
         // linebuffer にキャラクターの情報( characterId 番目の )を格納
         string[] linebuffer;
         linebuffer = buffer[characterId].Split(',');
+        
 
         // ステータス読込
         charaName = linebuffer[(int)_ST._charaName]; // 名前
@@ -82,7 +83,7 @@ public class CharacterStatus : MonoBehaviour
         string FilePath = Variables.Unit.PlayerDataFilePath;
         // 設定ファイルを読込
         string[] buffer;
-        buffer = System.IO.File.ReadAllLines(FilePath, System.Text.Encoding.GetEncoding("shift_jis"));
+        buffer = System.IO.File.ReadAllLines(FilePath);//, System.Text.Encoding.GetEncoding("shift_jis"));
 
         // linebuffer にキャラクターの情報( characterId 番目の )を格納
         string[] linebuffer;

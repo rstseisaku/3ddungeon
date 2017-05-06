@@ -33,7 +33,6 @@ namespace Variables
             minimapcanvas = GameObject.Find("MiniMap");
             minimap = minimapcanvas.GetComponent<miniMap>();
             playerobject = GameObject.FindWithTag("MainCamera");
-            direction = playerobject.transform.localEulerAngles.y;
         }
 
         //プレイヤーオブジェクト
@@ -48,12 +47,12 @@ namespace Variables
         }    
         
         // プレイヤの配置
-        public static void SetPlayer(int StartX, int StartY)
+        public static void SetPlayer(int StartX, int StartY, float localdirection)
         {
             //カメラの移動
             playerobject.transform.localPosition = new Vector3(StartX, 0.5f, StartY);
             //カメラの向きを最後に向いていた方向へ向ける
-            playerobject.transform.localEulerAngles = new Vector3(0, direction, 0);
+            playerobject.transform.localEulerAngles = new Vector3(0, localdirection, 0);
 
         }
 
@@ -83,7 +82,7 @@ namespace Variables
     {
         // キャラクターの情報
         public static int Num = 15; // キャラクター種類
-        public static string PlayerDataFilePath = "Assets\\Resources\\MapData\\data.csv";
+        public static string PlayerDataFilePath = "Assets\\Resources\\CharacterData\\data.csv";
     }
     
 
