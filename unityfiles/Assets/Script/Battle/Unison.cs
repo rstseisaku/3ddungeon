@@ -15,11 +15,12 @@ public class Unison : MonoBehaviour
         GameObject canvas = GameObject.Find("Canvas");
         List<GameObject> uniObj = new List<GameObject>();
         int unisonCount = 0;
+        int unisonSupport = 0;
         for ( int i=0; i< actionCharas.Length; i++)
         {
             if( actionCharas[i].ctbNum == 0 ){
                 string str = actionCharas[i].cs.standGraphicPath;
-                Debug.Log(str);
+                unisonSupport += actionCharas[i].cs.unisonSupport;
                 GameObject obj = Utility._Object.MyGenerateImage(str, canvas, new Vector2(270, 540));
                 obj.GetComponent<RectTransform>().localPosition = id2Pos(unisonCount);
                 uniObj.Add( obj );
@@ -36,16 +37,16 @@ public class Unison : MonoBehaviour
         foreach (GameObject g in uniObj) Destroy(g);
 
         // 対象表示
-        GameObject targetObj = DamageEffect.TargetGraphicDraw(TargetChara);
+        DamageEffect.TargetGraphicDraw(TargetChara);
         yield return Utility._Wait.WaitFrame(10);
         // 戦闘アニメーション
-        GameObject effObj = DamageEffect.AttackEffect(1);
+        DamageEffect.AttackEffect(1);
         yield return Utility._Wait.WaitFrame(45);
 
         // ダメージの算出
         int damage = OpeCharaList.GetAverageAtk(actionCharas);
         Debug.Log(damage);
-        damage *= BCV.UNISON_DAMAGE_COEFFICIENT[unisonCount];
+        damage *= ( BCV.UNISON_DAMAGE_COEFFICIENT[unisonCount] + unisonSupport);
         damage /= 100;
         Debug.Log(damage);
         damage *= cm.magnificationDamage;

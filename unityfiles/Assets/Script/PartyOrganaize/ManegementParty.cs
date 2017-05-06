@@ -31,8 +31,6 @@ class ManegementParty : MonoBehaviour
     /* パーティのセーブデータ */
     private mSaveData saveData;
 
-    GameObject canvas;
-
     void Start()
     {
         StartCoroutine("MainLoop");
@@ -99,9 +97,6 @@ class ManegementParty : MonoBehaviour
     /* 初期化 */
     IEnumerator Init()
     {
-        /* オブジェクト読み込み */
-        canvas = GameObject.Find("PartyCanvas");
-
         /* セーブデータが存在すれば読み込む */
         saveData = GameObject.Find(Variables.Save.Name).GetComponent<mSaveData>();
         yield return saveData.WaitLoad();

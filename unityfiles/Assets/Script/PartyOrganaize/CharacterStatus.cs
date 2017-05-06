@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-
 public enum _ST
 {
     _charaName = 0,
@@ -17,8 +16,9 @@ public enum _ST
     _resistKnockback = 7,
     _waitActionBase = 8,
     _magWaitBase = 9,
-    _element = 10,
-    _description = 11,
+    _unisonSupport = 10,
+    _element = 11,
+    _description = 12,
 };
 
 /* =======================================================
@@ -40,6 +40,7 @@ public class CharacterStatus : MonoBehaviour
     public string faceGraphicPath; // 顔グラのファイルパス
     public string standGraphicPath; // 立ち絵へのファイルパス
     public string description; // 説明文
+    public int unisonSupport; // ユニゾン時のダメージ増加
 
     public void LoadCharacterData(string FilePath, int characterId)
     {
@@ -70,6 +71,7 @@ public class CharacterStatus : MonoBehaviour
         magWaitBase = int.Parse(linebuffer[(int)_ST._magWaitBase]); ; // 詠唱後の待機時間
         element = int.Parse(linebuffer[(int)_ST._element]); ; // 属性
         description = linebuffer[(int)_ST._description]; // 説明文
+        unisonSupport = int.Parse(linebuffer[(int)_ST._unisonSupport]); // ユニゾンダメージの増加
     }
 
     // 指定されたパラメータの取得    
