@@ -27,7 +27,7 @@ public class Event : MonoBehaviour {
         TRANSITION = 1,
         ENCOUNT = 2,
         MOVESCENE = 3,
-        MOVEPOS = 4
+        MOVEPOS = 4,
 
     }
     public enum DIRECTION
@@ -97,6 +97,9 @@ public class CustomEvent : Editor
         custom.activateonwhat = (Event.EVENTTYPE)EditorGUILayout.EnumPopup("この時実行", custom.activateonwhat);
         //クリックするまで待つか
         handler.waituntilclick = EditorGUILayout.Toggle("クリックまで待つ", handler.waituntilclick);
+        //一度きりイベント
+        handler.onlyonce = EditorGUILayout.Toggle("一度きり", handler.onlyonce);
+
 
         //新しく追加するイベントの種類に応じて設定
         custom.mode = (Event.TYPE)EditorGUILayout.EnumPopup("種類", custom.mode);
@@ -166,6 +169,7 @@ public class CustomEvent : Editor
             custom.direction = (Event.DIRECTION)EditorGUILayout.EnumPopup("方向", custom.direction);
             handler.direction = (int)custom.direction * 90;
         }
+        
 
         if (GUILayout.Button("追加"))
         { 

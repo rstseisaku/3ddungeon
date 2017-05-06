@@ -184,6 +184,7 @@ namespace Utility
              */
             // 描画先キャンバスを生成
             GameObject canvas = _Object.GenerateCanvas();
+            Debug.Log(canvas.name);
 
             // トランジションオブジェクト
             GameObject obj = _Object.MyInstantiate(
@@ -197,6 +198,7 @@ namespace Utility
             obj.name = "Fade";
             yield return _Wait.WaitFrame((int)frame + 10);
 
+            Debug.Log(sceneName);
             // 移動
             SceneManager.LoadScene(sceneName);
 
@@ -231,6 +233,10 @@ namespace Utility
             EnemyGroup eg = obj.GetComponent<EnemyGroup>();
             eg.enemyGroupId = enemyGroupId;
             eg.LoadCharacterIdFromGroupId();
+
+            Party party = _Object.MyFind(Variables.Party.SingletonObjectName).transform.GetComponent<Party>();
+            party.nowScene = SceneManager.GetActiveScene().name;
+            Debug.Log(party.nowScene);
 
             yield return _Scene.MoveScene("battleScene");
         }

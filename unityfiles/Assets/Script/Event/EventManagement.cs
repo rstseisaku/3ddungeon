@@ -62,6 +62,8 @@ public class EventManagement : MonoBehaviour {
             Map.direction = activeevent.direction;
             Map.SetPlayer((int)Map.movehere.x, (int)Map.movehere.y, Map.direction);
         }
+        
+
     }
 
     public void StartEvent(List<Handler> activeevent)
