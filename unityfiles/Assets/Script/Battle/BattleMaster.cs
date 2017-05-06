@@ -176,7 +176,8 @@ public class BattleMaster : MonoBehaviour
         yield return BattleResult.ResultFadeout(canvas);
 
         /* 戦闘が終わったので元のマップに返す */
-        SceneManager.LoadScene("TES");
+        Debug.Log("f");
+        yield return Utility._Scene.MoveScene(party.nowScene, Variables.BackGround.black , 60);
     }
 
     // 行動できるキャラクターが出るまでループを回す

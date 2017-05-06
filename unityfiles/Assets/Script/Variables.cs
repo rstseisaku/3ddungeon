@@ -113,6 +113,12 @@ namespace Variables
         public static string EnemyGroupFilePath = "Assets\\Resources\\CharacterData\\enemyGroupData.csv";
     }
 
+    public class BackGround
+    {
+
+        public static string black = "Images\\Fade";
+    }
+
     public class SE
     {
         public static string soundObjName = "SingletonSoundObj";
@@ -160,6 +166,7 @@ namespace Variables
         //共通
         public int type;
         public bool waituntilclick = false;
+        public bool onlyonce;
 
         //文章表示で使用
         public string text;

@@ -11,6 +11,7 @@ public class Party : MonoBehaviour
 {
     /* パーティー編成名・パーティーID */
     public string partyName; // 編成名
+    public string nowScene;
 
     /* 所属しているキャラクター */
     public PartyCharacter[] partyCharacter; // パーティーにいるキャラクタ
