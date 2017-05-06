@@ -111,7 +111,6 @@ public class HaveChara : MonoBehaviour
     {
         if (TextObject == null)
         {
-            Debug.Log("OKOKOKOKO");
             // キャンバスの取得
             GameObject parentObj = transform.FindChild("Characters").gameObject;
             // テキストオブジェクトの生成

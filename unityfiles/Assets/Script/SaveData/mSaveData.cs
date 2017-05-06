@@ -105,7 +105,7 @@ public class mSaveData : MonoBehaviour
     /* セーブデータを生成する関数 */
     public bool MakeSaveData()
     {
-        DebugView();
+        //DebugView();
 
         /* セーブデータの生成 */
         string curDir = Directory.GetCurrentDirectory();
@@ -117,8 +117,7 @@ public class mSaveData : MonoBehaviour
         BinaryFormatter bf = new BinaryFormatter();
         bf.Serialize(fs, saveObject); //シリアル化して書き込む
         fs.Close();
-
-        Debug.Log("何か吐き出した");
+        
 
         return true; // セーブ成功
     }

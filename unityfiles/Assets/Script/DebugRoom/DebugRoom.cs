@@ -93,9 +93,7 @@ public class CustomDebugRoom : Editor
             for (int i = 0; i < partyId.Length; i++) partyId[i] = 0;
             dr._partyCharacterId = partyId;
         }
-
-        // 選ばれたときに呼ばれる？
-        Debug.Log("OnEnable");
+        
     }
 
     public override void OnInspectorGUI()
@@ -140,8 +138,7 @@ public class CustomDebugRoom : Editor
             dr.debugMode = dt;
             dr._encountGroupId = groupId;
             dr._partyCharacterId = partyId;
-
-            Debug.Log("Changed");
+            
         }
 
         if (GUILayout.RepeatButton("Save"))
@@ -149,7 +146,6 @@ public class CustomDebugRoom : Editor
             // 現在シーンだけ保存
             // 値を変更⇒Undoを実装する必要があるらしい。
             EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
-            Debug.Log("Saved");
         }
     }
 }

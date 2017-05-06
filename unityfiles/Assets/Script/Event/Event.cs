@@ -177,6 +177,10 @@ public class CustomEvent : Editor
             
             //list.Add(handler);
             //handler = new Handler();
+            if(handler.onlyonce == true)
+            {
+                handler.obj = custom.gameObject;
+            }
 
             custom.eventlist.Add(handler);
             handler = new Handler();

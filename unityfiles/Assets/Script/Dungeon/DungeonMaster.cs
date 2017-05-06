@@ -41,7 +41,6 @@ public class DungeonMaster : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Debug.Log(firsttime);
         SoundManager.SceneChangePlaySound(BGM.BgmName.dungeon);
         flag = false;
 

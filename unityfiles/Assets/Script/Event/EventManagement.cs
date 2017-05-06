@@ -79,6 +79,10 @@ public class EventManagement : MonoBehaviour {
     {
         buttoncanvas.gameObject.SetActive(true);
         textcanvas.SetActive(false);
+        if(eventlist[0].onlyonce == true)
+        {
+            GameObject.Find("Event").GetComponent<SaveEvent>().DisableEvent(eventlist[0].obj.name);
+        }
     }
 
     private IEnumerator mUpdate()
