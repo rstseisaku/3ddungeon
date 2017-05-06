@@ -83,10 +83,9 @@ namespace Variables
     {
         // キャラクターの情報
         public static int Num = 15; // キャラクター種類
-        public static string PlayerDataFilePath = "Assets\\Resources\\MapData\\data.csv";
+        public static string PlayerDataFilePath = "Assets\\Resources\\CharacterData\\data.csv";
     }
     
-
     public class Party
     {
         public static string SingletonObjectName = "SingletonPartyObject";
@@ -119,7 +118,7 @@ namespace Variables
         public static string soundObjName = "SingletonSoundObj";
         public enum SeName {
         dokan = 0,
-        dokan2 = 1,
+        unison_dokan2 = 1,
         kin = 2,
         battle_unison_chari = 3,
         system_cursor = 4,

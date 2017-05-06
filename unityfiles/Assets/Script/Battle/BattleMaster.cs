@@ -65,6 +65,7 @@ public class BattleMaster : MonoBehaviour
     void Start()
     {
         /* メインループスタート */
+        SoundManager.SceneChangePlaySound(Variables.BGM.BgmName.battle);
         StartCoroutine("MyUpdate");
     } // --- Start()
 
