@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Variables
 {
+    
     //何度か使う可能性がある変数はこっちに記入
     public class __Debug
     {
