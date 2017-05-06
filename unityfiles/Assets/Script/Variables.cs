@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Variables
 {
-
+    
     //何度か使う可能性がある変数はこっちに記入
     public class __Debug
     {
@@ -45,8 +45,8 @@ namespace Variables
         {
             playerpos = new Vector2(playerobject.transform.localPosition.x, playerobject.transform.localPosition.z);
             direction = playerobject.transform.localEulerAngles.y;
-        }
-
+        }    
+        
         // プレイヤの配置
         public static void SetPlayer(int StartX, int StartY, float localdirection)
         {
@@ -85,8 +85,7 @@ namespace Variables
         public static int Num = 15; // キャラクター種類
         public static string PlayerDataFilePath = "Assets\\Resources\\CharacterData\\data.csv";
     }
-
-
+    
     public class Party
     {
         public static string SingletonObjectName = "SingletonPartyObject";
@@ -118,12 +117,12 @@ namespace Variables
     {
         public static string soundObjName = "SingletonSoundObj";
         public enum SeName {
-            dokan = 0,
-            dokan2 = 1,
-            kin = 2,
-            battle_unison_chari = 3,
-            system_cursor = 4,
-            system_dec = 5
+        dokan = 0,
+        unison_dokan2 = 1,
+        kin = 2,
+        battle_unison_chari = 3,
+        system_cursor = 4,
+        system_dec = 5
         };
         public static string[] SeFolderPath ={
             "SE\\hit64",
@@ -148,19 +147,12 @@ namespace Variables
             "BGM\\kamo99" };
     }
 
-    public class BackGround
-    {
-
-        public static string black = "Images\\Fade";
-    }
-
     [System.Serializable]
     public class Handler
     {
         //共通
         public int type;
         public bool waituntilclick = false;
-        public bool onlyonce = false;
 
         //文章表示で使用
         public string text;
@@ -185,10 +177,6 @@ namespace Variables
         public int moveX;
         public int moveY;
         public float direction;
-
-
-        //自壊イベント
-        public GameObject myself;
     }
 
 

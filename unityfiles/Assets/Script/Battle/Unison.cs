@@ -26,6 +26,7 @@ public class Unison : MonoBehaviour
                 uniObj.Add( obj );
 
                 unisonCount++;
+                SoundManager.PlaySe(Variables.SE.SeName.battle_unison_chari);
                 yield return Utility._Wait.WaitFrame(10);
             }
         }
@@ -44,6 +45,7 @@ public class Unison : MonoBehaviour
         yield return Utility._Wait.WaitFrame(45);
 
         // ダメージの算出
+        SoundManager.PlaySe(Variables.SE.SeName.unison_dokan2);
         int damage = OpeCharaList.GetAverageAtk(actionCharas);
         Debug.Log(damage);
         damage *= ( BCV.UNISON_DAMAGE_COEFFICIENT[unisonCount] + unisonSupport);

@@ -40,6 +40,7 @@ public class SelectAction : MonoBehaviour {
     public void myOnClick( int buttonId )
     {
         // 押された ID を格納する
+        SoundManager.PlaySe(Variables.SE.SeName.system_dec);
         selectId = buttonId;
     }
 

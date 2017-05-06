@@ -51,8 +51,9 @@ public class LeaderSelect : MonoBehaviour {
 
     public void myOnClick(int buttonId)
     {
+        SoundManager.PlaySe(Variables.SE.SeName.system_dec);
         // 左ボタンが押された
-        if( buttonId == 0)
+        if ( buttonId == 0)
         {
             do {
                 selectId++;

@@ -43,11 +43,12 @@ public class SelectTarget : MonoBehaviour {
 
     public void MyOnClick( Button obj )
     {
-        if( obj.name == "Return")
+        if ( obj.name == "Return")
         {
             selectId = -2; // キャンセル
             return;
         }
+        SoundManager.PlaySe(Variables.SE.SeName.system_dec);
         selectId = int.Parse(obj.name);
     }
 
