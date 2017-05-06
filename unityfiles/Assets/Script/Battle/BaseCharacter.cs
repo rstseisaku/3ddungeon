@@ -171,10 +171,10 @@ public class BaseCharacter : MonoBehaviour
         Destroy(atkObj);
 
         // 対象表示
-        GameObject targetObj = DamageEffect.TargetGraphicDraw(cd[targetId]);
+        DamageEffect.TargetGraphicDraw(cd[targetId]);
         yield return Utility._Wait.WaitFrame(10);
         // 戦闘アニメーション
-        GameObject effObj = DamageEffect.AttackEffect(1);
+        DamageEffect.AttackEffect(1);
         yield return Utility._Wait.WaitFrame(45);
 
         // ダメージ表示 

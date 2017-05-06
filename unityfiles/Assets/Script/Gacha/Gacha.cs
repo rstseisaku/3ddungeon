@@ -14,8 +14,6 @@ class Gacha : MonoBehaviour
     int getCharaResultId;
     mSaveData saveData;
 
-    bool isEnable = false;
-
     IEnumerator Start()
     {
         canvas = GameObject.Find("GachaCanvas");
@@ -23,7 +21,6 @@ class Gacha : MonoBehaviour
         saveData = GameObject.Find(Variables.Save.Name).GetComponent<mSaveData>();
         yield return saveData.WaitLoad();
 
-        isEnable = true;
         StartCoroutine("MainLoop");
     }
 
