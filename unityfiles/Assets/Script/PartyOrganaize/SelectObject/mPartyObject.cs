@@ -11,6 +11,7 @@ public class mPartyObject : MonoBehaviour
     GameObject[] partyCharaFrameObj;
     Image[] standImage;
     Text[] hpText;
+    Image[] elementImage;
     Text partyNameText;
     public int touchId = -1;
 
@@ -24,6 +25,7 @@ public class mPartyObject : MonoBehaviour
         partyCharaFrameObj = new GameObject[5];
         hpText = new Text[5];
         standImage = new Image[5];
+        elementImage = new Image[5];
         partyNameText = transform.FindChild("Text").gameObject.GetComponent<Text>();
         GameObject obj = transform.FindChild("Character").gameObject;
         for (int i = 0; i < partyCharacterObj.Length; i++)
@@ -32,6 +34,7 @@ public class mPartyObject : MonoBehaviour
             partyCharacterObj[i] = obj.transform.FindChild(str).gameObject;
             partyCharaFrameObj[i] = partyCharacterObj[i].transform.FindChild("Frame").gameObject;
             hpText[i] = partyCharaFrameObj[i].transform.FindChild("Text").gameObject.GetComponent<Text>();
+            elementImage[i] = partyCharaFrameObj[i].transform.FindChild("Element").gameObject.GetComponent<Image>();
             standImage[i] = partyCharacterObj[i].GetComponent<Image>();
         }
     }
@@ -60,6 +63,10 @@ public class mPartyObject : MonoBehaviour
     public void SetStandImage(int partyId, string standGraFilePath) 
     {
         standImage[partyId].sprite = Utility._Image.MyGetSprite(standGraFilePath);
+    }
+    public void SetElement( int partyId, int element)
+    {
+        elementImage[partyId].sprite = Utility._Image.MyGetSprite("Images/Icon/icon" + element);
     }
     public void CharacterSetActive(int partyId, bool isActive) { partyCharacterObj[partyId].SetActive(isActive); }
     public void FrameSetActive(int partyId, bool isActive) { partyCharaFrameObj[partyId].SetActive(isActive); }

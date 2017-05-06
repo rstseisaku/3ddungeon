@@ -48,8 +48,8 @@ public class ComboManager
     // 倍率算出
     private int CalMagnification( int combo )
     {
-        int magnification = 80 + 20 * combo;
-        magnification += (combo * combo) / 5;
+        int magnification = 90 + 10 * combo;
+        magnification += (combo * combo);
         return magnification;
     }
 }

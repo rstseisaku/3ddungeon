@@ -71,6 +71,7 @@ class DecideChangeCharacter : MonoBehaviour
 
             mPartyScript.SetHpText(i, pChara.cs.maxHp);
             mPartyScript.SetStandImage(i, pChara.cs.standGraphicPath);
+            mPartyScript.SetElement(i, pChara.cs.element);
             mPartyScript.FrameSetActive(i, true);
         }
     }
