@@ -32,6 +32,7 @@ namespace Variables
             minimapcanvas = GameObject.Find("MiniMap");
             minimap = minimapcanvas.GetComponent<miniMap>();
             playerobject = GameObject.FindWithTag("MainCamera");
+            direction = playerobject.transform.localEulerAngles.y;
         }
 
         //プレイヤーオブジェクト
@@ -43,6 +44,16 @@ namespace Variables
         {
             playerpos = new Vector2(playerobject.transform.localPosition.x, playerobject.transform.localPosition.z);
             direction = playerobject.transform.localEulerAngles.y;
+        }    
+        
+        // プレイヤの配置
+        public static void SetPlayer(int StartX, int StartY)
+        {
+            //カメラの移動
+            playerobject.transform.localPosition = new Vector3(StartX, 0.5f, StartY);
+            //カメラの向きを最後に向いていた方向へ向ける
+            playerobject.transform.localEulerAngles = new Vector3(0, direction, 0);
+
         }
 
         //ミニマップのオフセット
@@ -56,7 +67,6 @@ namespace Variables
 
 
         //その他
-        public static bool usethisvalue = false;
         public static Vector2 movehere;
     }
 
@@ -103,10 +113,14 @@ namespace Variables
     [System.Serializable]
     public class Handler
     {
+        //共通
         public int type;
+        public bool waituntilclick = false;
 
+        //文章表示で使用
         public string text;
 
+        //トランジションで使用
         public Texture2D rule;
         public float time;
         public TRANSITION.Transition.TRANSITION_MODE mode;
@@ -116,10 +130,15 @@ namespace Variables
         public bool thisobject;
         public GameObject transobject;
 
+        //エンカウントで使用
+        public int enemygroupID;
+
+        //シーン移動で使用
         public string movetothisscene;
-        public bool movehere; 
+
+        //同じエリア間で移動
         public int moveX;
         public int moveY;
-
+        public float direction;
     }
 }

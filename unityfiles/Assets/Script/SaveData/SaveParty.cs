@@ -15,6 +15,7 @@ public class SaveParty
 {
     /* 所持する値 */
     public string[] partyName; // パーティーの名前
+    [SerializeField]
     public int[,] partyCharacterId; // キャラクターのID
     public int mainParty; // メインパーティ
 
