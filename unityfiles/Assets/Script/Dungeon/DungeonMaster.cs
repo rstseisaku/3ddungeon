@@ -42,6 +42,7 @@ public class DungeonMaster : MonoBehaviour
     void Start()
     {
         Debug.Log(firsttime);
+        SoundManager.SceneChangePlaySound(BGM.BgmName.dungeon);
         flag = false;
 
         //マップチップとミニマップを紐づけるオブジェクトを取得

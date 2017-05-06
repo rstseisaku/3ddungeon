@@ -44,6 +44,7 @@ public class BattleResult : MonoBehaviour
             resultFaceObj[i].SetActive(false);
         }
 
+        SoundManager.PlaySe(Variables.SE.SeName.battle_result);
         yield return Utility._Wait.WaitKey();
 
         // オブジェクト消去
