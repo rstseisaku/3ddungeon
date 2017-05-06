@@ -24,6 +24,8 @@ public class SoundManager : MonoBehaviour
             sound = soundObj.GetComponent<Sound>();
         }
 
+        if (Variables.__Debug.isNotBGMPlay) return;
+
         // このシーンで流すBGMを設定
         sound.PlayBgm(id);
     }

@@ -18,9 +18,9 @@ public class ObtainChara
     /* 編集領域の確保 */
     public void NewVariables()
     {
-        isObtainChara = new bool[Variables.Unit.Num + 1];
-        atkAdd = new int[Variables.Unit.Num + 1];
-        maxHpAdd = new int[Variables.Unit.Num + 1];
+        isObtainChara = new bool[Variables.Unit.Num + 2];
+        atkAdd = new int[Variables.Unit.Num + 2];
+        maxHpAdd = new int[Variables.Unit.Num + 2];
     }
 
     /* セーブデータがなかった場合 */

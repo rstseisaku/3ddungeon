@@ -48,13 +48,12 @@ public class Unison : MonoBehaviour
         // ダメージの算出
         SoundManager.PlaySe(Variables.SE.SeName.battle_unison_damage);
         int damage = OpeCharaList.GetAverageAtk(actionCharas);
-        Debug.Log(damage);
-        damage *= ( BCV.UNISON_DAMAGE_COEFFICIENT[unisonCount] + unisonSupport);
+        damage *= ( BCV.UNISON_DAMAGE_COEFFICIENT[unisonCount]);
         damage /= 100;
-        Debug.Log(damage);
         damage *= cm.magnificationDamage;
         damage /= 100;
-        Debug.Log(damage);
+        damage *= (100 + unisonSupport); // ( 要調整 )
+        damage /= 100;
         TargetChara.hp -= damage;
         if (TargetChara.hp < 0) TargetChara.hp = 0;
         

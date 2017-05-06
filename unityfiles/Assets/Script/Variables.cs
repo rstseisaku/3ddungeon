@@ -8,8 +8,9 @@ namespace Variables
     //何度か使う可能性がある変数はこっちに記入
     public class __Debug
     {
-        public static bool isDrawFPS = true;
-        public static bool isPlayerCheat = true;
+        public static bool isDrawFPS = false;
+        public static bool isPlayerCheat = false;
+        public static bool isNotBGMPlay = false;
     }
 
     public class Map
@@ -82,7 +83,7 @@ namespace Variables
     public class Unit
     {
         // キャラクターの情報
-        public static int Num = 15; // キャラクター種類
+        public static int Num = 16; // キャラクター種類
         public static string PlayerDataFilePath = "Assets\\Resources\\CharacterData\\data.csv";
     }
     

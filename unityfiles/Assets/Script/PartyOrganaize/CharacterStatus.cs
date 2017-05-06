@@ -106,6 +106,7 @@ public class CharacterStatus : MonoBehaviour
         magWaitBase = cs.magWaitBase;
         element = cs.element;
         description = cs.description;
+        unisonSupport = cs.unisonSupport;
     }
 }
 
