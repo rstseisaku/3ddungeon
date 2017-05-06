@@ -16,6 +16,8 @@ class Gacha : MonoBehaviour
 
     IEnumerator Start()
     {
+        SoundManager.SceneChangePlaySound(Variables.BGM.BgmName.title);
+
         canvas = GameObject.Find("GachaCanvas");
         /* セーブデータが存在すれば読み込む */
         saveData = GameObject.Find(Variables.Save.Name).GetComponent<mSaveData>();

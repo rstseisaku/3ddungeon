@@ -4,36 +4,45 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Buttons : MonoBehaviour {
+    GameObject soundObj;
+    Sound sound;
+
+    public void Start()
+    {
+        SoundManager.SceneChangePlaySound(Variables.BGM.BgmName.title);
+    }
+
 
     // 探索処理開始
-	public void Adventure()
+    public void Adventure()
     {
+        SoundManager.PlaySe(Variables.SE.SeName.system_dec);
         StartCoroutine("StartAdventure");
     }
 
     // パーティー編成
     public void Organaize()
     {
+        SoundManager.PlaySe(Variables.SE.SeName.system_dec);
         StartCoroutine("MoveScene", "PartyOrganaize");
     }
 
     // ガチャ
     public void Gacha()
     {
-        Sound sound = GameObject.Find("audio").GetComponent<Sound>();
-        sound.PlaySe();
-
+        SoundManager.PlaySe(Variables.SE.SeName.system_dec);
         StartCoroutine("MoveScene", "Gacha");
     }
 
     public void Compose()
     {
+        SoundManager.PlaySe(Variables.SE.SeName.system_dec);
     }
 
     // ショップ
     public void Shop()
     {
-
+        SoundManager.PlaySe(Variables.SE.SeName.system_dec);
     }
 
     /* 探索開始 */

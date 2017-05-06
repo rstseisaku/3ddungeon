@@ -112,11 +112,39 @@ namespace Variables
         public static string EnemyDataFilePath = "Assets\\Resources\\CharacterData\\enemyData.csv";
         public static string EnemyGroupFilePath = "Assets\\Resources\\CharacterData\\enemyGroupData.csv";
     }
-    
+
     public class SE
     {
-        
-        public static string SeFolderPath = "SE\\hit64";
+        public static string soundObjName = "SingletonSoundObj";
+        public enum SeName {
+        dokan = 0,
+        dokan2 = 1,
+        kin = 2,
+        battle_unison_chari = 3,
+        system_cursor = 4,
+        system_dec = 5
+        };
+        public static string[] SeFolderPath ={
+            "SE\\hit64",
+            "SE\\hit54",
+            "SE\\freeze10",
+            "SE\\chari14_a",
+            "SE\\cursor18",
+            "SE\\cursor33"};
+    }
+    public class BGM
+    {
+        public static string soundObjName = SE.soundObjName;
+        public enum BgmName
+        {
+            title = 0,
+            dungeon = 1,
+            battle = 2,
+        };
+        public static string[] BgmFolderPath ={
+            "BGM\\wind",
+            "BGM\\seirei",
+            "BGM\\kamo99" };
     }
 
     [System.Serializable]

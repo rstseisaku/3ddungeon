@@ -33,6 +33,7 @@ class ManegementParty : MonoBehaviour
 
     void Start()
     {
+        SoundManager.SceneChangePlaySound(Variables.BGM.BgmName.title);
         StartCoroutine("MainLoop");
     }
 
