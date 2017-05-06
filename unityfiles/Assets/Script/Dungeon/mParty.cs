@@ -36,7 +36,7 @@ public class mParty : MonoBehaviour {
             Debug.Log("パーティーが居ない！");
         }
     }
-	/*
+	
 	// Update is called once per frame
 	void Update () {
         
@@ -47,5 +47,5 @@ public class mParty : MonoBehaviour {
         }
 
 
-    }*/
+    }
 }
