@@ -23,9 +23,8 @@ public class PartyCharacter : MonoBehaviour
     public int atkAdd; // 攻撃割振値
     public int maxHpAdd; // 魔力値割振
 
-
     /* IDを受け取りキャラの初期化を行う */
-    public void Init( int id )
+    public void LoadCharacterData(int id)
     {
         // キャラクターのIDを受け取る
         characterId = id;
@@ -35,16 +34,33 @@ public class PartyCharacter : MonoBehaviour
         cs = gameObject.AddComponent<CharacterStatus>();
         bcs = gameObject.AddComponent<CharacterStatus>();
 
-        // .csvから、キャラクターのステータス情報を読み込む(仮)
+        // .csvから、キャラクターのステータス情報を読み込む
         string FilePath = Variables.Unit.PlayerDataFilePath;
         cs.LoadCharacterData(FilePath, characterId);
+
+        // バトルスタータスを生成する
+        bcs.CopyCharacterStatus(cs);
     }
 
-    public CharacterStatus GetBattleCharacerStatus()
+    public void LoadCharacterData( int id, ObtainChara oc)
     {
-        bcs.CopyCharacterStatus(cs);
+        // ロード処理は共通
+        LoadCharacterData(id);
+        if (id == -1) return;
+
+        // ステータス振分値を obtainChara から読み込む
+        atkAdd = oc.atkAdd[characterId];
+        maxHpAdd = oc.maxHpAdd[characterId];
+        hp = cs.maxHp + maxHpAdd;
+
+        // 振り分け値を反映
         bcs.atk += atkAdd;
         bcs.maxHp += maxHpAdd;
+    }
+
+    /* 戦闘時に利用するパラメタを返す */
+    public CharacterStatus GetBattleCharacerStatus()
+    {
         return bcs;
     }
 }

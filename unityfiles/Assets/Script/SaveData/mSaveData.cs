@@ -13,16 +13,16 @@ class mSaveData : MonoBehaviour
     public SaveObject saveObject;
     private bool isEnable;
 
-
     void Start()
     {
-        /* 消さない */
-        Debug.Log(GameObject.Find(Variables.Save.Name));
+        /*
+         * シーンをまたいでも消さないオブジェクトに登録
+         * (パーティ編成などに利用)
+         */
         if ( GameObject.Find(Variables.Save.Name) != null)
         {
             Destroy(this.gameObject);
         }
-
         gameObject.name = Variables.Save.Name;
         DontDestroyOnLoad(this);
 
@@ -134,7 +134,28 @@ class mSaveData : MonoBehaviour
             GetSaveParty().partyCharacterId[editId, i] = pt.partyCharacterId[i];
         }
     }
-      
+
+    /* ダンジョン・バトルで利用するパーティオブジェクトを生成 */
+    private void MakeDungenBattleParty()
+    {
+        GameObject obj = new GameObject("Party");
+        DontDestroyOnLoad(obj);
+
+        Party p = obj.AddComponent<Party>();
+        p.NewVariables();
+        p.partyName = GetSaveParty().partyName[GetSaveParty().mainParty];
+        for( int i=0; i<Variables.Party.CharaNumPerParty; i++)            
+            p.partyCharacterId[i] = GetSaveParty().partyCharacterId[GetSaveParty().mainParty,i];
+        p.LoadFromPartyCharacterId( GetObtainChara() );
+    }
+
+    /* 探索開始時に呼ぶ処理 */
+    public void StartAdventure()
+    {
+        MakeDungenBattleParty();
+        Destroy(this.gameObject);
+    }
+
     /* セーブデータオブジェクトのアクセス */
     public SaveParty GetSaveParty() { return saveObject.saveParty; }
     public ObtainChara GetObtainChara() { return saveObject.obtainChara; }

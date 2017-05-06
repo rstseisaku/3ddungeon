@@ -149,7 +149,7 @@ class ManegementParty : MonoBehaviour
 
         // キャラデータのロード
         editParty.partyCharacterId[changeCharaPartyId] = joinCharaId;
-        editParty.partyCharacter[changeCharaPartyId].Init(joinCharaId);
+        editParty.partyCharacter[changeCharaPartyId].LoadCharacterData(joinCharaId,saveData.GetObtainChara());
         if (joinCharaId < 0) return;
 
         // ステータス割振値を取得

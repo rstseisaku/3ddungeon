@@ -37,10 +37,11 @@ public class Buttons : MonoBehaviour {
     /* 探索開始 */
     private IEnumerator StartAdventure()
     {
+        // 探索開始
         GameObject obj = GameObject.Find(Variables.Save.Name); ; // パーティーオブジェクトを探す
         mSaveData saveData = obj.GetComponent<mSaveData>();
-        yield return saveData.WaitLoad();        
-
+        saveData.StartAdventure();
+        
         // パーティ選択画面を表示
         yield return DecideEditParty.Loop(saveData.GetSaveParty(), "【戻る】");
         int id = DecideEditParty.editPartyId;
