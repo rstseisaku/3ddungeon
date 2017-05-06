@@ -113,6 +113,12 @@ namespace Variables
         public static string EnemyGroupFilePath = "Assets\\Resources\\CharacterData\\enemyGroupData.csv";
     }
     
+    public class SE
+    {
+        
+        public static string SeFolderPath = "SE\\hit64";
+    }
+
     [System.Serializable]
     public class Handler
     {
@@ -144,4 +150,6 @@ namespace Variables
         public int moveY;
         public float direction;
     }
+
+
 }
