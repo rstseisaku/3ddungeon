@@ -57,7 +57,7 @@ namespace Variables
         }
 
         //ミニマップのオフセット
-        public const int OFFSET_X = -100;
+        public const int OFFSET_X = -350;
         public const int OFFSET_Y = 0;
         public static Vector3 OFFSET = new Vector3(OFFSET_X, OFFSET_Y, 0);
 

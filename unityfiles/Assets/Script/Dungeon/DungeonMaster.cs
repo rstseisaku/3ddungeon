@@ -52,7 +52,7 @@ public class DungeonMaster : MonoBehaviour
         //初回
         if (firsttime)
         {
-            Map.SetPlayer(firstX, firstY, Map.direction);
+            Map.SetPlayer(firstX, firstY, Map.playerobject.transform.localEulerAngles.y);
         }
         //２回目以降
         //staticで残っている値を使用
