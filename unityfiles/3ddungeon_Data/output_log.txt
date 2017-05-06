@@ -1,24 +1,74 @@
 Initialize engine version: 5.6.0f3 (497a0f351392)
 GfxDevice: creating device client; threaded=1
 Direct3D:
-    Version:  Direct3D 11.0 [level 11.1]
-    Renderer: Intel(R) HD Graphics (ID=0x1606)
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: Intel(R) HD Graphics 4000 (ID=0x166)
     Vendor:   Intel
-    VRAM:     1130 MB
-    Driver:   10.18.15.4256
+    VRAM:     848 MB
+    Driver:   9.17.10.2875
 Begin MonoManager ReloadAssembly
-Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.dll (this message is harmless)
-Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.dll into Unity Child Domain
-Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.UI.dll (this message is harmless)
-Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
-Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
-Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
-Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
-Loading C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
-- Completed reload, in  0.343 seconds
-Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\System.Core.dll (this message is harmless)
-Platform assembly: C:\Users\ich\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\System.dll (this message is harmless)
+Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\Assembly-CSharp-firstpass.dll (this message is harmless)
+Loading C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\Assembly-CSharp-firstpass.dll into Unity Child Domain
+Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
+Loading C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
+- Completed reload, in  0.021 seconds
+Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\3ddungeon_Data\Managed\System.dll (this message is harmless)
 desktop: 1366x768 60Hz; virtual: 1366x768 at 0,0
 <RI> Initializing input.
-XInput1_3.dll not found. Trying XInput9_1_0.dll instead...
 <RI> Input initialized.
+<RI> Initialized touch support.
+UnloadTime: 1.311561 ms
+Setting up 4 worker threads for Enlighten.
+  Thread -> id: 58c8 -> priority: 1 
+  Thread -> id: 5ad0 -> priority: 1 
+  Thread -> id: 3d40 -> priority: 1 
+  Thread -> id: 5c60 -> priority: 1 
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 4.804925 ms
+
+Unloading 61 unused Assets to reduce memory usage. Loaded Objects now: 446.
+Total: 0.510170 ms (FindLiveObjects: 0.024375 ms CreateObjectMapping: 0.018816 ms MarkObjects: 0.286516 ms  DeleteObjects: 0.180035 ms)
+
+Null
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+セーブデータはあった。
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.493065 ms
+
+Unloading 78 unused Assets to reduce memory usage. Loaded Objects now: 526.
+Total: 0.425070 ms (FindLiveObjects: 0.026941 ms CreateObjectMapping: 0.029079 ms MarkObjects: 0.283523 ms  DeleteObjects: 0.085099 ms)
+
+ArgumentOutOfRangeException: Argument is out of range.
+Parameter name: index
+  at System.Collections.Generic.List`1[Variables.Handler].get_Item (Int32 index) [0x00000] in <filename unknown>:0 
+  at EventManagement+<NextEvent>c__Iterator1.MoveNext () [0x00000] in <filename unknown>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (IEnumerator enumerator, IntPtr returnValueAddress) [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 9.015862 ms
+
+Unloading 40 unused Assets to reduce memory usage. Loaded Objects now: 519.
+Total: 0.632046 ms (FindLiveObjects: 0.049178 ms CreateObjectMapping: 0.034638 ms MarkObjects: 0.439182 ms  DeleteObjects: 0.108192 ms)
+
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.886918 ms
+
+Unloading 60 unused Assets to reduce memory usage. Loaded Objects now: 399.
+Total: 0.514874 ms (FindLiveObjects: 0.030362 ms CreateObjectMapping: 0.029079 ms MarkObjects: 0.238621 ms  DeleteObjects: 0.216384 ms)
+

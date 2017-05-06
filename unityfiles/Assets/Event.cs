@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 using Variables;
 using TRANSITION;
@@ -18,7 +19,6 @@ public class Event : MonoBehaviour {
     {
         自動 = 0,
         接触 = 1,
-        調べる = 2
     }
 
     public enum TYPE
@@ -26,23 +26,33 @@ public class Event : MonoBehaviour {
         WORD = 0,
         TRANSITION = 1,
         ENCOUNT = 2,
-        MOVESCENE = 3
+        MOVESCENE = 3,
+        MOVEPOS = 4
+
+    }
+    public enum DIRECTION
+    {
+        UP = 0,
+        RIGHT = 1,
+        DOWN = 2, 
+        LEFT = 3
 
     }
     public EVENTTYPE activateonwhat;
 
     public TYPE mode;
 
-    private bool eventisactive = false;
-    private int i = 0;
+    public DIRECTION direction;
+
+    private EventManagement eventmanager;
 
     //自動実行
     public void Start()
     {
-        if(activateonwhat == EVENTTYPE.自動)
+        eventmanager = GameObject.Find("GameMaster").GetComponent<EventManagement>();
+        if (activateonwhat == EVENTTYPE.自動)
         {
-            eventisactive = true;
-            NextEvent(i);
+            ActivateEvent();
         }
     }
 
@@ -52,38 +62,17 @@ public class Event : MonoBehaviour {
         if (activateonwhat == EVENTTYPE.接触)
         {
             if (collision.transform.tag == "MainCamera")
-            {
+            {    
                 ActivateEvent();
-                NextEvent(i);
             }
         }
     }
 
     private void ActivateEvent()
     {
-        eventisactive = true;
- 
-    }
-
-    //イベント送り
-    private void NextEvent(int i)
-    {
-        Debug.Log(i);
-        GameObject.Find("GameMaster").GetComponent<EventManagement>().Execute(eventlist[i]);
+        eventmanager.StartEvent(eventlist);
     }
     
-    public void Update()
-    {
-        if (eventisactive == true)
-        {
-            if (Input.GetKeyUp(KeyCode.Z))
-            {
-                i++;
-                if (i < eventlist.Count)
-                    NextEvent(i);
-            }
-        }
-    }
 }
 
 
@@ -106,6 +95,8 @@ public class CustomEvent : Editor
 
         //イベントの起動条件
         custom.activateonwhat = (Event.EVENTTYPE)EditorGUILayout.EnumPopup("この時実行", custom.activateonwhat);
+        //クリックするまで待つか
+        handler.waituntilclick = EditorGUILayout.Toggle("クリックまで待つ", handler.waituntilclick);
 
         //新しく追加するイベントの種類に応じて設定
         custom.mode = (Event.TYPE)EditorGUILayout.EnumPopup("種類", custom.mode);
@@ -116,6 +107,7 @@ public class CustomEvent : Editor
         }
         if (custom.mode == Event.TYPE.TRANSITION)
         {
+
             handler.rule = EditorGUILayout.ObjectField("ルール画像", handler.rule, typeof(Texture2D), true) as Texture2D;
             handler.time = EditorGUILayout.FloatField("時間(s)", handler.time);
             handler.mode = (Transition.TRANSITION_MODE)EditorGUILayout.EnumPopup("種類", handler.mode);
@@ -158,18 +150,22 @@ public class CustomEvent : Editor
         }
         if (custom.mode == Event.TYPE.ENCOUNT)
         {
-
+            handler.enemygroupID = EditorGUILayout.IntField("敵グループID", handler.enemygroupID);
         }
         if (custom.mode == Event.TYPE.MOVESCENE)
         {
             handler.movetothisscene = EditorGUILayout.TextField("移動シーン", handler.movetothisscene);
-            handler.movehere = EditorGUILayout.Toggle("指定した場所に移動?", handler.movehere);
+        }
+        if (custom.mode == Event.TYPE.MOVEPOS)
+        {
             EditorGUILayout.BeginHorizontal();
             handler.moveX = EditorGUILayout.IntField("移動先X", handler.moveX);
             handler.moveY = EditorGUILayout.IntField("移動先Y", handler.moveY);
             EditorGUILayout.EndHorizontal();
+            
+            custom.direction = (Event.DIRECTION)EditorGUILayout.EnumPopup("方向", custom.direction);
+            handler.direction = (int)custom.direction * 90;
         }
-
 
         if (GUILayout.Button("追加"))
         { 
@@ -191,13 +187,25 @@ public class CustomEvent : Editor
         for (int i = 0; i < custom.eventlist.Count; i++)
         {
             custom.eventlist[i].type = EditorGUILayout.IntField("タイプ", custom.eventlist[i].type);
-            if(custom.eventlist[i].type == 0)
+            if (custom.eventlist[i].type == 0)
+            {
                 custom.eventlist[i].text = EditorGUILayout.TextField("文章", custom.eventlist[i].text);
+            }
             if (custom.eventlist[i].type == 1)
+            {
                 custom.eventlist[i].mode = (Transition.TRANSITION_MODE)EditorGUILayout.EnumPopup("", custom.eventlist[i].mode);
-
+            }
             if (custom.eventlist[i].type == 3)
-                custom.eventlist[i].movetothisscene = EditorGUILayout.TextField("文章", custom.eventlist[i].movetothisscene);
+            {
+                custom.eventlist[i].movetothisscene = EditorGUILayout.TextField("移動シーン", custom.eventlist[i].movetothisscene);
+            }
+            if (custom.eventlist[i].type == 4)
+            {
+                EditorGUILayout.BeginHorizontal();
+                custom.eventlist[i].moveX = EditorGUILayout.IntField("移動先X", custom.eventlist[i].moveX);
+                custom.eventlist[i].moveY = EditorGUILayout.IntField("移動先Y", custom.eventlist[i].moveY);
+                EditorGUILayout.EndHorizontal();
+            }
         }
         EditorGUI.EndDisabledGroup();
         

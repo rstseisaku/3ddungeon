@@ -153,6 +153,7 @@ public class miniMap : MonoBehaviour {
         else if ( currentmode == 1 || currentmode == 2 )
         {
             playerpos.GetComponent<Transform>().gameObject.SetActive( true );
+            playerpos.GetComponent<Transform>().localEulerAngles = new Vector3(0,0,-Map.direction);
             for ( int i = 0;i< Map.mapY; i++ )
             {
                 for ( int j = 0; j < Map.mapX; j++ )
