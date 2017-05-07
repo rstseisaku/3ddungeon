@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//
 /* ユニゾン処理 */
 public class Unison : MonoBehaviour
 {

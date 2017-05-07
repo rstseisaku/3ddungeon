@@ -91,49 +91,51 @@ public class DungeonMaster : MonoBehaviour
             yield return UpdateminiMap();
 
 
-            //ボタン入力に変更  
-            /*
-            //↑キーが押されている間
-            if ( Input.GetAxis("Vertical") > 0 )
+            //デバッグ中はキー操作の方が楽
+            if (__Debug.isInputKeyEnabled == true)
             {
-                //前方が移動可能か判定
-                Vector2 nextpos = NextPosition();
-                //前方が移動可能なら移動させる
-                if (map.isMoveable( (int)nextpos.x, (int)nextpos.y) )
+                //↑キーが押されている間
+                if (Input.GetAxis("Vertical") > 0)
                 {
-                    //移動処理
-                    yield return MyMove();
+                    //前方が移動可能か判定
+                    Vector2 nextpos = NextPosition();
+                    //前方が移動可能なら移動させる
+                    if (map.isMoveable((int)nextpos.x, (int)nextpos.y))
+                    {
+                        //移動処理
+                        yield return MyMove();
 
-                    //エンカウント判定
-                    yield return Encounter();
+                        //エンカウント判定
+                        yield return Encounter();
 
+                        continue;
+                    }
+                }
+                //→キーが押されている間
+                if (Input.GetAxis("Horizontal") > 0)
+                {
+                    // 回転させる(右方向)
+                    yield return MyRotate(new Vector3(0, 90, 0));
                     continue;
                 }
-            }
-            //→キーが押されている間
-            if ( Input.GetAxis("Horizontal") > 0 )
-            {
-                // 回転させる(右方向)
-                yield return MyRotate( new Vector3( 0, 90, 0 ) );
-                continue;
-            }
-            //←キーが押されている間
-            if ( Input.GetAxis("Horizontal") < 0 )
-            {
-                // 回転させる(左方向)
-                yield return MyRotate( new Vector3( 0, -90, 0 ) );
-                continue;
-            }
-            */
+                //←キーが押されている間
+                if (Input.GetAxis("Horizontal") < 0)
+                {
+                    // 回転させる(左方向)
+                    yield return MyRotate(new Vector3(0, -90, 0));
+                    continue;
+                }
 
-            //現在はボタンから起動出来るようにした
-            //モード変更用のボタンでも作る?
-            //spaceキーが離された時にミニマップのモードを変更
-            /*
-            if ( Input.GetKeyUp(KeyCode.Space) )
-            {
-                ChangeMode();
-            }*/
+
+                //現在はボタンから起動出来るようにした
+                //モード変更用のボタンでも作る?
+                //spaceキーが離された時にミニマップのモードを変更
+
+                if (Input.GetKeyUp(KeyCode.Space))
+                {
+                    ChangeMode();
+                }
+            }
         }
     } // ---MyUpdate()
 
