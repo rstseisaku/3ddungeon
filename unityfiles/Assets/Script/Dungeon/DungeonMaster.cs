@@ -134,9 +134,6 @@ public class DungeonMaster : MonoBehaviour
             {
                 ChangeMode();
             }*/
-
-            // 処理の終了
-            yield return 0;
         }
     } // ---MyUpdate()
 
@@ -182,7 +179,7 @@ public class DungeonMaster : MonoBehaviour
                                                            Map.playerobject.transform.position.y,
                                                            Mathf.Round(Map.playerobject.transform.position.z));
 
-        
+        yield return UpdatePlayerPos();
 
         // 移動後のウェイト
         yield return _Wait.WaitFrame(Player.MOVEWAITTIME);
@@ -203,8 +200,12 @@ public class DungeonMaster : MonoBehaviour
     }
     public void Turn_RIGHT()
     {
-        Vector3 vec3 = new Vector3(0, 90, 0);
-        StartCoroutine(MyRotate(vec3));
+        if (flag == false)
+        {
+            Vector3 vec3 = new Vector3(0, 90, 0);
+            StartCoroutine(MyRotate(vec3));
+            flag = true;
+        }
     }
     public void Go_Straight()
     {
@@ -230,8 +231,7 @@ public class DungeonMaster : MonoBehaviour
     IEnumerator UpdatePlayerPos()
     {
         //プレイヤー位置取得用関数
-        Map.GetPlayerPos();
-        yield return 0;
+        yield return Map.GetPlayerPos();
     }
 
     //ミニマップの更新

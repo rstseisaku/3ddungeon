@@ -18,7 +18,13 @@ public class EventManagement : MonoBehaviour {
 
     private List<Handler> eventlist;
 
-    public void Start()
+  /*  public void Start()
+    {
+        buttoncanvas = GameObject.Find("ButtonCanvas");
+        textcanvas = GameObject.Find("TextCanvas");
+        textcanvas.gameObject.SetActive(false);
+    }*/
+    public void Awake()
     {
         buttoncanvas = GameObject.Find("ButtonCanvas");
         textcanvas = GameObject.Find("TextCanvas");
@@ -26,7 +32,7 @@ public class EventManagement : MonoBehaviour {
     }
 
     //イベント実行関数
-    public void Execute (Handler activeevent)
+    public IEnumerator Execute (Handler activeevent)
     {
         //イベントの種類に応じて実行
         if(activeevent.type == (int)Event.TYPE.WORD)
@@ -46,6 +52,7 @@ public class EventManagement : MonoBehaviour {
          }
         if (activeevent.type == (int)Event.TYPE.ENCOUNT)
         {
+            EndEvent();
             StartCoroutine(_Encount.Encount(activeevent.enemygroupID));
         }
         if (activeevent.type == (int)Event.TYPE.MOVESCENE)
@@ -54,14 +61,16 @@ public class EventManagement : MonoBehaviour {
         }
         if (activeevent.type == (int)Event.TYPE.MOVEPOS)
         {
+            Debug.Log("called");
+            Map.direction = activeevent.direction;
             Map.movehere = new Vector2(activeevent.moveX, activeevent.moveY);
             //移動した後で一歩進んでいるため無理やり一歩戻す
-            Vector2 offset = new Vector2(Mathf.Sin(Map.playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360),
-                                         Mathf.Cos(Map.playerobject.transform.localEulerAngles.y * 2 * Mathf.PI / 360));
+            Vector2 offset = new Vector2(Mathf.Sin(activeevent.direction * 2 * Mathf.PI / 360),
+                                         Mathf.Cos(activeevent.direction * 2 * Mathf.PI / 360));
             Map.movehere -= offset;
-            Map.direction = activeevent.direction;
             Map.SetPlayer((int)Map.movehere.x, (int)Map.movehere.y, Map.direction);
         }
+        yield return 0;
         
 
     }
@@ -83,6 +92,8 @@ public class EventManagement : MonoBehaviour {
         {
             GameObject.Find("Event").GetComponent<SaveEvent>().DisableEvent(eventlist[0].obj.name);
         }
+        scroll = false;
+        Debug.Log("イベント終了");
     }
 
     private IEnumerator mUpdate()
@@ -116,6 +127,7 @@ public class EventManagement : MonoBehaviour {
                 if (scroll == true)
                 {
                     EndEvent();
+                    yield break;
                 }
             }
             yield return 0;
@@ -124,8 +136,7 @@ public class EventManagement : MonoBehaviour {
 
     private IEnumerator NextEvent(int i)
     {
-        Execute(eventlist[i]);
-        yield return 0;
+        yield return Execute(eventlist[i]);
     }
 
     public void OnClick()
