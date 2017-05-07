@@ -90,7 +90,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\FPS.cs" />
     <Compile Include="Assets\Script\Base\Buttons.cs" />
     <Compile Include="Assets\Script\Battle\BCV.cs" />
     <Compile Include="Assets\Script\Battle\BaseCharacter.cs" />
@@ -135,15 +134,9 @@
     <Compile Include="Assets\Script\SaveData\SaveObject.cs" />
     <Compile Include="Assets\Script\SaveData\SaveParty.cs" />
     <Compile Include="Assets\Script\SaveData\mSaveData.cs" />
-    <Compile Include="Assets\Script\Sound.cs" />
-    <Compile Include="Assets\Script\SoundManager.cs" />
+    <Compile Include="Assets\Script\Sound\Sound.cs" />
+    <Compile Include="Assets\Script\Sound\SoundManager.cs" />
     <Compile Include="Assets\Script\Title\StartMenu.cs" />
-    <Compile Include="Assets\Script\Transition.cs" />
-    <Compile Include="Assets\Script\Utility.cs" />
-    <Compile Include="Assets\Script\Variables.cs" />
-    <Compile Include="Assets\Script\mInput.cs" />
-    <Compile Include="Assets\Test.cs" />
-    <Compile Include="Assets\movescene.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Resources\Materials\BWout.shader" />
