@@ -29,3 +29,6 @@ C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\Temp\bin\Debug\UnityEngine.
 C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
 C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\obj\Debug\Assembly-CSharp.dll
 C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\obj\Debug\Assembly-CSharp.pdb
+C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\Temp\bin\Debug\I18N.CJK.dll
+C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\Temp\bin\Debug\I18N.dll
+C:\Users\eiichi-pc\Source\Repos\3ddungeon\unityfiles\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb
