@@ -1,0 +1,5 @@
+名前,ファイルパス(かお),ファイルパス(たちえ),HP,ATK,魔力値,吹き飛ばし,吹き飛び耐性,行動終了後待機,詠唱終了後待機,ユニゾン,属性,説明
+嘆きの亡霊,Images/Face/enemy1,Images/Stand/enemy1,800,120,1,7,3,7,6,0,0,特になんにもない。
+気高き獣,Images/Face/enemy2,Images/Stand/enemy2,500,200,1,7,1,7,6,0,0,特になんにもない。
+ゴーレム,Images/Face/enemy3,Images/Stand/enemy3,2300,120,1,18,2,14,4,0,2,特になんにもない。
+死者の魂,Images/Face/enemy4,Images/Stand/enemy4,28000,350,2,27,5,10,6,100,4,やばい。つよい。
