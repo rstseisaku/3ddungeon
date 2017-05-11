@@ -21,6 +21,7 @@ public class OpeCharaList : MonoBehaviour
         int sum = 0;
         foreach (BaseCharacter chara in cb)
         {
+            if (chara.cs == null) continue;
             if (chara.ctbNum <= 0) sum += chara.cs.mag;
         }
         return sum;
@@ -77,6 +78,7 @@ public class OpeCharaList : MonoBehaviour
         int sumKnockback = 0;
         for (int i = 0; i < cd.Length; i++)
         {
+            if (cd[i].cs == null) continue;
             if (cd[i].ctbNum <= 0) sumKnockback += cd[i].cs.knockback;
         }
         return sumKnockback;
@@ -182,6 +184,7 @@ public class OpeCharaList : MonoBehaviour
         int co = 0;
         for (int j = 0; j < cb.Length; j++)
         {
+            if (cb[j].cs == null) continue;
             if (cb[j].ctbNum <= 0 && !cb[j].isWaitUnison)
             {
                 aveAtk += cb[j].cs.atk;

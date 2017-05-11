@@ -78,10 +78,16 @@ public class PredictObject : MonoBehaviour
     /* 予測オブジェクトを全て非ｱｸﾃｨﾌﾞに */
     public static void SetInactiveAllPredictObj( BaseCharacter[] pChara,BaseCharacter[] eChara )
     {
-        for (int i = 0; pChara!= null && i < pChara.Length; i++)
-            pChara[i].predictObj.obj.GetComponent<Transform>().gameObject.SetActive(false);
+        for (int i = 0; pChara != null && i < pChara.Length; i++)
+        {
+            if (pChara[i].predictObj != null)
+                pChara[i].predictObj.obj.GetComponent<Transform>().gameObject.SetActive(false);
+        }
         for (int i = 0; eChara != null && i < eChara.Length; i++)
-            eChara[i].predictObj.obj.GetComponent<Transform>().gameObject.SetActive(false);
+        {
+            if (eChara[i].predictObj != null)
+                eChara[i].predictObj.obj.GetComponent<Transform>().gameObject.SetActive(false);
+        }
     }
 
     /* 予測オブジェクトを非ｱｸﾃｨﾌﾞに */

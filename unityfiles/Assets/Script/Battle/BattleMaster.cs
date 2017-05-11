@@ -19,14 +19,14 @@ using UnityEngine.UI;
 //   ┗(復帰予告必要？)
 // ★戦闘不能処理
 // ★エフェクト(CanvasとParticleとの表示順問題)
-//　 ユニゾン追撃処理
+// ★ユニゾン追撃処理
 // ★キャラクターの属性の定義・表示
 //    ┗  ★顔グラフィック周りの表示方法変更
 //        ★グラフィック/魔力レベル/属性を1つの塊として扱うべき
 //    　　読み込みこれから
-//　 定数・グローバル変数の管理方法
 // ★リザルト画面
 // ★死体を殴れるのを修正
+//   隊列に空白がある場合の処理
  */
 
 
@@ -110,7 +110,7 @@ public class BattleMaster : MonoBehaviour
             cd[i] = gameObject.AddComponent<PlayerCharacter>();
             cd[i].Init(canvas);
 
-            // キャラクターデータをロード
+            // キャラクターデータをロード           
              cd[i].LoadCharacterData(party.partyCharacter[i].GetBattleCharacerStatus() , i);
         }
     } // --- LoadPlayerChara()
@@ -451,7 +451,7 @@ public class BattleMaster : MonoBehaviour
             for (int i=0;i<10000;i++)
             {
                 selectedTarget = UnityEngine.Random.Range(0, cd.Length);
-                if (!cd[selectedTarget].isknockout) break;
+                if (cd[selectedTarget].cs != null && !cd[selectedTarget].isknockout) break;
             }
             yield break;
         }
