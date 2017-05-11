@@ -43,12 +43,11 @@ namespace Variables
         public static Vector2 playerpos;
         public static float direction;
 
-        public static IEnumerator GetPlayerPos()
+        public static void GetPlayerPos()
         {
             playerpos = new Vector2(playerobject.transform.localPosition.x, playerobject.transform.localPosition.z);
             direction = playerobject.transform.localEulerAngles.y;
-
-            yield return 0;
+            
         }    
         
         // プレイヤの配置
@@ -179,7 +178,6 @@ namespace Variables
         //共通
         public EVENTTYPE type;
         public bool waituntilclick = false;
-        public GameObject obj;
 
         //文章表示で使用
         public string text;

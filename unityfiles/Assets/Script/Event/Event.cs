@@ -40,7 +40,7 @@ public class Event : MonoBehaviour {
     //自動実行
     public void Start()
     {
-        eventmanager = GameObject.Find("GameMaster").GetComponent<EventManagement>();
+        eventmanager = GameObject.Find("Event").GetComponent<EventManagement>();
         if (activateonwhat == ActivateTYPE.自動)
         {
             ActivateEvent();
@@ -168,6 +168,7 @@ public class CustomEvent : Editor
         if (handler.type == Handler.EVENTTYPE.MOVEPOS)
         {
             EditorGUILayout.BeginHorizontal();
+            handler.direction = (Handler.DIRECTION)EditorGUILayout.EnumPopup("方向", handler.direction);
             handler.moveX = EditorGUILayout.IntField("移動先X", handler.moveX);
             handler.moveY = EditorGUILayout.IntField("移動先Y", handler.moveY);
             EditorGUILayout.EndHorizontal();
@@ -208,7 +209,7 @@ public class CustomEvent : Editor
                 EditorGUILayout.Toggle("クリックまで待つ", custom.eventlist[i].waituntilclick);
                 EditorGUILayout.IntField("敵グループ", custom.eventlist[i].enemygroupID);
             }
-            if (custom.eventlist[i].type == Handler.EVENTTYPE.MOVEPOS)
+            if (custom.eventlist[i].type == Handler.EVENTTYPE.MOVESCENE)
             {
                 EditorGUILayout.Toggle("クリックまで待つ", custom.eventlist[i].waituntilclick);
                 EditorGUILayout.TextField("移動シーン", custom.eventlist[i].movetothisscene);

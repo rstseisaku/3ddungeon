@@ -20,6 +20,8 @@ public class EventManagement : MonoBehaviour {
 
     private Event runningevent;
 
+    private string eventname;
+
   /*  public void Start()
     {
         buttoncanvas = GameObject.Find("ButtonCanvas");
@@ -54,7 +56,7 @@ public class EventManagement : MonoBehaviour {
          }
         if (activeevent.type == Handler.EVENTTYPE.ENCOUNT)
         {
-            EndEvent();
+            //EndEvent();
             StartCoroutine(_Encount.Encount(activeevent.enemygroupID));
         }
         if (activeevent.type == Handler.EVENTTYPE.MOVESCENE)
@@ -66,10 +68,11 @@ public class EventManagement : MonoBehaviour {
             Map.direction = activeevent.angle;
             Map.movehere = new Vector2(activeevent.moveX, activeevent.moveY);
             //移動した後で一歩進んでいるため無理やり一歩戻す
-            Vector2 offset = new Vector2(Mathf.Sin(activeevent.angle * 2 * Mathf.PI / 360),
-                                         Mathf.Cos(activeevent.angle * 2 * Mathf.PI / 360));
-            Map.movehere -= offset;
+            //Vector2 offset = new Vector2(Mathf.Sin(activeevent.angle * 2 * Mathf.PI / 360),
+              //                           Mathf.Cos(activeevent.angle * 2 * Mathf.PI / 360));
+            //Map.movehere -= offset;
             Map.SetPlayer((int)Map.movehere.x, (int)Map.movehere.y, Map.direction);
+            GameObject.Find("GameMaster").GetComponent<DungeonMaster>().Stop();
         }
         yield return 0;
         
@@ -81,6 +84,8 @@ public class EventManagement : MonoBehaviour {
         runningevent = receivedevent;
 
         eventlist = runningevent.eventlist;
+
+        eventname = runningevent.gameObject.name;
 
         buttoncanvas.gameObject.SetActive(false);
 
@@ -94,7 +99,7 @@ public class EventManagement : MonoBehaviour {
         textcanvas.SetActive(false);
         if(runningevent.onlyonce == true)
         {
-            this.gameObject.GetComponent<SaveEvent>().DisableEvent(eventlist[0].obj.name);
+            this.gameObject.GetComponent<SaveEvent>().DisableEvent(eventname);
         }
         scroll = false;
         Debug.Log("イベント終了");
