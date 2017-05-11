@@ -34,10 +34,8 @@ public class SaveParty
         {
             for (int j = 0; j < Variables.Party.CharaNumPerParty; j++)
             {
-                partyCharacterId[i,j] = -1;
+                partyCharacterId[i,j] = i + 1;
             }
         }
-        // 初期パーティを適当に設定
-        partyCharacterId[0, 0] = 1;
     }
 }
