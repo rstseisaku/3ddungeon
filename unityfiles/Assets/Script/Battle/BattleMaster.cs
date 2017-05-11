@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 
 
+
 /* ----------------------------------------
 //  : 残タスク
 // ----------------------------------------
@@ -26,7 +27,7 @@ using UnityEngine.UI;
 //    　　読み込みこれから
 // ★リザルト画面
 // ★死体を殴れるのを修正
-//   隊列に空白がある場合の処理
+// ★隊列に空白がある場合の処理
  */
 
 
@@ -186,14 +187,15 @@ public class BattleMaster : MonoBehaviour
         int isActionableChara = (int)tmp.x + (int)tmp.y;
         while ( isActionableChara == 0 )
         {
+            Debug.Log("OK");
             // CTBメータを 1 つ進める
-            // 人数分のキャラクターデータの読込
-            CtbManager.SubStun(cd, enemyCd);
-            isActionableChara += CtbManager.SubCtbNum( cd );
-            isActionableChara += CtbManager.SubCtbNum( enemyCd );
+            isActionableChara += CtbManager.SubCtbNum(cd);
+            isActionableChara += CtbManager.SubCtbNum(enemyCd);
+            CtbManager.SubStun(cd, enemyCd); // メモ: CTB値の更新⇒スタン値の更新の順番である必要がある
 
-            // 移動演出のコルーチンを呼び出す
-            yield return CtbMove();
+            // 移動演出のコルーチンを呼び出す            
+            yield return CtbMove(); // メモ: 処理終了後に CTB値・STUN値をもとにした位置に再描画
+            // yield return Utility._Wait.WaitKey();
         }
     } // --- DecideNextActionCharacter()
 
@@ -737,23 +739,23 @@ public class BattleMaster : MonoBehaviour
         {
             for (int i = 0; i < cd.Length; i++)
             {
-                if (!cd[i].isWaitUnison && (cd[i].stunCount == 0) && (cd[i].hp != 0))
+
+                if (!cd[i].isWaitUnison && !cd[i].isStun && (cd[i].hp != 0))
                 {
                     cd[i].ctbFaceObj.faceObj.transform.localPosition += movePos;
-                    // cd[i].ctbFaceObj.faceObj.transform;
                 }
-                if (cd[i].stunCount != 0)
+                if (cd[i].stunCount >= 0)
                 {
                     cd[i].MovePredictTowardX(movePos.x);
                 }
             }
             for (int i = 0; i < enemyCd.Length; i++)
             {
-                if (!enemyCd[i].isWaitUnison && (enemyCd[i].stunCount == 0) && (enemyCd[i].hp != 0))
+                if (!enemyCd[i].isWaitUnison && !enemyCd[i].isStun && (enemyCd[i].hp != 0))
                 {
                     enemyCd[i].ctbFaceObj.faceObj.transform.localPosition += movePos;
                 }
-                if (enemyCd[i].stunCount != 0)
+                if (enemyCd[i].stunCount >= 0)
                 {
                     enemyCd[i].MovePredictTowardX(movePos.x);
                 }

@@ -88,7 +88,7 @@ class ManegementParty : MonoBehaviour
                 default:
                     break;
             }
-            // ふりーずぼーしいい！！！！！！
+            // フリーズを防止
             yield return 0;
         }
 

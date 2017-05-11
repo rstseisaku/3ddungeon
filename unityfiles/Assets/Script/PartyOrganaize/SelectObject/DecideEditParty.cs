@@ -18,9 +18,15 @@ public class DecideEditParty : MonoBehaviour {
 
     public static IEnumerator Loop(SaveParty saveParty, string returnString)
     {
+        yield return Loop(saveParty, returnString, "");
+    }
+
+    public static IEnumerator Loop(SaveParty saveParty, string returnString, string describeString)
+    {
         /* パーティーを表示 */
         DrawParty(saveParty);
-        SetReturnString(returnString);        
+        SetReturnString(returnString);
+        SetDescribeString(describeString);
 
         /* 制御部分 */
         while (true)
@@ -62,5 +68,10 @@ public class DecideEditParty : MonoBehaviour {
     public static void SetReturnString( string str )
     {
         decPartyObjScript.SetReturnString(str);
+    }
+
+    public static void SetDescribeString( string str)
+    {
+        decPartyObjScript.SetDescribeString(str);
     }
 }

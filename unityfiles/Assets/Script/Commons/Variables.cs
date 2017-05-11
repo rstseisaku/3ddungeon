@@ -10,7 +10,7 @@ namespace Variables
     {
         public static bool isDrawFPS = false;
         public static bool isPlayerCheat = false;
-        public static bool isNotBGMPlay = false;
+        public static bool isNotBGMPlay = true;
         public static bool isInputKeyEnabled = false;
     }
 

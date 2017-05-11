@@ -60,7 +60,7 @@ public class PredictObject : MonoBehaviour
         return blowFrame;
     }
 
-    /* 行動できるまでのフレームを元に移動 */
+    /* 行動できるまでのフレームを元に予測オブジェクトを表示 */
     public void SetFromNum(BaseCharacter actionChara, int untilFrame )
     {
         // 座標を更新し、オブジェクトをアクティブに

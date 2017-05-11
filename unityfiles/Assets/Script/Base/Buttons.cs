@@ -53,7 +53,7 @@ public class Buttons : MonoBehaviour {
         mSaveData saveData = obj.GetComponent<mSaveData>();
         
         // パーティ選択画面を表示
-        yield return DecideEditParty.Loop(saveData.GetSaveParty(), "【戻る】");
+        yield return DecideEditParty.Loop(saveData.GetSaveParty(), "【戻る】", "利用するパーティを選んでください");
         int id = DecideEditParty.editPartyId;
         if ( id >= 0)
             saveData.GetSaveParty().mainParty = id;
