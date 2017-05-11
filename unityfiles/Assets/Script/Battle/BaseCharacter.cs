@@ -85,7 +85,10 @@ public class BaseCharacter : MonoBehaviour
         isMagic = false;
         isWaitUnison = false;
         isknockout = false;
+
         isStun = false;
+        isStun = true;
+        stunCount = 2;
 
         /* 編成されていない場合は処理終了 */
         if (cs == null) return;
@@ -318,8 +321,8 @@ public class BaseCharacter : MonoBehaviour
      * ================================== */
     public void StartStun(int stunCtbNum)
     {
-        stunCount = stunCtbNum;
-        isStun = true;
+        stunCount = stunCtbNum; // スタンフレーム
+        isStun = true; // スタンフラグをONに
 
         // 演出処理
         SetFaceObjColorFromStatus(this);
@@ -355,13 +358,23 @@ public class BaseCharacter : MonoBehaviour
     // 行動終了後の予測位置を表示(数値から)
     public void SetPredictFromCtbNum( int ctbNum ) {
         if (predictObj != null) predictObj.SetFromNum(this, ctbNum); }
-    // 復帰時間を予測(スタン)
-    public void SetPredictFromStun() {
-        if (isStun && predictObj != null) predictObj.SetFromNum(this, stunCount); }
     // X方向への移動
     public void MovePredictTowardX(float vx) {
         if (predictObj != null) predictObj.MoveTowardX(vx); }
     // 非表示に
     public void SetPredictInactive() {
         if (predictObj != null) predictObj.SetInactive();}
+    // 復帰時間を予測(スタン)
+    // 表示位置を「スタンカウント-1」にすると正常に動作
+    // ⇒ スタン回復フレーム(=StunCount==0)の時に、表示位置(予告) は-1の位置にいてほしい
+    // 　CTBでの処理順番: スタンカウントを進める ⇒ CTB計算…の順番。
+    //   StunCount==1 のとき ⇒ 起点はベース位置+1の位置で良いはず
+    //   何で-1するとそろうのこれ？
+    //   StunCoun==0 のとき ⇒ オブジェクト本体が動き始めるはず
+    //   ★なぜかStunCount=1のときに本体が動いちゃってる。
+    public void SetPredictFromStun()
+    {
+        Debug.Log(stunCount);
+        if (isStun && predictObj != null) predictObj.SetFromNum(this, stunCount);
+    }
 }

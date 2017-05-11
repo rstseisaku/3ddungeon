@@ -51,7 +51,7 @@ public class CtbManager : MonoBehaviour
             if (cb[i].cs == null) continue;
 
             // ctbゲージを進める
-            if (cb[i].stunCount == 0 && cb[i].hp != 0) cb[i].ctbNum--;
+            if (cb[i].stunCount <= 0 && cb[i].hp != 0) cb[i].ctbNum--;
             if (cb[i].ctbNum < 0) cb[i].ctbNum = 0;
             // アクション可能キャラがいたら、フラグを立てる 
             if (cb[i].ctbNum <= 0 && !cb[i].isWaitUnison)
@@ -69,21 +69,21 @@ public class CtbManager : MonoBehaviour
         SubStun(cb);
         SubStun(ecb);
     }
-    // 対象: スタン中の全てのキャラクター
+    // 対象: stunCount > -1 のキャラクター
     // 処理内容: スタン値を1減らす
     public static void SubStun(BaseCharacter[]cb)
     {
         for (int i = 0; i < cb.Length; i++)
         {
-            // スタン値を1減らす
-            if (cb[i].stunCount > 0)
+            // スタン回復時の処理の流れの都合上、-1まで必要。
+            // ( 詳しいことは「注意書き.txt 〇スタン回復時の順番 を参照 )
+            if (cb[i].stunCount > -1)
             {
                 cb[i].stunCount--;
-                if (cb[i].stunCount == 0)
-                {
-                    // スタン表示終了
-                    cb[i].EndStun();
-                }
+            }
+            if( cb[i].stunCount == -1)
+            {
+                cb[i].EndStun();
             }
         }
     }

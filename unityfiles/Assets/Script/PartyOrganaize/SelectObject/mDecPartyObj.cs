@@ -29,7 +29,8 @@ public class mDecPartyObj : MonoBehaviour {
                 int charaId = saveParty.partyCharacterId[i, j];
                 if (charaId < 0)
                 {
-                    // child.SetActive(false);
+                    // 子オブジェクトに画像を貼り付ける(パーティ顔グラ)
+                    child.GetComponent<Image>().sprite = Utility._Image.MyGetSprite("Images\\Face\\c999");
                     continue;
                 }
                 // 子オブジェクトに画像を貼り付ける(パーティ顔グラ)
@@ -50,6 +51,12 @@ public class mDecPartyObj : MonoBehaviour {
     public void SetReturnString(string str)
     {
         GameObject child = transform.FindChild("Return").gameObject.transform.FindChild("Text").gameObject;
+        child.GetComponent<Text>().text = str;
+    }
+
+    public void SetDescribeString(string str)
+    {
+        GameObject child = transform.FindChild("Describe").gameObject;
         child.GetComponent<Text>().text = str;
     }
 
