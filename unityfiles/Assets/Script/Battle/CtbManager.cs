@@ -47,7 +47,9 @@ public class CtbManager : MonoBehaviour
         int count = 0;
         for (int i = 0; i < cb.Length; i++)
         {
-            // TODO: CTBゲージを進めるか否かのフラグを持たせて逐次更新するべき？
+            // 編成されていないキャラクターをスキップ
+            if (cb[i].cs == null) continue;
+
             // ctbゲージを進める
             if (cb[i].stunCount == 0 && cb[i].hp != 0) cb[i].ctbNum--;
             if (cb[i].ctbNum < 0) cb[i].ctbNum = 0;

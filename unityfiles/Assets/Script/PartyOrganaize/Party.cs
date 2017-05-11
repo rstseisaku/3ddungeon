@@ -51,10 +51,14 @@ public class Party : MonoBehaviour
     // 振分値を反映した値を返す
     public CharacterStatus GetPartyCharacterBattleStatus(int partyId)
     {
+        // 編成されていなければ null を返す
+        if( partyCharacterId[partyId] < 0) { return null; }
         return partyCharacter[partyId].bcs;
     }
     public int GetNowHp(int partyId)
     {
+        // 編成されていなければ -1 を返す
+        if (partyCharacterId[partyId] < 0) { return -1; }
         return partyCharacter[partyId].hp;
     }
 }

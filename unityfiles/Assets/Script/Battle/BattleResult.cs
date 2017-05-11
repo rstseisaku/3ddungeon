@@ -33,6 +33,11 @@ public class BattleResult : MonoBehaviour
         {
             String str = "Chara_" + (i + 1);
             resultFaceObj[i] = resultCharas.transform.FindChild(str).gameObject;
+            if (bc[i].ctbFaceObj == null)
+            {
+                resultFaceObj[i].SetActive(false); // 編成されていない
+                continue;
+            }
             resultFaceObj[i].GetComponent<Image>().sprite =
                 bc[i].ctbFaceObj.faceObj.GetComponent<Image>().sprite;
         }

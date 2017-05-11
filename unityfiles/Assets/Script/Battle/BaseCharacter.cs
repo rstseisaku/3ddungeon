@@ -74,33 +74,37 @@ public class BaseCharacter : MonoBehaviour
     // characterId; キャラクターのID
     protected void LoadCharacterData()
     {
-        // ウェイトのBase値をもとに計算
-        SetWaitTime();
+        // 編成されていない場合に利用される値
+        // ( null値のままになるので、nullチェックで弾く )
+        ctbNum = 999999;
+        ctbFaceObj = null;
+        predictObj = null;
+        StatusObj = null;
 
-        // CTB 値を適当に初期化しておく
-        ctbNum = (int)UnityEngine.Random.Range(3, 10);
+        /* 詠唱・ユニゾン・戦闘不能・スタンなどの初期状態 */
         isMagic = false;
         isWaitUnison = false;
         isknockout = false;
         isStun = false;
-        hp = cs.maxHp;
 
-        // Debug
-        isStun = true;
-        stunCount = 7;
-
-        // 画像オブジェクトの定義など
-        MakeCharacterGraphic();
+        /* 編成されていない場合は処理終了 */
+        if (cs == null) return;
+        SetWaitTime();
+        ctbNum = (int)UnityEngine.Random.Range(3, 10); // CTB値初期値
+        hp = cs.maxHp; // ウェイトのBase値をもとに計算      
+        MakeCharacterGraphic(); // 画像オブジェクトの定義など
     }
     protected void LoadCharacterData(string FilePath, int characterId)
     {
         // csの設定をここでやる
+        // ( 必要なくなったので、このままウェイト値の設定などへ飛ぶ )
         LoadCharacterData();
     }
 
     // ウェイトに乱数補正をかける(初期化時・行動後に呼出)
     public void SetWaitTime()
     {
+        if (cs == null) return;
         magWait = cs.magWaitBase + UnityEngine.Random.Range(-1, 1);
         waitAction = cs.waitActionBase + UnityEngine.Random.Range(-1, 1);
     }
@@ -156,6 +160,7 @@ public class BaseCharacter : MonoBehaviour
     private void UpdateHp()
     {
         // HP の更新
+        if (StatusObj == null) return;
         GameObject text = StatusObj.transform.FindChild("HpText").gameObject;
         text.GetComponent<Text>().text = "" + hp;
     } // ---UpdateHp()
@@ -196,14 +201,6 @@ public class BaseCharacter : MonoBehaviour
         // HPを削る
         cd[targetId].hp -= DamageEffect.CalDamage(this, cm);
         if (cd[targetId].hp < 0) cd[targetId].hp = 0;
-
-        /*
-        // 吹き飛ばし
-        // ★全員分のアクション終了後に再計算するため個別処理は行わない
-        int blow = cs.knockback - cd[targetId].cs.resistKnockback;
-        if (blow <= 0) blow = 1;
-        cd[targetId].ctbNum += blow;
-        */
 
         // ユニゾン・詠唱の解除
         EndUnison(cd[targetId]);
@@ -341,30 +338,30 @@ public class BaseCharacter : MonoBehaviour
      * ================================================== */
     // 現在のステータスに応じて顔グラの色を変更
     public void SetFaceObjColorFromStatus(BaseCharacter bc) {
-        ctbFaceObj.SetFaceObjColorFromStatus(bc); }
+        if(ctbFaceObj!=null) ctbFaceObj.SetFaceObjColorFromStatus(bc); }
     // ctbNum に従った位置に顔グラを表示
     public void SetFaceObj() {
-        ctbFaceObj.SetPosX(ctbNum); }
+        if(ctbFaceObj != null) ctbFaceObj.SetPosX(ctbNum); }
 
     /* ==================================================
      * 予測オブジェクトを表示するインタフェースを提供 
      * ================================================== */
     // 行動終了後の予測位置を表示
     public void SetPredictFromWaitAction(){
-        predictObj.SetFromNum(this, waitAction);}
+        if (predictObj != null) predictObj.SetFromNum(this, waitAction);}
     // 行動終了後の予測位置を表示(詠唱)
     public void SetPredictFromMagWait() {
-        predictObj.SetFromNum(this, magWait); }
+        if (predictObj != null) predictObj.SetFromNum(this, magWait); }
     // 行動終了後の予測位置を表示(数値から)
     public void SetPredictFromCtbNum( int ctbNum ) {
-        predictObj.SetFromNum(this, ctbNum); }
+        if (predictObj != null) predictObj.SetFromNum(this, ctbNum); }
     // 復帰時間を予測(スタン)
     public void SetPredictFromStun() {
-        if (isStun) predictObj.SetFromNum(this, stunCount); }
+        if (isStun && predictObj != null) predictObj.SetFromNum(this, stunCount); }
     // X方向への移動
     public void MovePredictTowardX(float vx) {
-        predictObj.MoveTowardX(vx); }
+        if (predictObj != null) predictObj.MoveTowardX(vx); }
     // 非表示に
     public void SetPredictInactive() {
-        predictObj.SetInactive();}
+        if (predictObj != null) predictObj.SetInactive();}
 }
