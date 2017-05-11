@@ -61,10 +61,6 @@ public class DungeonMaster : MonoBehaviour
             Map.SetPlayer((int)Map.playerpos.x, (int)Map.playerpos.y, Map.direction);
         }
 
-        GameObject temp = _Object.MyInstantiate("Prefabs\\Map\\PartyIcons", GameObject.Find("characterviewcamera"));
-        temp.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceCamera;
-        temp.GetComponent<Canvas>().worldCamera = GameObject.Find("characterviewcamera").GetComponent<Camera>();
-
         //マップの作成
         //マップチップの配置
         MakeMap(mapname);
