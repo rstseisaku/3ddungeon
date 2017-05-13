@@ -61,8 +61,11 @@ public class PartyCharacter : MonoBehaviour
     /* 戦闘時に利用するパラメタを返す */
     public CharacterStatus GetBattleCharacerStatus()
     {
-        if (Variables.__Debug.isPlayerCheat) bcs.atk += 99999;
-        if (Variables.__Debug.isPlayerCheat) bcs.waitActionBase = 1;
+        if (bcs != null)
+        {
+            if (Variables.__Debug.isPlayerCheat) bcs.atk += 99999;
+            if (Variables.__Debug.isPlayerCheat) bcs.waitActionBase = 1;
+        }
         return bcs;
     }
 }
