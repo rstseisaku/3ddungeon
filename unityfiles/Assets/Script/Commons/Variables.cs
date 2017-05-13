@@ -43,12 +43,11 @@ namespace Variables
         public static Vector2 playerpos;
         public static float direction;
 
-        public static IEnumerator GetPlayerPos()
+        public static void GetPlayerPos()
         {
             playerpos = new Vector2(playerobject.transform.localPosition.x, playerobject.transform.localPosition.z);
             direction = playerobject.transform.localEulerAngles.y;
-
-            yield return 0;
+            
         }    
         
         // プレイヤの配置
@@ -167,11 +166,18 @@ namespace Variables
     [System.Serializable]
     public class Handler
     {
+        public enum EVENTTYPE
+        {
+            WORD = 0,
+            TRANSITION = 1,
+            ENCOUNT = 2,
+            MOVESCENE = 3,
+            MOVEPOS = 4,
+        }
+
         //共通
-        public int type;
+        public EVENTTYPE type;
         public bool waituntilclick = false;
-        public bool onlyonce;
-        public GameObject obj;
 
         //文章表示で使用
         public string text;
@@ -193,9 +199,17 @@ namespace Variables
         public string movetothisscene;
 
         //同じエリア間で移動
+        public enum DIRECTION
+        {
+            UP = 0,
+            RIGHT = 1,
+            DOWN = 2,
+            LEFT = 3
+        }
+        public DIRECTION direction;
         public int moveX;
         public int moveY;
-        public float direction;
+        public float angle;
     }
 
 

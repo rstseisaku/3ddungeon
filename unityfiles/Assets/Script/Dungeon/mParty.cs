@@ -39,13 +39,15 @@ public class mParty : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
-        for (int i = 0; i < party.partyCharacter.Length; i++)
+        if (party != null)
         {
-            if ((characterstatus = party.GetPartyCharacterBattleStatus(i)) != null)
+            for (int i = 0; i < party.partyCharacter.Length; i++)
             {
-                icon[i].transform.FindChild("HP").GetComponent<mHPcolor>().remainingHP = party.partyCharacter[i].hp;
-                icon[i].transform.FindChild("HP").GetComponent<mHPcolor>().maxHP = party.partyCharacter[i].bcs.maxHp;
+                if ((characterstatus = party.GetPartyCharacterBattleStatus(i)) != null)
+                {
+                    icon[i].transform.FindChild("HP").GetComponent<mHPcolor>().remainingHP = party.partyCharacter[i].hp;
+                    icon[i].transform.FindChild("HP").GetComponent<mHPcolor>().maxHP = party.partyCharacter[i].bcs.maxHp;
+                }
             }
         }
 

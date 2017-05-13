@@ -18,6 +18,10 @@ public class EventManagement : MonoBehaviour {
 
     private List<Handler> eventlist;
 
+    private Event runningevent;
+
+    private string eventname;
+
   /*  public void Start()
     {
         buttoncanvas = GameObject.Find("ButtonCanvas");
@@ -35,13 +39,13 @@ public class EventManagement : MonoBehaviour {
     public IEnumerator Execute (Handler activeevent)
     {
         //イベントの種類に応じて実行
-        if(activeevent.type == (int)Event.TYPE.WORD)
+        if(activeevent.type == Handler.EVENTTYPE.WORD)
         {
             //ちゃんとしたキャンバスに張り付ける
             textcanvas.SetActive(true);
             textcanvas.transform.FindChild("Conversation").GetComponent<Text>().text = activeevent.text;
         }
-        if (activeevent.type == (int)Event.TYPE.TRANSITION)
+        if (activeevent.type == Handler.EVENTTYPE.TRANSITION)
         {
             //このオブジェクトに対するトランジション
             if(activeevent.thisobject == false)
@@ -50,34 +54,38 @@ public class EventManagement : MonoBehaviour {
             if (activeevent.thisobject == true)
                 _Transition.mTransition(activeevent, activeevent.transobject);
          }
-        if (activeevent.type == (int)Event.TYPE.ENCOUNT)
+        if (activeevent.type == Handler.EVENTTYPE.ENCOUNT)
         {
-            EndEvent();
+            //EndEvent();
             StartCoroutine(_Encount.Encount(activeevent.enemygroupID));
         }
-        if (activeevent.type == (int)Event.TYPE.MOVESCENE)
+        if (activeevent.type == Handler.EVENTTYPE.MOVESCENE)
         {
             StartCoroutine(_Scene.MoveScene(activeevent.movetothisscene));
         }
-        if (activeevent.type == (int)Event.TYPE.MOVEPOS)
+        if (activeevent.type == Handler.EVENTTYPE.MOVEPOS)
         {
-            Debug.Log("called");
-            Map.direction = activeevent.direction;
+            Map.direction = activeevent.angle;
             Map.movehere = new Vector2(activeevent.moveX, activeevent.moveY);
             //移動した後で一歩進んでいるため無理やり一歩戻す
-            Vector2 offset = new Vector2(Mathf.Sin(activeevent.direction * 2 * Mathf.PI / 360),
-                                         Mathf.Cos(activeevent.direction * 2 * Mathf.PI / 360));
-            Map.movehere -= offset;
+            //Vector2 offset = new Vector2(Mathf.Sin(activeevent.angle * 2 * Mathf.PI / 360),
+              //                           Mathf.Cos(activeevent.angle * 2 * Mathf.PI / 360));
+            //Map.movehere -= offset;
             Map.SetPlayer((int)Map.movehere.x, (int)Map.movehere.y, Map.direction);
+            GameObject.Find("GameMaster").GetComponent<DungeonMaster>().Stop();
         }
         yield return 0;
         
 
     }
 
-    public void StartEvent(List<Handler> activeevent)
+    public void StartEvent(Event receivedevent)
     {
-        eventlist = activeevent;
+        runningevent = receivedevent;
+
+        eventlist = runningevent.eventlist;
+
+        eventname = runningevent.gameObject.name;
 
         buttoncanvas.gameObject.SetActive(false);
 
@@ -86,11 +94,12 @@ public class EventManagement : MonoBehaviour {
 
     public void EndEvent()
     {
+        Debug.Log("called");
         buttoncanvas.gameObject.SetActive(true);
         textcanvas.SetActive(false);
-        if(eventlist[0].onlyonce == true)
+        if(runningevent.onlyonce == true)
         {
-            GameObject.Find("Event").GetComponent<SaveEvent>().DisableEvent(eventlist[0].obj.name);
+            this.gameObject.GetComponent<SaveEvent>().DisableEvent(eventname);
         }
         scroll = false;
         Debug.Log("イベント終了");

@@ -27,16 +27,13 @@ public class DungeonMaster : MonoBehaviour
     private int encount;
     public int randomencount = 0;
 
-    //初期位置のセットに必要 2回目以降は最後に居た位置を使用
-    private static bool firsttime = true;
-    public int firstX;
-    public int firstY;
-
     //
     private MapMake map;
     private miniMap minimap;
 
     private bool flag;
+
+    private Coroutine coroutine;
 
     // Use this for initialization
     void Start()
@@ -47,32 +44,23 @@ public class DungeonMaster : MonoBehaviour
         //マップチップとミニマップを紐づけるオブジェクトを取得
         //必ず最初にこれを行わないとエラー吐く
         Map.GetGameObject();
-
-        // プレイヤーの位置設定
-        //初回
-        if (firsttime)
+        if (Map.playerpos == new Vector2(0,0))
         {
-            Map.SetPlayer(firstX, firstY, Map.playerobject.transform.localEulerAngles.y);
+            Map.GetPlayerPos();
         }
+        // プレイヤーの位置設定
+
         //２回目以降
         //staticで残っている値を使用
-        else
-        {
-            Map.SetPlayer((int)Map.playerpos.x, (int)Map.playerpos.y, Map.direction);
-        }
 
-        GameObject temp = _Object.MyInstantiate("Prefabs\\Map\\PartyIcons", GameObject.Find("characterviewcamera"));
-        temp.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceCamera;
-        temp.GetComponent<Canvas>().worldCamera = GameObject.Find("characterviewcamera").GetComponent<Camera>();
+        Map.SetPlayer((int)Map.playerpos.x, (int)Map.playerpos.y, Map.direction);
+    
 
         //マップの作成
         //マップチップの配置
         MakeMap(mapname);
         //ミニマップの作成
         MakeminiMap(mapname);
-
-        //初回のみ必要な変数なのでここでfalseにする
-        firsttime = false;
 
         //本ループ
         StartCoroutine(MyUpdate());
@@ -219,7 +207,7 @@ public class DungeonMaster : MonoBehaviour
             if (map.isMoveable((int)nextpos.x, (int)nextpos.y))
             {
                 //移動処理
-                StartCoroutine(MyMove());
+                coroutine = StartCoroutine(MyMove());
 
                 //エンカウント判定
                 StartCoroutine(Encounter());
@@ -233,7 +221,9 @@ public class DungeonMaster : MonoBehaviour
     IEnumerator UpdatePlayerPos()
     {
         //プレイヤー位置取得用関数
-        yield return Map.GetPlayerPos();
+        Map.GetPlayerPos();
+
+        yield return 0;
     }
 
     //ミニマップの更新
@@ -311,5 +301,10 @@ public class DungeonMaster : MonoBehaviour
             encount = 0;
         }
         yield break;
+    }
+
+    public void Stop()
+    {
+        StopCoroutine(coroutine);
     }
 }
