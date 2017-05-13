@@ -126,38 +126,42 @@ public class OpeCharaList : MonoBehaviour
     } // --- CountActionableMagic()
 
     // ユニゾン待機中のフラグを折る処理
-    public static void EndWaitUnison(bool isPlayer,
-         PlayerCharacter[] cd,
-         EnemyCharacterData[] enemyCd)
+    public static void EndWaitUnison(BaseCharacter[] bc)
     {
-        for (int i = 0; i < cd.Length && isPlayer; i++)
+        for (int i = 0; i < bc.Length; i++)
         {
-            if (cd[i].ctbNum <= 0 && cd[i].isWaitUnison)
-                cd[i].EndUnison();
-        }
-        for (int i = 0; i < enemyCd.Length && !isPlayer; i++)
-        {
-            if (enemyCd[i].ctbNum <= 0 && enemyCd[i].isWaitUnison)
-                enemyCd[i].EndUnison();
+            if (bc[i].ctbNum <= 0 && bc[i].isWaitUnison)
+                bc[i].EndUnison();
         }
     }
 
     // 詠唱中のフラグを折る処理
-    public static void EndMagic(bool isPlayer,
-         PlayerCharacter[] cd,
-         EnemyCharacterData[] enemyCd)
+    // ( どちらかのみの実行 )
+    public static void EndMagic(BaseCharacter[] cd) 
     {
-        for (int i = 0; i < cd.Length && isPlayer; i++)
+        for (int i = 0; i < cd.Length; i++)
         {
             if (cd[i].ctbNum <= 0 && cd[i].isMagic)
                 cd[i].EndMagic();
         }
-        for (int i = 0; i < enemyCd.Length && !isPlayer; i++)
+    }
+
+    // 戦闘終了時の処理
+    public static void AllCharaEndMagic(BaseCharacter[] cd)
+    {
+        for (int i = 0; i < cd.Length; i++)
         {
-            if (enemyCd[i].ctbNum <= 0 && enemyCd[i].isMagic)
-                enemyCd[i].EndMagic();
+                cd[i].EndMagic();
         }
     }
+    public static void AllCharaEndWaitUnison(BaseCharacter[] bc)
+    {
+        for (int i = 0; i < bc.Length; i++)
+        {
+            bc[i].EndUnison();
+        }
+    }
+
 
     // 詠唱中キャラクターの待機値の平均を求める
     public static int GetAverageMagWait(BaseCharacter[] cb)
