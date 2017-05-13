@@ -72,7 +72,7 @@ public class EventManagement : MonoBehaviour {
               //                           Mathf.Cos(activeevent.angle * 2 * Mathf.PI / 360));
             //Map.movehere -= offset;
             Map.SetPlayer((int)Map.movehere.x, (int)Map.movehere.y, Map.direction);
-            GameObject.Find("GameMaster").GetComponent<DungeonMaster>().Stop();
+            GameObject.Find("GameMaster").GetComponent<DungeonMaster>().StopMove();
         }
         yield return 0;
         
