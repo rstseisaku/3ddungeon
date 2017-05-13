@@ -176,8 +176,22 @@ public class BattleMaster : MonoBehaviour
         else { yield return BattleResult.ResultLoseScene(cd, canvas); }
         yield return BattleResult.ResultFadeout(canvas);
 
+        /* 戦闘終了時に行うべき処理をまとめる */
+        BattleEnd();
+
         /* 戦闘が終わったので元のマップに返す */
         yield return Utility._Scene.MoveScene(party.nowScene, Variables.BackGround.black , 60);
+    }
+
+    /* 戦闘終了時の処理 */
+    // ( リザルト表示終了後 )
+    private void BattleEnd()
+    {
+        // 詠唱終了
+        OpeCharaList.AllCharaEndMagic(cd);
+        OpeCharaList.AllCharaEndMagic(enemyCd);
+        OpeCharaList.AllCharaEndWaitUnison(cd);
+        OpeCharaList.AllCharaEndWaitUnison(enemyCd);
     }
 
     // 行動できるキャラクターが出るまでループを回す
@@ -264,7 +278,10 @@ public class BattleMaster : MonoBehaviour
     IEnumerator PlayActionNoRamble( Vector2 countActionCharacterInfo )
     {
         // 行動サイドのユニゾン待機を終了
-        OpeCharaList.EndWaitUnison( countActionCharacterInfo.x >= 1, cd, enemyCd);
+        bool isPlayer = ( countActionCharacterInfo.x >= 1);
+        if (isPlayer) OpeCharaList.EndWaitUnison(cd);
+        else OpeCharaList.EndWaitUnison(enemyCd);
+
         // 行動人数の情報を再度取得( コマンド選択前に )
         countActionCharacterInfo =
             OpeCharaList.CountActionableCharacter(cd, enemyCd);
@@ -339,10 +356,10 @@ public class BattleMaster : MonoBehaviour
         //  エフェクト表示
 
         //  ユニゾン・詠唱を終了
-        OpeCharaList.EndWaitUnison(true, cd, enemyCd);
-        OpeCharaList.EndWaitUnison(false, cd, enemyCd);
-        OpeCharaList.EndMagic(true, cd, enemyCd);
-        OpeCharaList.EndMagic(false, cd, enemyCd);
+        OpeCharaList.EndWaitUnison(cd);
+        OpeCharaList.EndWaitUnison(enemyCd);
+        OpeCharaList.EndMagic(cd);
+        OpeCharaList.EndMagic(enemyCd);
 
         // CTB 値を再設定( waitAction の値を格納 )
         CtbManager.SetCtbNum(cd, enemyCd);

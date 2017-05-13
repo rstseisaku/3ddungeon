@@ -85,10 +85,7 @@ public class BaseCharacter : MonoBehaviour
         isMagic = false;
         isWaitUnison = false;
         isknockout = false;
-
         isStun = false;
-        isStun = true;
-        stunCount = 2;
 
         /* 編成されていない場合は処理終了 */
         if (cs == null) return;
