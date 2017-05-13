@@ -303,7 +303,7 @@ public class DungeonMaster : MonoBehaviour
         yield break;
     }
 
-    public void Stop()
+    public void StopMove()
     {
         StopCoroutine(coroutine);
     }
