@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 using Variables;
 using TRANSITION;
 
+
+//マップイベントのリスト表示
 public class mCustomWindow
 {
     public class mEditorWindow : EditorWindow
@@ -21,8 +23,7 @@ public class mCustomWindow
             EditorWindow.GetWindow<mEditorWindow>("イベントリスト"); // タイトル名を"EditorEx"に指定（後からでも変えられるけど）
 
         }
-
-        // Windowのクライアント領域のGUI処理を記述
+        
         void OnGUI()
         {
             //ラベルを表示
@@ -30,7 +31,6 @@ public class mCustomWindow
             EditorGUILayout.LabelField("ロック", GUILayout.Width(100));
             EditorGUILayout.LabelField("イベント名", GUILayout.Width(200));
             EditorGUILayout.LabelField("コマンド", GUILayout.Width(100));
-
             EditorGUILayout.EndHorizontal();
             
             //全イベントを格納しているキャンバスの取得
@@ -91,6 +91,7 @@ public class mCustomWindow
             eventlist.Add(temp);
         }
 
+        //イベントの削除
         void RemoveEvent(List<GameObject> eventlist, int i)
         {
             DestroyImmediate(eventlist[i].gameObject);
@@ -99,6 +100,7 @@ public class mCustomWindow
 
     }
 
+    //マップイベントの編集ウィンドウ
     public class EventContents : EditorWindow
     {
         public Event eventconfig;
@@ -113,6 +115,7 @@ public class mCustomWindow
             maxSize = new Vector2(800, 400);
             minSize = new Vector2(800, 380);
 
+            //イベントの種類(全イベント共通)
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("起動条件", GUILayout.Width(100));
             EditorGUILayout.LabelField("一度きり", GUILayout.Width(100));
@@ -123,6 +126,7 @@ public class mCustomWindow
             eventconfig.onlyonce = EditorGUILayout.Toggle("", eventconfig.onlyonce, GUILayout.Width(100));
             EditorGUILayout.EndHorizontal();
 
+            //イベントの中身
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Height(320));
             int count = eventconfig.eventlist.Count;
             if (count > 0)
@@ -140,7 +144,7 @@ public class mCustomWindow
                     eventconfig.eventlist[i].type = (Handler.EVENTTYPE)EditorGUILayout.EnumPopup("", eventconfig.eventlist[i].type, GUILayout.Width(100));
                     if (GUILayout.Button("挿入", GUILayout.Width(32)))
                     {
-                        //リストの途中に挿入
+                        AddEvent(i);
                     }
                     if (GUILayout.Button("削除", GUILayout.Width(32)))
                     {
@@ -273,14 +277,26 @@ public class mCustomWindow
 
             EditorGUILayout.EndScrollView();
             
-            //EditorGUILayout.Space(30)
             if (GUILayout.Button("追加", GUILayout.Width(64)))
             {
-                eventconfig.eventlist.Add(handler);
-                handler = new Handler();
+                AddEvent();
             }
         }
 
+        //イベントの追加
+        void AddEvent()
+        {
+            eventconfig.eventlist.Add(handler);
+            handler = new Handler();
+        }
+        //途中に挿入
+        void AddEvent(int i)
+        {
+            eventconfig.eventlist.Insert(i, handler);
+            handler = new Handler();
+        }
+
+        //イベントの削除
         void RemoveEvent(int i)
         {
             eventconfig.eventlist.Remove(eventconfig.eventlist[i]);
