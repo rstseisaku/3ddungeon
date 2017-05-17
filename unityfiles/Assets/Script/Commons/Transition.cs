@@ -77,7 +77,10 @@ namespace TRANSITION {
 
             image.material.SetFloat("_Value", fill);
         }
-        
+        if (fill >= 1)
+        {
+            Destroy(this);
+        }
     }
 
     //パラメータのセット

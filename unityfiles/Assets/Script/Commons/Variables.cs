@@ -173,11 +173,24 @@ namespace Variables
             ENCOUNT = 2,
             MOVESCENE = 3,
             MOVEPOS = 4,
+            PICTURE = 5
+        }
+        public enum TARGET
+        {
+            SCREEN = 0,
+            PICTURE1 = 1,
+            PICTURE2 = 2,
+            PICTURE3 = 3,
+            PICTURE4 = 4,
+            PICTURE5 = 5
         }
 
         //共通
         public EVENTTYPE type;
-        public bool waituntilclick = false;
+        public bool simultaneous = false;
+        //TRANSITIONとPICTUREで共通
+        //どの枠に使うか
+        public TARGET target;
 
         //文章表示で使用
         public string text;
@@ -189,7 +202,7 @@ namespace Variables
         public Texture2D mask;
         public float blackout;
         public float whiteout;
-        public bool thisobject;
+        //public bool thisobject;
         public GameObject transobject;
 
         //エンカウントで使用
@@ -210,6 +223,13 @@ namespace Variables
         public int moveX;
         public int moveY;
         public float angle;
+
+        //画像の表示
+        public Sprite picture;
+        public int picX;
+        public int picY;
+        public int sizeX;
+        public int sizeY;
     }
 
 
