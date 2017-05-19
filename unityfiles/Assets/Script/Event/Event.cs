@@ -73,7 +73,9 @@ public class Event : MonoBehaviour {
 /**
  * Inspector拡張クラス
  */
- 
+
+//編集専用のエディタを作ったから要らない？
+/* 
 [CustomEditor(typeof(Event))]
 public class CustomEvent : Editor
 {
@@ -105,7 +107,7 @@ public class CustomEvent : Editor
         custom.onlyonce = EditorGUILayout.Toggle("一度きり", custom.onlyonce);
         
         //クリックするまで待つか
-        handler.waituntilclick = EditorGUILayout.Toggle("クリックまで待つ", handler.waituntilclick);
+        handler.simultaneous = EditorGUILayout.Toggle("上と同時", handler.simultaneous);
 
         //新しく追加するイベントの種類に応じて設定
         handler.type = (Handler.EVENTTYPE)EditorGUILayout.EnumPopup("イベントの種類", handler.type);
@@ -176,7 +178,11 @@ public class CustomEvent : Editor
             handler.direction = (Handler.DIRECTION)EditorGUILayout.EnumPopup("方向", handler.direction);
             handler.angle = (int)handler.direction * 90;
         }
-        
+        if (handler.type == Handler.EVENTTYPE.PICTURE)
+        {
+            //handler.picture
+        }
+
 
         if (GUILayout.Button("追加"))
         {
@@ -196,32 +202,32 @@ public class CustomEvent : Editor
             EditorGUILayout.EnumPopup("イベントの種類", custom.eventlist[i].type);
             if (custom.eventlist[i].type == Handler.EVENTTYPE.WORD)
             {
-                EditorGUILayout.Toggle("クリックまで待つ", custom.eventlist[i].waituntilclick);
                 EditorGUILayout.TextField("文章", custom.eventlist[i].text);
             }
             if (custom.eventlist[i].type == Handler.EVENTTYPE.TRANSITION)
             {
-                EditorGUILayout.Toggle("クリックまで待つ", custom.eventlist[i].waituntilclick);
                 EditorGUILayout.EnumPopup("", custom.eventlist[i].mode);
             }
             if(custom.eventlist[i].type == Handler.EVENTTYPE.ENCOUNT)
             {
-                EditorGUILayout.Toggle("クリックまで待つ", custom.eventlist[i].waituntilclick);
                 EditorGUILayout.IntField("敵グループ", custom.eventlist[i].enemygroupID);
             }
             if (custom.eventlist[i].type == Handler.EVENTTYPE.MOVESCENE)
             {
-                EditorGUILayout.Toggle("クリックまで待つ", custom.eventlist[i].waituntilclick);
                 EditorGUILayout.TextField("移動シーン", custom.eventlist[i].movetothisscene);
             }
             if (custom.eventlist[i].type == Handler.EVENTTYPE.MOVEPOS)
             {
-                EditorGUILayout.Toggle("クリックまで待つ", custom.eventlist[i].waituntilclick);
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.IntField("移動先X", custom.eventlist[i].moveX);
                 EditorGUILayout.IntField("移動先Y", custom.eventlist[i].moveY);
                 EditorGUILayout.EndHorizontal();
             }
+            if (handler.type == Handler.EVENTTYPE.PICTURE)
+            {
+                //handler.picture
+            }
+            handler.simultaneous = EditorGUILayout.Toggle("上と同時", handler.simultaneous);
         }
         EditorGUI.EndDisabledGroup();
         
@@ -229,4 +235,5 @@ public class CustomEvent : Editor
         EditorUtility.SetDirty(target);
     }
 }
+*/
 #endif

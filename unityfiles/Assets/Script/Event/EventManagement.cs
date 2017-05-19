@@ -11,52 +11,86 @@ using Utility;
 public class EventManagement : MonoBehaviour {
 
     //テキスト描画用キャンバス取得
-    GameObject textcanvas;
+    private GameObject textcanvas;
+    private GameObject textobject;
+    private GameObject imageobject;
+    private GameObject[] picture = new GameObject[5];
     private bool scroll = false;
-    
-    private GameObject buttoncanvas;
 
+    //
+    private GameObject gamemaster;
+    
+    //移動等のボタンを封じるために取得
+    private GameObject buttoncanvas;
+    private bool istherebuttons = false;
+    
+    //受け取ったイベントのリストをコピー
     private List<Handler> eventlist;
 
+    //実行中のイベント
     private Event runningevent;
 
+    //イベント名(イベントを持っているGameObjectの名前)
     private string eventname;
 
-  /*  public void Start()
-    {
-        buttoncanvas = GameObject.Find("ButtonCanvas");
-        textcanvas = GameObject.Find("TextCanvas");
-        textcanvas.gameObject.SetActive(false);
-    }*/
     public void Awake()
     {
-        buttoncanvas = GameObject.Find("ButtonCanvas");
-        textcanvas = GameObject.Find("TextCanvas");
-        textcanvas.gameObject.SetActive(false);
-    }
+        //他のボタン無効にするため
+        if (GameObject.Find("ButtonCanvas"))
+        {
+            buttoncanvas = GameObject.Find("ButtonCanvas");
+            istherebuttons = true;
+        }
 
+        //基本的にイベント用のキャンバスは非表示にしておく
+        textcanvas = GameObject.Find("TextCanvas");
+        textobject = textcanvas.transform.FindChild("TextObject").gameObject;
+        imageobject = textcanvas.transform.FindChild("ImageObject").gameObject;
+        textobject.gameObject.SetActive(false);
+        imageobject.gameObject.SetActive(false);
+        for (int i = 0; i < 5; i++)
+        {
+            picture[i] = imageobject.transform.FindChild((i+1).ToString()).gameObject;
+            picture[i].SetActive(false);
+        }
+
+        //プレイヤーの動きを強制的に止めたりするのに使う
+        if (GameObject.Find("GameMaster"))
+        {
+            gamemaster = GameObject.Find("GameMaster");
+        }
+    }
+    
     //イベント実行関数
     public IEnumerator Execute (Handler activeevent)
     {
         //イベントの種類に応じて実行
         if(activeevent.type == Handler.EVENTTYPE.WORD)
         {
-            //ちゃんとしたキャンバスに張り付ける
-            textcanvas.SetActive(true);
-            textcanvas.transform.FindChild("Conversation").GetComponent<Text>().text = activeevent.text;
+            //文章表示ならテキストウィンドウを有効化
+            if (activeevent.text != "")
+            {
+                textobject.SetActive(true);
+                textobject.transform.FindChild("Text").GetComponent<Text>().text = activeevent.text;
+            }
+            //空のテキストならテキストウィンドウを無効化
+            if (activeevent.text == "")
+            {
+                textobject.SetActive(false);
+            }
         }
+
         if (activeevent.type == Handler.EVENTTYPE.TRANSITION)
         {
-            //このオブジェクトに対するトランジション
-            if(activeevent.thisobject == false)
-            _Transition.mTransition(activeevent);
             //画面全体に対するトランジション
-            if (activeevent.thisobject == true)
-                _Transition.mTransition(activeevent, activeevent.transobject);
-         }
+            if (activeevent.target == Handler.TARGET.SCREEN)
+                _Transition.mTransition(activeevent);
+            //PICTURE1~5に対するトランジション
+            else
+                _Transition.mTransition(activeevent, picture[(int)activeevent.target - 1]);
+    }
         if (activeevent.type == Handler.EVENTTYPE.ENCOUNT)
         {
-            //EndEvent();
             StartCoroutine(_Encount.Encount(activeevent.enemygroupID));
         }
         if (activeevent.type == Handler.EVENTTYPE.MOVESCENE)
@@ -67,72 +101,88 @@ public class EventManagement : MonoBehaviour {
         {
             Map.direction = activeevent.angle;
             Map.movehere = new Vector2(activeevent.moveX, activeevent.moveY);
-            //移動した後で一歩進んでいるため無理やり一歩戻す
-            //Vector2 offset = new Vector2(Mathf.Sin(activeevent.angle * 2 * Mathf.PI / 360),
-              //                           Mathf.Cos(activeevent.angle * 2 * Mathf.PI / 360));
-            //Map.movehere -= offset;
             Map.SetPlayer((int)Map.movehere.x, (int)Map.movehere.y, Map.direction);
-            GameObject.Find("GameMaster").GetComponent<DungeonMaster>().StopMove();
+            gamemaster.GetComponent<DungeonMaster>().StopMove();
+        }
+        if (activeevent.type == Handler.EVENTTYPE.PICTURE)
+        {
+            imageobject.SetActive(true);
+            if (activeevent.target != Handler.TARGET.SCREEN)
+            {
+                picture[(int)activeevent.target - 1].SetActive(true);
+                picture[(int)activeevent.target - 1].GetComponent<Image>().sprite = activeevent.picture;
+                picture[(int)activeevent.target - 1].transform.localPosition = new Vector2(activeevent.picX, activeevent.picY);
+            }
         }
         yield return 0;
-        
-
     }
 
+    //イベント開始処理
     public void StartEvent(Event receivedevent)
     {
+        //実行中イベント=受け取ったイベント
         runningevent = receivedevent;
-
+        //イベントリスト=受け取ったイベントの中身
         eventlist = runningevent.eventlist;
-
+        //イベント名(GameObject)名取得
+        //一度きりイベントの無効化用
         eventname = runningevent.gameObject.name;
-
+        //イベント実行中は他のボタンの無効化
         buttoncanvas.gameObject.SetActive(false);
-
+        //ボタン押した判定のリセット
+        scroll = false;
+        //イベント実行
         StartCoroutine(mUpdate());
     }
 
+    //イベント終了処理
     public void EndEvent()
     {
-        Debug.Log("called");
+        //他のボタンの有効化
         buttoncanvas.gameObject.SetActive(true);
+        //イベント用ボタン、テキスト等の無効化
         textcanvas.SetActive(false);
+        //一度きりイベントなら呼ばれないようにする
         if(runningevent.onlyonce == true)
         {
             this.gameObject.GetComponent<SaveEvent>().DisableEvent(eventname);
         }
-        scroll = false;
         Debug.Log("イベント終了");
     }
 
     private IEnumerator mUpdate()
     {
+        //iの初期化
         int i = 0;
         while (true)
         {
+            //一番最初のイベントは即実行
             if (i == 0)
             {
                 yield return NextEvent(0);
                 i++;
             }
+            //2番目以降
             if (i < eventlist.Count)
             {
-                if (eventlist[i].waituntilclick == false)
+                //上と同時に実行するイベント
+                if (eventlist[i].simultaneous == true)
                 {
                     yield return NextEvent(i);
                     i++;
                 }
+                //それ以外のイベントはボタンが押されるまで待機
                 if (scroll == true)
                 {
                     yield return NextEvent(i);
                     i++;
                     scroll = false;
                 }
-
             }
-
+            //全イベント完了
             if (i >= eventlist.Count)
             {
+                //終了条件　変えるべき？
                 if (scroll == true)
                 {
                     EndEvent();
@@ -143,13 +193,16 @@ public class EventManagement : MonoBehaviour {
         }
     }
 
+    //次のイベント読み込み
     private IEnumerator NextEvent(int i)
     {
         yield return Execute(eventlist[i]);
     }
 
+    //ボタンが押された判定(テキスト読み進めたり)
     public void OnClick()
     {
         scroll = true;
     }
 }
+
