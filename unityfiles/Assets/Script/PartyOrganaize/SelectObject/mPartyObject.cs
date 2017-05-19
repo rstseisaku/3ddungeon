@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class mPartyObject : MonoBehaviour
 {
-    // パーティーオブジェクト
+    // パーティーオブジェクト 
     GameObject[] partyCharacterObj;
     GameObject[] partyCharaFrameObj;
     Image[] standImage;
