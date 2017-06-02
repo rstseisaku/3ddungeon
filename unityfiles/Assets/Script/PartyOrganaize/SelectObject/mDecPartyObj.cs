@@ -24,7 +24,7 @@ public class mDecPartyObj : MonoBehaviour {
             {
                 // コオブジェクトにアクセス
                 string str = "Chara" + (j + 1);
-                child = partyViewObj[i].transform.FindChild(str).gameObject;
+                child = partyViewObj[i].transform.Find(str).gameObject;
                 // パーティキャラクタの情報を読み取る
                 int charaId = saveParty.partyCharacterId[i, j];
                 if (charaId < 0)
@@ -39,7 +39,7 @@ public class mDecPartyObj : MonoBehaviour {
             }
 
             // パーティ編成用のボタン(非表示で)
-            child = partyViewObj[i].transform.FindChild("Button").gameObject;
+            child = partyViewObj[i].transform.Find("Button").gameObject;
             child.GetComponent<Button>().onClick.AddListener(() => this.onClick(child)); // DecideEditParty.onClick(child)
             child.name = "" + i;
             // 場所指定
@@ -50,13 +50,13 @@ public class mDecPartyObj : MonoBehaviour {
 
     public void SetReturnString(string str)
     {
-        GameObject child = transform.FindChild("Return").gameObject.transform.FindChild("Text").gameObject;
+        GameObject child = transform.Find("Return").gameObject.transform.Find("Text").gameObject;
         child.GetComponent<Text>().text = str;
     }
 
     public void SetDescribeString(string str)
     {
-        GameObject child = transform.FindChild("Describe").gameObject;
+        GameObject child = transform.Find("Describe").gameObject;
         child.GetComponent<Text>().text = str;
     }
 

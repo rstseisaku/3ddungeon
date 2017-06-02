@@ -729,11 +729,11 @@ public class BattleMaster : MonoBehaviour
                             Quaternion.identity);
         eObj.transform.SetParent(canvas.transform, false);
 
-        GameObject ecObj = eObj.transform.FindChild("CharacterGraphic").gameObject;
+        GameObject ecObj = eObj.transform.Find("CharacterGraphic").gameObject;
         ecObj.GetComponent<Image>().sprite = 
             enemyCd[elId].ctbFaceObj.faceObj.GetComponent<Image>().sprite;
 
-        ecObj = eObj.transform.FindChild("Text").gameObject;
+        ecObj = eObj.transform.Find("Text").gameObject;
         ecObj.GetComponent<Text>().text =
             "詠唱 LV" + OpeCharaList.GetSumMoveableMag(enemyCd) + "!";
 

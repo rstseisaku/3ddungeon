@@ -45,8 +45,8 @@ public class mParty : MonoBehaviour {
             {
                 if ((characterstatus = party.GetPartyCharacterBattleStatus(i)) != null)
                 {
-                    icon[i].transform.FindChild("HP").GetComponent<mHPcolor>().remainingHP = party.partyCharacter[i].hp;
-                    icon[i].transform.FindChild("HP").GetComponent<mHPcolor>().maxHP = party.partyCharacter[i].bcs.maxHp;
+                    icon[i].transform.Find("HP").GetComponent<mHPcolor>().remainingHP = party.partyCharacter[i].hp;
+                    icon[i].transform.Find("HP").GetComponent<mHPcolor>().maxHP = party.partyCharacter[i].bcs.maxHp;
                 }
             }
         }

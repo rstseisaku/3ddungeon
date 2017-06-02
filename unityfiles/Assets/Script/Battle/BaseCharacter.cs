@@ -149,7 +149,7 @@ public class BaseCharacter : MonoBehaviour
         // 座標指定
         StatusObj.transform.localPosition = new Vector3(X, Y, 0);
         // 画像を貼る(画像のアドレス)
-        GameObject img = StatusObj.transform.FindChild("FaceGra").gameObject;
+        GameObject img = StatusObj.transform.Find("FaceGra").gameObject;
         img.GetComponent<Image>().sprite =
                         ctbFaceObj.faceObj.GetComponent<Image>().sprite;
     } //---MakeStatusObj()
@@ -161,7 +161,7 @@ public class BaseCharacter : MonoBehaviour
     {
         // HP の更新
         if (StatusObj == null) return;
-        GameObject text = StatusObj.transform.FindChild("HpText").gameObject;
+        GameObject text = StatusObj.transform.Find("HpText").gameObject;
         text.GetComponent<Text>().text = "" + hp;
     } // ---UpdateHp()
 

@@ -44,13 +44,13 @@ public class EventManagement : MonoBehaviour {
 
         //基本的にイベント用のキャンバスは非表示にしておく
         textcanvas = GameObject.Find("TextCanvas");
-        textobject = textcanvas.transform.FindChild("TextObject").gameObject;
-        imageobject = textcanvas.transform.FindChild("ImageObject").gameObject;
+        textobject = textcanvas.transform.Find("TextObject").gameObject;
+        imageobject = textcanvas.transform.Find("ImageObject").gameObject;
         textobject.gameObject.SetActive(false);
         imageobject.gameObject.SetActive(false);
         for (int i = 0; i < 5; i++)
         {
-            picture[i] = imageobject.transform.FindChild((i+1).ToString()).gameObject;
+            picture[i] = imageobject.transform.Find((i+1).ToString()).gameObject;
             picture[i].SetActive(false);
         }
 
@@ -71,7 +71,7 @@ public class EventManagement : MonoBehaviour {
             if (activeevent.text != "")
             {
                 textobject.SetActive(true);
-                textobject.transform.FindChild("Text").GetComponent<Text>().text = activeevent.text;
+                textobject.transform.Find("Text").GetComponent<Text>().text = activeevent.text;
             }
             //空のテキストならテキストウィンドウを無効化
             if (activeevent.text == "")

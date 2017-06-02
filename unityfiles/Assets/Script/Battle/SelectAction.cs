@@ -20,9 +20,9 @@ public class SelectAction : MonoBehaviour {
         buttonObj = new GameObject[3];
 
         // ボタンオブジェクト取得
-        buttonObj[0] = gameObject.transform.FindChild("AtkButton").gameObject;
-        buttonObj[1] = gameObject.transform.FindChild("UniButton").gameObject;
-        buttonObj[2] = gameObject.transform.FindChild("MagButton").gameObject;
+        buttonObj[0] = gameObject.transform.Find("AtkButton").gameObject;
+        buttonObj[1] = gameObject.transform.Find("UniButton").gameObject;
+        buttonObj[2] = gameObject.transform.Find("MagButton").gameObject;
 
         // 親オブジェクトに自分自身を設定(一緒に破棄されて欲しい)
         buttonObj[0].transform.SetParent(this.transform);

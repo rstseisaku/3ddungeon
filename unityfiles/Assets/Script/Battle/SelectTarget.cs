@@ -15,10 +15,10 @@ public class SelectTarget : MonoBehaviour {
         buttonObj = new GameObject[ecd.Length];
 
         // ボタンオブジェクト取得
-        buttonObj[0] = gameObject.transform.FindChild("Button").gameObject;
+        buttonObj[0] = gameObject.transform.Find("Button").gameObject;
         buttonObj[0].transform.SetParent(this.transform);
         buttonObj[0].name = "" + 0;
-        buttonObj[0].transform.FindChild("Text").GetComponent<Text>().text =
+        buttonObj[0].transform.Find("Text").GetComponent<Text>().text =
              ecd[0].cs.charaName;
 
         for (int i = 1; i < ecd.Length; i++)
@@ -27,7 +27,7 @@ public class SelectTarget : MonoBehaviour {
             buttonObj[i].transform.SetParent(this.transform, false);
             buttonObj[i].GetComponent<RectTransform>().localPosition += id2Pos(i);
             buttonObj[i].name = "" + i;
-            buttonObj[i].transform.FindChild("Text").GetComponent<Text>().text =
+            buttonObj[i].transform.Find("Text").GetComponent<Text>().text =
                 ecd[i].cs.charaName;
         }
         // ボタン0の座標をずらすのは最後(起点座標になっているため)

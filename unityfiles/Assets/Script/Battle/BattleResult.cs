@@ -26,13 +26,13 @@ public class BattleResult : MonoBehaviour
             BCV.RESULT_PREFAB,
             c);
         // 顔グラフィックオブジェクトの子供を取得する
-        resultCharas = resultObj.transform.FindChild("Charas").gameObject;
+        resultCharas = resultObj.transform.Find("Charas").gameObject;
 
         // 画像を貼り付ける
         for (int i = 0; i < bc.Length; i++)
         {
             String str = "Chara_" + (i + 1);
-            resultFaceObj[i] = resultCharas.transform.FindChild(str).gameObject;
+            resultFaceObj[i] = resultCharas.transform.Find(str).gameObject;
             if (bc[i].ctbFaceObj == null)
             {
                 resultFaceObj[i].SetActive(false); // 編成されていない
@@ -45,7 +45,7 @@ public class BattleResult : MonoBehaviour
         for (int i = bc.Length; i < BCV.PLAYER_MAX; i++)
         {
             String str = "Chara_" + (i + 1);
-            resultFaceObj[i] = resultCharas.transform.FindChild(str).gameObject;
+            resultFaceObj[i] = resultCharas.transform.Find(str).gameObject;
             resultFaceObj[i].SetActive(false);
         }
 

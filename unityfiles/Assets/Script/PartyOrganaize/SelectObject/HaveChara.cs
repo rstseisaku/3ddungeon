@@ -15,7 +15,7 @@ public class HaveChara : MonoBehaviour
     public void GenerateObject(bool[] isObtainChara)
     {
         // キャンバスの取得
-        GameObject parentObj = transform.FindChild("Characters").gameObject;
+        GameObject parentObj = transform.Find("Characters").gameObject;
 
         // 外す
         int drawPosId = 0;
@@ -112,7 +112,7 @@ public class HaveChara : MonoBehaviour
         if (TextObject == null)
         {
             // キャンバスの取得
-            GameObject parentObj = transform.FindChild("Characters").gameObject;
+            GameObject parentObj = transform.Find("Characters").gameObject;
             // テキストオブジェクトの生成
             TextObject = new GameObject("DescritionText");
             TextObject.transform.SetParent(parentObj.transform, false);
