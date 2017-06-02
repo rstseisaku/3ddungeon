@@ -119,56 +119,55 @@ public class mCustomWindow
             //イベントの種類(全イベント共通)
             EditorGUILayout.BeginHorizontal();
 
-             EditorGUILayout.BeginVertical();
+            EditorGUILayout.BeginVertical();
 
-              EditorGUILayout.BeginHorizontal();
-               EditorGUILayout.LabelField("起動条件", GUILayout.Width(100));
-               EditorGUILayout.LabelField("一度きり", GUILayout.Width(100));
-              EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("起動条件", GUILayout.Width(100));
+            EditorGUILayout.LabelField("一度きり", GUILayout.Width(100));
+            EditorGUILayout.EndHorizontal();
 
-              EditorGUILayout.BeginHorizontal();
-               eventconfig.activateonwhat = (Event.ActivateTYPE)EditorGUILayout.EnumPopup("", eventconfig.activateonwhat, GUILayout.Width(100));
-               eventconfig.onlyonce = EditorGUILayout.Toggle("", eventconfig.onlyonce, GUILayout.Width(100));
-              EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            eventconfig.activateonwhat = (Event.ActivateTYPE)EditorGUILayout.EnumPopup("", eventconfig.activateonwhat, GUILayout.Width(100));
+            eventconfig.onlyonce = EditorGUILayout.Toggle("", eventconfig.onlyonce, GUILayout.Width(100));
+            EditorGUILayout.EndHorizontal();
 
-              //イベントの中身
-              scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Height(320));
-               int count = eventconfig.eventlist.Count;
-               if (count > 0)
-               {
-               EditorGUILayout.BeginHorizontal();
+            //イベントの中身
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Height(320));
+            int count = eventconfig.eventlist.Count;
+            if (count > 0)
+            {
+                EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("種類", GUILayout.Width(100));
-                EditorGUILayout.LabelField("コマンド", GUILayout.Width(64));
-                EditorGUILayout.LabelField("詳細", GUILayout.Width(100));
-                EditorGUILayout.LabelField("上と同時", GUILayout.Width(64));
+                EditorGUILayout.LabelField("コマンド", GUILayout.Width(96));
+                EditorGUILayout.LabelField("上と同時実行", GUILayout.Width(100));
                 EditorGUILayout.EndHorizontal();
 
                 for (int i = 0; i < count; i++)
                 {
-                EditorGUILayout.BeginVertical();
-                 EditorGUILayout.BeginHorizontal();
-                  eventconfig.eventlist[i].type = (Handler.EVENTTYPE)EditorGUILayout.EnumPopup("", eventconfig.eventlist[i].type, GUILayout.Width(100));
-                  if (GUILayout.Button("編集", GUILayout.Width(32)))
-                  {
-                  x = i;
-                  }
-                  if (GUILayout.Button("挿入", GUILayout.Width(32)))
-                  {
-                  AddEvent(i);
-                  }
-                  if (GUILayout.Button("削除", GUILayout.Width(32)))
-                  {
-                  RemoveEvent(i);
-                  count--;
-                  }
+                    EditorGUILayout.BeginVertical();
+                    EditorGUILayout.BeginHorizontal();
+                    eventconfig.eventlist[i].type = (Handler.EVENTTYPE)EditorGUILayout.EnumPopup("", eventconfig.eventlist[i].type, GUILayout.Width(100));
+                    if (GUILayout.Button("編集", GUILayout.Width(32)))
+                    {
+                        x = i;
+                    }
+                    if (GUILayout.Button("挿入", GUILayout.Width(32)))
+                    {
+                        AddEvent(i);
+                    }
+                    if (GUILayout.Button("削除", GUILayout.Width(32)))
+                    {
+                        RemoveEvent(i);
+                        count--;
+                    }
                     eventconfig.eventlist[i].simultaneous = EditorGUILayout.Toggle("", eventconfig.eventlist[i].simultaneous, GUILayout.Width(64));
 
                     EditorGUILayout.EndHorizontal();
-                EditorGUILayout.EndVertical();
+                    EditorGUILayout.EndVertical();
                 }
             }
 
-              EditorGUILayout.EndScrollView();
+            EditorGUILayout.EndScrollView();
             
             if (GUILayout.Button("追加", GUILayout.Width(64)))
             {
@@ -183,7 +182,7 @@ public class mCustomWindow
                 if (eventconfig.eventlist[x].type == Handler.EVENTTYPE.WORD)
                 {
                     EditorGUILayout.LabelField("文章", GUILayout.Width(72));
-                    eventconfig.eventlist[x].text = EditorGUILayout.TextArea(eventconfig.eventlist[x].text, GUILayout.Width(256), GUILayout.Height(256));
+                    eventconfig.eventlist[x].text = EditorGUILayout.TextArea(eventconfig.eventlist[x].text, GUILayout.Width(374), GUILayout.Height(256));
                 }
                 if (eventconfig.eventlist[x].type == Handler.EVENTTYPE.TRANSITION)
                 {
