@@ -107,13 +107,12 @@ public class EventManagement : MonoBehaviour {
         if (activeevent.type == Handler.EVENTTYPE.PICTURE)
         {
             imageobject.SetActive(true);
-            if (activeevent.target != Handler.TARGET.SCREEN)
-            {
-                picture[(int)activeevent.target - 1].SetActive(true);
-                picture[(int)activeevent.target - 1].GetComponent<Image>().sprite = activeevent.picture;
-                picture[(int)activeevent.target - 1].transform.localPosition = new Vector2(activeevent.picX, activeevent.picY);
-            }
+
+            picture[(int)activeevent.target - 1].SetActive(true);
+            picture[(int)activeevent.target - 1].GetComponent<Image>().sprite = activeevent.picture;
+            picture[(int)activeevent.target - 1].transform.localPosition = new Vector2(activeevent.picX, activeevent.picY);
         }
+        
         yield return 0;
     }
 
