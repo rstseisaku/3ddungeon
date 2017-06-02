@@ -26,15 +26,15 @@ public class mPartyObject : MonoBehaviour
         hpText = new Text[5];
         standImage = new Image[5];
         elementImage = new Image[5];
-        partyNameText = transform.FindChild("Text").gameObject.GetComponent<Text>();
-        GameObject obj = transform.FindChild("Character").gameObject;
+        partyNameText = transform.Find("Text").gameObject.GetComponent<Text>();
+        GameObject obj = transform.Find("Character").gameObject;
         for (int i = 0; i < partyCharacterObj.Length; i++)
         {
             string str = "Chara" + (i + 1);
-            partyCharacterObj[i] = obj.transform.FindChild(str).gameObject;
-            partyCharaFrameObj[i] = partyCharacterObj[i].transform.FindChild("Frame").gameObject;
-            hpText[i] = partyCharaFrameObj[i].transform.FindChild("Text").gameObject.GetComponent<Text>();
-            elementImage[i] = partyCharaFrameObj[i].transform.FindChild("Element").gameObject.GetComponent<Image>();
+            partyCharacterObj[i] = obj.transform.Find(str).gameObject;
+            partyCharaFrameObj[i] = partyCharacterObj[i].transform.Find("Frame").gameObject;
+            hpText[i] = partyCharaFrameObj[i].transform.Find("Text").gameObject.GetComponent<Text>();
+            elementImage[i] = partyCharaFrameObj[i].transform.Find("Element").gameObject.GetComponent<Image>();
             standImage[i] = partyCharacterObj[i].GetComponent<Image>();
         }
     }

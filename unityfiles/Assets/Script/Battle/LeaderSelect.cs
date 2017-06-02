@@ -23,10 +23,10 @@ public class LeaderSelect : MonoBehaviour {
         buttonObj = new GameObject[4];
 
         // ボタンオブジェクト取得
-        buttonObj[0] = gameObject.transform.FindChild("RightButton").gameObject;
-        buttonObj[1] = gameObject.transform.FindChild("LeftButton").gameObject;
-        buttonObj[2] = gameObject.transform.FindChild("CharacterGraphic").gameObject;
-        buttonObj[3] = gameObject.transform.FindChild("Text").gameObject;
+        buttonObj[0] = gameObject.transform.Find("RightButton").gameObject;
+        buttonObj[1] = gameObject.transform.Find("LeftButton").gameObject;
+        buttonObj[2] = gameObject.transform.Find("CharacterGraphic").gameObject;
+        buttonObj[3] = gameObject.transform.Find("Text").gameObject;
 
         // 親オブジェクトに自分自身を設定(一緒に破棄されて欲しい)
         foreach (GameObject o in buttonObj)
