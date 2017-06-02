@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using UnityEngine.SceneManagement;
 
 using Variables;
 using TRANSITION;
 
+#if UNITY_EDITOR
+
+using UnityEditor;
 
 //マップイベントのリスト表示
 public class mCustomWindow
@@ -319,3 +321,5 @@ public class mCustomWindow
         }
     }
 }
+
+#endif
