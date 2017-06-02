@@ -7,7 +7,7 @@ public class Sound : MonoBehaviour {
     public static AudioSource audioSource;
     public static AudioSource audioSourceBGM;
     public static int playingBgmId = -1;
-    //
+    // 
     public void LoadSound()
     {
         audioClip = new AudioClip[Variables.SE.SeFolderPath.Length];

@@ -9,7 +9,7 @@ using UnityEngine.UI;
  *  :構成要素
  *     顔グラフィック
  *     魔力値表示オブジェクト
- *     属性表示オブジェクト
+ *     属性表示オブジェクト 
  */
 public class CtbFaceObj : MonoBehaviour
 {

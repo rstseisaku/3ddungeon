@@ -11,7 +11,7 @@ public class HaveChara : MonoBehaviour
     string unitDescription = "";
     public int touchId = -1;
 
-    /* 利用するオブジェクトを生成する */
+    /* 利用するオブジェクトを生成する  */
     public void GenerateObject(bool[] isObtainChara)
     {
         // キャンバスの取得
