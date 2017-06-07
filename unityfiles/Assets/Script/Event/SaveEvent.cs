@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Utility;
+
 using UnityEngine.SceneManagement;
 
 public class SaveEvent : MonoBehaviour {
 
-    string filepath = "Assets\\Resources\\MapData\\Event\\";
+    string filepath;
     string scenename;
 
     public struct enabledevent
@@ -21,6 +23,8 @@ public class SaveEvent : MonoBehaviour {
 
     // Use this for initialization
     public void Start () {
+        filepath = _File.Path("\\Resources\\MapData\\Event\\");
+
         scenename = SceneManager.GetActiveScene().name;
 
         if (System.IO.File.Exists(filepath + scenename + ".txt"))

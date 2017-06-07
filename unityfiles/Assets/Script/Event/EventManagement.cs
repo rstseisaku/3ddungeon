@@ -11,9 +11,9 @@ using Utility;
 public class EventManagement : MonoBehaviour {
 
     //テキスト描画用キャンバス取得
+    private GameObject canvas;
     private GameObject textcanvas;
-    private GameObject textobject;
-    private GameObject imageobject;
+    private GameObject imagecanvas;
     private GameObject[] picture = new GameObject[5];
     private bool scroll = false;
 
@@ -43,14 +43,14 @@ public class EventManagement : MonoBehaviour {
         }
 
         //基本的にイベント用のキャンバスは非表示にしておく
-        textcanvas = GameObject.Find("TextCanvas");
-        textobject = textcanvas.transform.Find("TextObject").gameObject;
-        imageobject = textcanvas.transform.Find("ImageObject").gameObject;
-        textobject.gameObject.SetActive(false);
-        imageobject.gameObject.SetActive(false);
+        canvas = GameObject.Find("Canvas");
+        textcanvas = canvas.transform.Find("TextCanvas").gameObject;
+        imagecanvas = canvas.transform.Find("ImageCanvas").gameObject;
+        textcanvas.gameObject.SetActive(false);
+        imagecanvas.gameObject.SetActive(false);
         for (int i = 0; i < 5; i++)
         {
-            picture[i] = imageobject.transform.Find((i+1).ToString()).gameObject;
+            picture[i] = imagecanvas.transform.Find((i+1).ToString()).gameObject;
             picture[i].SetActive(false);
         }
 
@@ -70,13 +70,26 @@ public class EventManagement : MonoBehaviour {
             //文章表示ならテキストウィンドウを有効化
             if (activeevent.text != "")
             {
-                textobject.SetActive(true);
-                textobject.transform.Find("Text").GetComponent<Text>().text = activeevent.text;
+                textcanvas.SetActive(true);
+                textcanvas.transform.Find("Frame").Find("Text").GetComponent<Text>().text = activeevent.text;
+
+                //アイコンが設定されているなら表示
+                textcanvas.transform.Find("Frame").Find("Icon").GetComponent<Image>().sprite = activeevent.icon;
+                if (activeevent.icon != null)
+                {
+                    textcanvas.transform.Find("Frame").Find("Icon").gameObject.SetActive(true);
+                    textcanvas.transform.Find("Frame").Find("Text").GetComponent<RectTransform>().localPosition = new Vector2(180,0);
+                }
+                else
+                {
+                    textcanvas.transform.Find("Frame").Find("Icon").gameObject.SetActive(false);
+                    textcanvas.transform.Find("Frame").Find("Text").GetComponent<RectTransform>().localPosition = new Vector2(0,0);
+                }
             }
             //空のテキストならテキストウィンドウを無効化
             if (activeevent.text == "")
             {
-                textobject.SetActive(false);
+                textcanvas.SetActive(false);
             }
         }
 
@@ -106,11 +119,12 @@ public class EventManagement : MonoBehaviour {
         }
         if (activeevent.type == Handler.EVENTTYPE.PICTURE)
         {
-            imageobject.SetActive(true);
+            imagecanvas.SetActive(true);
 
             picture[(int)activeevent.target - 1].SetActive(true);
             picture[(int)activeevent.target - 1].GetComponent<Image>().sprite = activeevent.picture;
             picture[(int)activeevent.target - 1].transform.localPosition = new Vector2(activeevent.picX, activeevent.picY);
+            picture[(int)activeevent.target - 1].GetComponent<RectTransform>().sizeDelta = new Vector2(activeevent.sizeX, activeevent.sizeY);
         }
         
         yield return 0;
@@ -131,6 +145,7 @@ public class EventManagement : MonoBehaviour {
         //ボタン押した判定のリセット
         scroll = false;
         //イベント実行
+        Debug.Log("イベント開始");
         StartCoroutine(mUpdate());
     }
 

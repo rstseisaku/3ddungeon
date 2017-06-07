@@ -6,6 +6,7 @@
 		_Value("Value", Range(0,1)) = 0.5
 		_Blackout("Blackout", Range(0,0.99)) = 0
 		_Whiteout("Whiteout", Range(0,0.99)) = 0
+		_Albedo("Albedo", Range(0,0.99)) = 1
 	}
 		SubShader{
 			Tags{ "RenderType" = "Opaque" }
@@ -38,6 +39,7 @@
 		float _Value;
 		float _Blackout;
 		float _Whiteout;
+		float _Albedo;
 
 		v2f vert(appdata v)
 		{
@@ -64,6 +66,7 @@
 			{
 				 main.rgb *= (1 - _Blackout);
 				 main.rgb /= (1 - _Whiteout);
+				 main.a = _Albedo;
 			}
 
 			return main;

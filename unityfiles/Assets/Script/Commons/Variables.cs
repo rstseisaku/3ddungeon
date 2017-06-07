@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Utility;
+
 namespace Variables
 {
     
@@ -20,7 +22,7 @@ namespace Variables
         //マップ生成関連
         public static int mapX = 0;
         public static int mapY = 0;
-        public const string filepath = "Assets\\Resources\\MapData\\";
+        public static string filepath = _File.Path("\\Resources\\MapData\\");
 
         //フィールドマップの親オブジェクト
         public static GameObject map;
@@ -86,7 +88,7 @@ namespace Variables
     {
         // キャラクターの情報
         public static int Num = 16; // キャラクター種類
-        public static string PlayerDataFilePath = "Assets\\Resources\\CharacterData\\data.csv";
+        public static string PlayerDataFilePath = _File.Path("\\Resources\\CharacterData\\data.csv");
     }
     
     public class Party
@@ -112,8 +114,8 @@ namespace Variables
     public class Enemy
     {
         public static string EnemyGroupObjectName = "SingltonEnemyGroup"; // 1 つしか存在しないオブジェクト名
-        public static string EnemyDataFilePath = "Assets\\Resources\\CharacterData\\enemyData.csv";
-        public static string EnemyGroupFilePath = "Assets\\Resources\\CharacterData\\enemyGroupData.csv";
+        public static string EnemyDataFilePath = _File.Path("\\Resources\\CharacterData\\enemyData.csv");
+        public static string EnemyGroupFilePath = _File.Path("\\Resources\\CharacterData\\enemyGroupData.csv");
     }
 
     public class BackGround
@@ -194,6 +196,8 @@ namespace Variables
 
         //文章表示で使用
         public string text;
+        public bool useicon;
+        public Sprite icon;
 
         //トランジションで使用
         public Texture2D rule;
@@ -202,7 +206,7 @@ namespace Variables
         public Texture2D mask;
         public float blackout;
         public float whiteout;
-        //public bool thisobject;
+        public float albedo = 1;
         public GameObject transobject;
 
         //エンカウントで使用

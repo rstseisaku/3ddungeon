@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System;
 
 using Variables;
 using TRANSITION;
@@ -55,7 +56,7 @@ namespace Utility
         {
             return MyInstantiate(FilePath, null);
         }
-        
+
         // ファイル名からオブジェクトを返す(Canvasセット付)
         public static GameObject MyInstantiate(string FilePath, GameObject c)
         {
@@ -197,7 +198,7 @@ namespace Utility
             obj.GetComponent<Transition>().time = (frame / 60);
             obj.name = "Fade";
             yield return _Wait.WaitFrame((int)frame + 10);
-            
+
             // 移動
             SceneManager.LoadScene(sceneName);
 
@@ -278,6 +279,24 @@ namespace Utility
             transobject.gameObject.GetComponent<Transition>().SetParameter(transition);
             transobject.gameObject.GetComponent<Transition>().Enable();
         }
+    }
+
+    class _File
+    {
+        public static string Path(string FileName)
+        {
+            string path;
+#if UNITY_EDITOR
+            path = Application.dataPath + "/StreamingAssets";
+            return path + FileName;
+#elif UNITY_ANDROID
+            path = "jar:file://" + Application.dataPath + "!/assets/";
+            return path + FileName;
+#endif
+        }
+
+       
+
     }
     
 }

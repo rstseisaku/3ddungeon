@@ -53,6 +53,8 @@ namespace TRANSITION {
         //ホワイトアウト
         [SerializeField, Range(0, 0.99f)]
         public float whiteout;
+        //transparency
+        public float albedo;
         //モード
         [SerializeField]
         public TRANSITION_MODE mode;
@@ -92,6 +94,7 @@ namespace TRANSITION {
             mask = transition.mask;
             blackout = transition.blackout;
             whiteout = transition.whiteout;
+            albedo = transition.albedo;
             mode = transition.mode;
     }
 
@@ -151,6 +154,7 @@ namespace TRANSITION {
         image.material = new Material(Shader.Find("Custom/BWout"));
         image.material.SetTexture("_Rule", rule);
         image.material.SetFloat("_Blackout", blackout);
+        image.material.SetFloat("_Albedo", albedo);
     }
 
     // ホワイトアウト
@@ -159,7 +163,8 @@ namespace TRANSITION {
         image.material = new Material(Shader.Find("Custom/BWout"));
         image.material.SetTexture("_Rule", rule);
         image.material.SetFloat("_Whiteout", whiteout);
-    }
+        image.material.SetFloat("_Albedo", albedo);
+        }
 
     // 色彩反転
     void COLOR_INVERSION()

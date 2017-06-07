@@ -77,7 +77,16 @@ public class mSaveData : MonoBehaviour
     /* セーブデータを取得する関数 */
     public object LoadSaveData()
     {
-        /* セーブデータの生成 */
+        BinaryFormatter bf = new BinaryFormatter();
+        string serializedData = PlayerPrefs.GetString("SaveData");
+
+        MemoryStream dataStream = new MemoryStream(System.Convert.FromBase64String(serializedData));
+        object deserializedObject = (object)bf.Deserialize(dataStream);
+
+        return deserializedObject;
+
+        /*
+        // セーブデータの生成
         string curDir = Directory.GetCurrentDirectory();
         FileStream fs = null;
         object obj = null;
@@ -100,6 +109,7 @@ public class mSaveData : MonoBehaviour
         }
 
         return obj;
+        */
     }
 
     /* セーブデータを生成する関数 */
@@ -109,15 +119,38 @@ public class mSaveData : MonoBehaviour
 
         /* セーブデータの生成 */
         string curDir = Directory.GetCurrentDirectory();
+        MemoryStream fs= new MemoryStream();
+        BinaryFormatter bf = new BinaryFormatter();
+        bf.Serialize(fs, saveObject); //シリアル化して書き込む
 
+        string tmp = System.Convert.ToBase64String(fs.ToArray());
+        try
+        {
+            PlayerPrefs.SetString("SaveData", tmp);
+        }
+        catch (PlayerPrefsException)
+        {
+            return false;
+        }
+
+        fs.Close();
+        return true;
+
+#if UNITY_EDITOR
+        /*
         FileStream fs = new FileStream(
             curDir + "\\Save.dat",
             FileMode.Create,
             FileAccess.Write);
-        BinaryFormatter bf = new BinaryFormatter();
-        bf.Serialize(fs, saveObject); //シリアル化して書き込む
-        fs.Close();
-        
+            */
+
+#elif UNITY_ANDROID
+              WWW www = new WWW(
+            curDir + "\\Save.dat");
+       
+        www.Dispose();
+  
+#endif
 
         return true; // セーブ成功
     }
