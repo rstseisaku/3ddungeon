@@ -1,6 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 using Utility;
 
@@ -214,6 +219,9 @@ namespace Variables
 
         //シーン移動で使用
         public string movetothisscene;
+#if UNITY_EDITOR
+        public SceneAsset scenetemp;
+#endif
 
         //同じエリア間で移動
         public enum DIRECTION

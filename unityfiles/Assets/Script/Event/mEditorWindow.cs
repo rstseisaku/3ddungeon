@@ -204,6 +204,10 @@ public class mCustomWindow
         private int DefaultSizeY;
         /**/
 
+        /*移動シーン*/
+        SceneAsset temp = null;
+        /**/
+
         void OnGUI()
         {
             /*ウィンドウサイズ固定*/
@@ -370,7 +374,21 @@ public class mCustomWindow
                 if (eventconfig.eventlist[x].type == Handler.EVENTTYPE.MOVESCENE)
                 {
                     EditorGUILayout.LabelField("移動先シーン", GUILayout.Width(72));
-                    eventconfig.eventlist[x].movetothisscene = EditorGUILayout.TextField("", eventconfig.eventlist[x].movetothisscene, GUILayout.Width(384));
+                    if (eventconfig.eventlist[x].movetothisscene == null)
+                    {
+                        temp = null;
+                    }
+                    else
+                    {
+                         temp = eventconfig.eventlist[x].scenetemp;
+                    }
+                    temp = EditorGUILayout.ObjectField("", temp, typeof(SceneAsset), true, GUILayout.Width(128)) as SceneAsset;
+                    EditorGUILayout.LabelField("", GUILayout.Width(200));
+                    if (temp != null)
+                    {
+                        eventconfig.eventlist[x].scenetemp = temp;
+                        eventconfig.eventlist[x].movetothisscene = temp.name;
+                    }
                 }
                 /**/
 
